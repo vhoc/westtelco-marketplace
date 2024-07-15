@@ -1,14 +1,14 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
-import { Card } from "@nextui-org/react";
-import { navigateToTeam } from "@/utils/team";
-import FindTeamForm from "@/components/forms/FindTeamForm";
 
-export default function Home({ searchParams }: { searchParams: { message: string } }) {
-
+export default function TeamsLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center  h-16">
+    <div className="flex-1 w-full flex flex-col items-center">
+      <nav className="w-full flex justify-center h-16 border-b-1 border-b-default-200">
         <div className="w-full flex justify-between items-center p-3 text-sm px-[80px] bg-white">
           <div className="flex gap-4 items-center">
             <Image
@@ -23,11 +23,9 @@ export default function Home({ searchParams }: { searchParams: { message: string
         </div>
       </nav>
 
-      <div className="animate-in w-full flex-1 flex flex-col gap-20 opacity-1 max-w-4xl px-3 text-black">
-        <main className="flex-1 w-full flex flex-col gap-6 items-center">
-          <Card radius={'none'} shadow="none" className={'p-[45px] color-[#00336A] text-center w-full max-w-[510px] flex flex-col gap-4'}>
-            Welcome
-          </Card>
+      <div className="animate-in w-full flex-1 flex flex-col gap-20 opacity-1 text-black">
+        <main className="flex-1 w-full flex flex-col items-center">
+          { children }
         </main>
       </div>
 
