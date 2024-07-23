@@ -1,7 +1,7 @@
 
 import { Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCirclePlus, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
+import { faUserSlash, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "@/utils/team"
 import { getSkuInfo } from "@/utils/licenses"
@@ -37,8 +37,8 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
 
         {/* TEAM INFO TOPBAR: RIGHT SECTION */}
         <div className="flex gap-4">
-          <Button color="primary" size={'sm'} endContent={<FontAwesomeIcon icon={faCirclePlus} size="lg" aria-label="Añadir SKU" />}>
-            Añadir SKU
+          <Button color="danger" variant="ghost" size={'sm'} endContent={<FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" />}>
+            Suspender cliente
           </Button>
 
           <Button

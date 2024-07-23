@@ -151,7 +151,7 @@ export default function LicenseBox(props: LicenseBoxProps) {
             {/* PROVISIONED USERS */}
             <div className="flex gap-[8px]  flex-wrap">
               <FontAwesomeIcon icon={faUsers} size="xl" color="#D4D4D8" />
-              <span className="text-xl leading-7 font-medium text-black">{String(props.num_licensed_users + 3)}</span>
+              <span className="text-xl leading-7 font-medium text-black">{String(props.num_licensed_users)}</span>
             </div>
           </div>
 

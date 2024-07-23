@@ -1,5 +1,5 @@
 "use client"
-import { ISku, IAddon, IAddonApiResponse } from "@/types";
+import { ISku, IAddon, IAddonApiResponse, ISkuInfoResponse } from "@/types";
 import { createClient } from "./supabase/client";
 
 export const filterLicenseType = (skus: Array<ISku>, type: "regular" | "addon") => {
@@ -32,7 +32,7 @@ export const doesAddonSkuExist = async (skuId: string): Promise<IAddonApiRespons
     .single()
 
   if ( sku ) {
-    console.log(`doesAddonSkuExist/sku: `, sku)
+    // console.log(`doesAddonSkuExist/sku: `, sku)
     return {
       code: 200,
       data: sku,
@@ -43,12 +43,42 @@ export const doesAddonSkuExist = async (skuId: string): Promise<IAddonApiRespons
     console.error(`Error: `, error.message)
     return {
       code: 400,
-      message: "El SKU de este Addon no existe."
+      message: "El SKU de este Addon no se encontró."
     }
   }
 
   return {
     code: 404,
-    message: "El SKU de este Addon no existe."
+    message: "El SKU de este Addon no existe en la base de datos."
   }
-} 
+}
+
+export const getSkuInfo = async ( skuId: string ): Promise<ISkuInfoResponse> => {
+  const supabase = createClient()
+  const { data: sku, error } = await supabase
+    .from('sku')
+    .select('*')
+    .eq('sku_base', skuId)
+    .single()
+
+  if ( sku ) {
+    return {
+      code: 200,
+      data: sku,
+    }
+  }
+
+  if ( error ) {
+    console.error(`Error: `, error.message)
+    return {
+      code: 400,
+      message: "No se encontró el SKU especificado en la base de datos."
+    }
+  }
+
+  return {
+    code: 404,
+    message: "El SKU especificado no existe en la base de datos."
+  }
+
+}

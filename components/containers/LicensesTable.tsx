@@ -1,12 +1,14 @@
 // @ts-nocheck
 "use client"
 import { useState, useEffect, Dispatch } from "react"
-import { ISku } from "@/types"
+import { ISku, ISkuInfo } from "@/types"
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@nextui-org/react"
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react"
-import { filterLicenseType } from "@/utils/licenses-client"
+import { filterLicenseType, getSkuInfo } from "@/utils/licenses-client"
 import { isInGracePeriod } from "@/utils/team-client"
 import { doesAddonSkuExist } from "@/utils/licenses-client"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons"
 
 interface LicensesTableProps {
   skus: Array<ISku>
@@ -32,6 +34,7 @@ export default function LicensesTable(props: LicensesTableProps) {
   const [newSkuToAdd, setNewSkuToAdd] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [isAddSkuButtonDisabled, setIsAddSkuButtonDisabled] = useState(false)
+  const [baseSkuInfo, setBaseSkuInfo] = useState<ISkuInfo | null>(null)
 
   // Modal control
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -94,6 +97,38 @@ export default function LicensesTable(props: LicensesTableProps) {
     }
   }
 
+  const handleAddLicenseSku = async (skuId: string, quantity: number) => {
+    console.log(`skuId: `, skuId)
+    setIsAddSkuButtonDisabled(true)
+    try {
+      const skuInfo = await getSkuInfo(skuId)
+      console.log(`skuInfo: `, skuInfo)
+      if (skuInfo && skuInfo.data) {
+        props.setNewSkus((prevNewSkus) => (
+          [...prevNewSkus, { sku_id: skuInfo.data.sku_license, quantity: quantity }]
+        ))
+      }
+    } catch (error) {
+
+    } finally {
+      setIsAddSkuButtonDisabled(false)
+    }
+  }
+
+  // Initially, gets the current baseSku info:
+  useEffect(() => {
+    if (props.skus && props.skus.length >= 1) {
+      const baseSku = props.skus.filter(item => item.sku_id.startsWith('TEAM-'))
+      if (baseSku) {
+        getSkuInfo(baseSku[0].sku_id).then(data => {
+          if (data.data) {
+            setBaseSkuInfo(data.data)
+          }
+        })
+      }
+    }
+  }, [props.skus])
+
   // Handles the regular skus and the addons skus to place them separately in the table
   useEffect(() => {
     if (props.skus && props.skus.length >= 1) {
@@ -129,7 +164,7 @@ export default function LicensesTable(props: LicensesTableProps) {
 
       {/* REGULAR SKUS TABLE */}
       {
-        regularSkus && regularSkus.length >= 1 ?
+        props.newSkus && props.newSkus.length >= 1 && regularSkus && regularSkus.length >= 1 ?
           <Table isStriped radius="none" shadow="none" classNames={tableClassNames} aria-label="Tabla de SKUs">
 
             <TableHeader className="bg-white">
@@ -143,7 +178,7 @@ export default function LicensesTable(props: LicensesTableProps) {
 
                   const currentSkuRenewalState = props.renewalStateSkus.find(item => item.sku_id === sku.sku_id)
                   const currentSku = props.skus.find(item => item.sku_id === sku.sku_id)
-                  const currentNewSku = props.newSkus?.find(item => item.sku_id === sku.sku_id)
+                  const currentNewSku = props.newSkus.find(item => item.sku_id === sku.sku_id)
 
                   return (
                     <TableRow key={index} >
@@ -177,8 +212,8 @@ export default function LicensesTable(props: LicensesTableProps) {
                                 (props.modifyStatus === "success" || currentSkuRenewalState?.quantity < currentSku?.quantity) && (sku.sku_id.startsWith('TEAMLIC-') || sku.sku_id.startsWith('EDULIC-')) ?
                                   <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
                                     {
-                                      (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity > currentSku?.quantity ?
-                                        // (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity >= currentSku?.quantity ?
+                                      // (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity > currentSku?.quantity ?
+                                      (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity >= currentSku?.quantity ?
                                         `Número de licencias incrementado a ${currentNewSku?.quantity}.`
                                         :
                                         `Cambio programado a ${props.modifyStatus === "success" ? currentNewSku?.quantity : currentSkuRenewalState?.quantity} licencias en ${props.formattedEndDate}`
@@ -218,6 +253,68 @@ export default function LicensesTable(props: LicensesTableProps) {
                     </TableRow>
                   )
                 })
+              }
+
+              {
+                /**
+                 * Show "Agregar License SKU" button when:
+                 * - No SKU that starts with 'TEAMLIC-' (License SKU) already exists in the current skus.
+                 * - No License SKU already exists in the newSkus (SKUs to be added) array.
+                 * - This component is in EDIT mode.
+                 */
+                !regularSkus?.some(item => item.sku_id.startsWith('TEAMLIC-')) && !props.newSkus?.some(item => item.sku_id === baseSkuInfo?.sku_license) && props.editMode ?
+                  <TableRow key={'new-license-sku-row'}>
+                    <TableCell>
+                      <Button
+                        color="primary"
+                        size={'sm'}
+                        endContent={<FontAwesomeIcon icon={faPlusCircle} size="lg" />}
+                        aria-label="Agregar License SKU"
+                        isLoading={isAddSkuButtonDisabled}
+                        isDisabled={isAddSkuButtonDisabled}
+                        onPress={() => handleAddLicenseSku(baseSkuInfo?.sku_base, 1)}
+                      >
+                        Agregar License SKU
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+
+                    </TableCell>
+                  </TableRow>
+                  :
+                  baseSkuInfo && baseSkuInfo.sku_base && !props.skus.some(item => item.sku_id.startsWith('TEAMLIC-')) && props.newSkus && props.newSkus.some(item => item.sku_id.startsWith('TEAMLIC-')) && props.editMode ?
+                    <TableRow key={'new-license-sku-row'}>
+                      <TableCell>
+                        {props.newSkus.find(item => item.sku_id.startsWith('TEAMLIC-')).sku_id}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-8 items-center">
+                          <Input
+                            type="number"
+                            variant="bordered"
+                            value={props.newSkus.find(item => item.sku_id === baseSkuInfo.sku_license)?.quantity}
+                            aria-label="Cantidad"
+                            onChange={(event) => {
+                              
+                              if ( props.newSkus && props.newSkus.length >= 1) {
+                                // const thisSku = props.newSkus.find(item => item.sku_id === sku.sku_id)
+                                props.setNewSkus((prevSkus) =>
+                                  prevSkus.map(sku =>
+                                    ({ ...sku, quantity: sku.sku_id.startsWith("TEAM-") || sku.sku_id.startsWith("EDU-") ? 1 : Number(event.target.value) })
+                                ))
+                              }
+                              
+
+                            }}
+                            className="max-w-24"
+                            size={'lg'}
+                          />
+                          <span className="text-[14px] text-default-500">{`Aumenta o reduce el número actual de licencias (${props.newSkus.find(item => item.sku_id === baseSkuInfo.sku_base)?.quantity})`}</span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                    :
+                    null
               }
 
               {
