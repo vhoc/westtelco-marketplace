@@ -1,3 +1,8 @@
+export interface ISkuValidationResponse {
+  status: "success" | "error"
+  message?: string | undefined
+}
+
 export interface ISku {
   sku_id: string
   quantity: number

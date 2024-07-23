@@ -40,26 +40,30 @@ export default function LicenseBox(props: LicenseBoxProps) {
   const { isOpen: isOpenError, onOpen: onOpenError, onOpenChange: onOpenChangeError, onClose: onCloseError } = useDisclosure();
 
   const handleUpdate = () => {
-    onOpen()
+    // onOpen()
     if (props.teamId && props.baseSku && props.skus && newSkus) {
-      modifyTeamSkus(props.teamId, props.skus, newSkus)
-        .then(data => {
-          if (data.code !== 200) {
-            setModifyStatus("error")
-            setErrorMessage(data?.message || "Error desconocido")
-          }
-          console.log(`modifyTeamSkus response: `, data)
-          setModifyStatus("success")
-        })
-        .catch(error => {
-          console.error(error)
-          setModifyStatus("error")
-          setErrorMessage(error)
-        })
-        .finally(() => {
-          onClose()
-          setEditMode(false)
-        })
+      // const skusToFilter = newSkus.filter(({sku_id}) => !props.renewalStateSkus?.some(r => r.sku_id === sku_id)).map(sku => sku.sku_id)
+      console.log(`handleUpdate/newSkus: `, newSkus)
+      // modifyTeamSkus(props.teamId, props.skus, newSkus)
+      //   .then(data => {
+      //     if (data.code !== 200) {
+      //       setModifyStatus("error")
+      //       setErrorMessage(data?.message || "Error desconocido")
+      //       setNewSkus(props.skus)
+      //     }
+      //     // console.log(`modifyTeamSkus response: `, data)
+      //     setModifyStatus( "success" )
+      //   })
+      //   .catch(error => {
+      //     console.error(error)
+      //     setModifyStatus("error")
+      //     setErrorMessage(error)
+      //     setNewSkus(props.skus)
+      //   })
+      //   .finally(() => {
+      //     onClose()
+      //     setEditMode(false)
+      //   })
     }
   }
 

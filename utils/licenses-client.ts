@@ -1,5 +1,5 @@
 "use client"
-import { ISku, IAddon, IAddonApiResponse, ISkuInfoResponse } from "@/types";
+import { ISku, IAddon, IAddonApiResponse, ISkuInfoResponse, ISkuValidationResponse } from "@/types";
 import { createClient } from "./supabase/client";
 
 export const filterLicenseType = (skus: Array<ISku>, type: "regular" | "addon") => {
@@ -81,4 +81,44 @@ export const getSkuInfo = async ( skuId: string ): Promise<ISkuInfoResponse> => 
     message: "El SKU especificado no existe en la base de datos."
   }
 
+}
+
+export const validateAddonSku = async ( baseSku: string , addonSku: string, currentSkus: Array<ISku> ): Promise<ISkuValidationResponse> => {
+
+  const hyphenPosition = addonSku.indexOf('-')
+  const currentAddonSkus = filterLicenseType(currentSkus, "addon")
+  const newAddonNameInitials = addonSku.substring(hyphenPosition + 1, hyphenPosition + 3)
+
+  const { data: baseSkuInfo, code: baseSkuResponseCode, message: baseSkuResponseMessage } = await getSkuInfo(baseSku)
+  const { data: addonSkuInfo, code: addonSkuResponseCode, message: addonSkuResponseMessage } = await doesAddonSkuExist(addonSku)
+
+  // Check existence of baseSku
+  if ( baseSkuResponseCode !== 200 || !baseSkuInfo ) {
+    return { status: "error", message: baseSkuResponseMessage }
+  }
+
+  // Check existence of addonSku
+  if ( addonSkuResponseCode !== 200 || !addonSkuInfo ) {
+    return { status: "error", message: addonSkuResponseMessage }
+  }
+
+  // Same commitment type: anual or monthly
+  if ( baseSkuInfo.commitment_type !== addonSkuInfo.commitment_type ) {
+    return { status: "error", message: "El período de suscripción y de pago debe ser igual al de la licencia Base." }
+  }
+
+  // New addonSku is "Extended Version History" and there is a "Data Governance" addon already in the team.  
+  const dataGovernanceAddons = currentAddonSkus.some(item => item.sku_id.substring(hyphenPosition + 1, hyphenPosition + 3) === 'LH')
+  if ( currentAddonSkus && currentAddonSkus.length >= 1 && newAddonNameInitials === "EV" && dataGovernanceAddons  ) {
+    return { status: "error", message: "No se puede agregar un addon [Extended Version History] cuando ya existe un addon [Data Governance] en el cliente." }
+  }
+
+  // New addonSku is "Data Governance" and there is an "Extended Version History" addon already in the team.
+  const extendedVersionHistoryAddons = currentAddonSkus.some(item => item.sku_id.substring(hyphenPosition + 1, hyphenPosition + 3) === 'EV')
+  if ( currentAddonSkus && currentAddonSkus.length >= 1 && newAddonNameInitials === "LH" && extendedVersionHistoryAddons  ) {
+    return { status: "error", message: "No se puede agregar un addon [Data Governance] cuando ya existe un addon [Extended Version History] en el cliente." }
+  }
+
+  return { status: "success" }
+  
 }

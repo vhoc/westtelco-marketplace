@@ -4,11 +4,12 @@ import { useState, useEffect, Dispatch } from "react"
 import { ISku, ISkuInfo } from "@/types"
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@nextui-org/react"
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react"
-import { filterLicenseType, getSkuInfo } from "@/utils/licenses-client"
+import { filterLicenseType, getSkuInfo, validateAddonSku } from "@/utils/licenses-client"
 import { isInGracePeriod } from "@/utils/team-client"
 import { doesAddonSkuExist } from "@/utils/licenses-client"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons"
+import { faPlusCircle, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
+import { AddonsTable } from "./AddonsTable"
 
 interface LicensesTableProps {
   skus: Array<ISku>
@@ -30,6 +31,7 @@ export default function LicensesTable(props: LicensesTableProps) {
 
   const [regularSkus, setRegularSkus] = useState<Array<ISku> | null>(null)
   const [addonSkus, setAddonSkus] = useState<Array<ISku> | null>(null)
+  
   const [gracePeriodStatus, setGracePeriodStatus] = useState(false)
   const [newSkuToAdd, setNewSkuToAdd] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
@@ -67,6 +69,11 @@ export default function LicensesTable(props: LicensesTableProps) {
   const handleAddAddon = async (skuId: string, quantity: number) => {
     setIsAddSkuButtonDisabled(true)
     try {
+      const validateAddonResponse = await validateAddonSku(baseSkuInfo?.sku_base, skuId, props.skus )
+      if ( validateAddonResponse.status !== "success" ) {
+        setErrorMessage(validateAddonResponse.message)
+        return
+      }
       // Check if the Addon SKU exists in the database.
       const addonSkuResponse = await doesAddonSkuExist(skuId)
       if (addonSkuResponse.code !== 200) {
@@ -83,7 +90,8 @@ export default function LicensesTable(props: LicensesTableProps) {
 
       // Add entered addon sku to the newSkus to be sent to Dropbox
       props.setNewSkus((prevNewSkus) => (
-        [...prevNewSkus, { sku_id: skuId, quantity }]
+        // Quantity needs to be the total users count, including the base SKU's 3 licensed users.
+        [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
       ))
 
       // Reset the SKU input field
@@ -94,6 +102,7 @@ export default function LicensesTable(props: LicensesTableProps) {
       console.error(error);
     } finally {
       setIsAddSkuButtonDisabled(false)
+      setNewSkuToAdd("");
     }
   }
 
@@ -204,17 +213,14 @@ export default function LicensesTable(props: LicensesTableProps) {
                                     <span>{currentSku?.quantity}</span>// KEEP SHOWING CURRENT QUANTITY
                               }
                               {
-                                // 
-
-
                                 // If a modification to the licenses has been made and the SKU id starts with TEAMLIC- OR EDULIC-,
                                 // ==OR== if the number of licenses to be renewed is lower than the licenses currently active, show the Chip with the message
-                                (props.modifyStatus === "success" || currentSkuRenewalState?.quantity < currentSku?.quantity) && (sku.sku_id.startsWith('TEAMLIC-') || sku.sku_id.startsWith('EDULIC-')) ?
+                                (props.modifyStatus === "success" || currentSkuRenewalState?.quantity < currentSku?.quantity) && (sku.sku_id.startsWith('TEAMLIC-') || sku.sku_id.startsWith('EDULIC-') && ( !sku.sku_id.startsWith('TEAMADD-') || !sku.sku_id.startsWith('EDUADD-') ) ) ?
                                   <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
                                     {
                                       // (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity > currentSku?.quantity ?
                                       (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity >= currentSku?.quantity ?
-                                        `Número de licencias incrementado a ${currentNewSku?.quantity}.`
+                                        `Número de licencias incrementado a ${currentNewSku?.quantity}`
                                         :
                                         `Cambio programado a ${props.modifyStatus === "success" ? currentNewSku?.quantity : currentSkuRenewalState?.quantity} licencias en ${props.formattedEndDate}`
                                     }
@@ -372,9 +378,9 @@ export default function LicensesTable(props: LicensesTableProps) {
                       className={'rounded-md'}
                       aria-label="Añadir"
                       isLoading={isAddSkuButtonDisabled}
-                      isDisabled={isAddSkuButtonDisabled}
-                      // Add addon with the sku specified in the above input, and the quantity taken from the TEAMLIC- or EDULIC- SKU's quantity for it to be equal to the new quanitity to be requested.
-                      onPress={() => handleAddAddon(newSkuToAdd, props.newSkus?.find(item => item.sku_id.startsWith("TEAMLIC-"))?.quantity || props.newSkus?.find(item => item.sku_id.startsWith("EDULIC"))?.quantity)}
+                      isDisabled={isAddSkuButtonDisabled || !newSkuToAdd || newSkuToAdd.length < 1}
+                      // Add addon with the sku specified in the above input, and the quantity taken from the TEAMLIC- or EDULIC- SKU's quantity for it to be equal to the new quanitity to be requested. If only a Base SKU exists, set quantity to 1.
+                      onPress={() => handleAddAddon(newSkuToAdd, props.newSkus?.find(item => item.sku_id.startsWith("TEAMLIC-"))?.quantity || props.newSkus?.find(item => item.sku_id.startsWith("EDULIC-"))?.quantity || 0)}
                     >
                       Añadir
                     </Button>
@@ -403,14 +409,23 @@ export default function LicensesTable(props: LicensesTableProps) {
                           <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
                             {/* If the current SKU is neither found in newSkus, show a "to be added" message. */}
                             {
-                              !props.newSkus?.find(item => item.sku_id === sku.sku_id) ?
-                                `Eliminación programada para ${props.formattedEndDate}`
-                                :
-                                `Seleccionado para agregar`
+                              // checar si esta en current skus, mostrar eliminacion programada, si no, mostrar para agregar.
+                              props.skus.some(item => item.sku_id === sku.sku_id) ?
+                              `Eliminación programada para ${props.formattedEndDate}`
+                              :
+                              `Seleccionado para agregar`
+                              // !props.newSkus?.find(item => item.sku_id === sku.sku_id) ?
+                              //   `Eliminación programada para ${props.formattedEndDate}`
+                              //   :
+                              //   `Seleccionado para agregar`
+                            }
+                            {
+                              console.log(`currentAddonSku: `, sku)
+                              // !props.renewalStateSkus.some(item => item.sku_id )
                             }
                           </Chip>
                           :
-                          !props.newSkus?.find(item => item.sku_id === sku.sku_id) ?
+                          !props.newSkus?.find(item => item.sku_id === sku.sku_id) && props.editMode ?
                             <Chip color="warning" radius={'full'} size={'sm'} className="ml-4 text-black text-tiny">
                               {`Seleccionado para eliminación`}
                             </Chip>
@@ -456,7 +471,10 @@ export default function LicensesTable(props: LicensesTableProps) {
         shouldBlockScroll
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1 text-black">ERROR</ModalHeader>
+          <ModalHeader className="flex gap-2 text-black items-center">
+            <FontAwesomeIcon icon={faExclamationTriangle} size={'lg'} color={'#ffba00'} />
+            ERROR
+          </ModalHeader>
           <ModalBody className={'text-black'}>
             {errorMessage}
           </ModalBody>
