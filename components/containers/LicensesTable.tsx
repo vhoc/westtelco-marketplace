@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client"
-import { useState, useEffect, Dispatch } from "react"
+import { useState, useEffect, Dispatch, SetStateAction } from "react"
 import { ISku, ISkuInfo } from "@/types"
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@nextui-org/react"
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react"
@@ -31,7 +31,8 @@ export default function LicensesTable(props: LicensesTableProps) {
 
   const [regularSkus, setRegularSkus] = useState<Array<ISku> | null>(null)
   const [addonSkus, setAddonSkus] = useState<Array<ISku> | null>(null)
-  
+  const [newAddonSkus, setNewAddonSkus] = useState<Array<ISku>>([])
+
   const [gracePeriodStatus, setGracePeriodStatus] = useState(false)
   const [newSkuToAdd, setNewSkuToAdd] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
@@ -62,15 +63,15 @@ export default function LicensesTable(props: LicensesTableProps) {
 
   const handleRemoveAddon = (skuId: string) => {
     props.setNewSkus((prevNewSkus) => (
-      prevNewSkus.filter(item => item.sku_id !== skuId)
+      prevNewSkus?.filter(item => item.sku_id !== skuId)
     ))
   }
 
   const handleAddAddon = async (skuId: string, quantity: number) => {
     setIsAddSkuButtonDisabled(true)
     try {
-      const validateAddonResponse = await validateAddonSku(baseSkuInfo?.sku_base, skuId, props.skus )
-      if ( validateAddonResponse.status !== "success" ) {
+      const validateAddonResponse = await validateAddonSku(baseSkuInfo?.sku_base, skuId, props.skus)
+      if (validateAddonResponse.status !== "success") {
         setErrorMessage(validateAddonResponse.message)
         return
       }
@@ -89,7 +90,7 @@ export default function LicensesTable(props: LicensesTableProps) {
       }
 
       // Add entered addon sku to the newSkus to be sent to Dropbox
-      props.setNewSkus((prevNewSkus) => (
+      setNewAddonSkus((prevNewSkus) => (
         // Quantity needs to be the total users count, including the base SKU's 3 licensed users.
         [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
       ))
@@ -143,7 +144,8 @@ export default function LicensesTable(props: LicensesTableProps) {
     if (props.skus && props.skus.length >= 1) {
       const regular = filterLicenseType(props.skus, "regular")
       // If editMode is TRUE, show newSkus in the addons table, instead of the current Skus.
-      const addons = props.editMode ? filterLicenseType(props.newSkus, "addon") : filterLicenseType(props.skus, "addon")
+      // const addons = props.editMode ? filterLicenseType(props.newSkus, "addon") : filterLicenseType(props.skus, "addon")
+      const addons = filterLicenseType(props.skus, "addon")
 
       setRegularSkus(regular)
       setAddonSkus(addons)
@@ -167,6 +169,10 @@ export default function LicensesTable(props: LicensesTableProps) {
   useEffect(() => {
     console.log(`newSkus: `, props.newSkus)
   }, [props.newSkus])
+
+  useEffect(() => {
+    console.log(`newAddonSkus: `, newAddonSkus)
+  }, [newAddonSkus])
 
   return (
     <div className="flex flex-col w-full">
@@ -215,7 +221,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                               {
                                 // If a modification to the licenses has been made and the SKU id starts with TEAMLIC- OR EDULIC-,
                                 // ==OR== if the number of licenses to be renewed is lower than the licenses currently active, show the Chip with the message
-                                (props.modifyStatus === "success" || currentSkuRenewalState?.quantity < currentSku?.quantity) && (sku.sku_id.startsWith('TEAMLIC-') || sku.sku_id.startsWith('EDULIC-') && ( !sku.sku_id.startsWith('TEAMADD-') || !sku.sku_id.startsWith('EDUADD-') ) ) ?
+                                (props.modifyStatus === "success" || currentSkuRenewalState?.quantity < currentSku?.quantity) && (sku.sku_id.startsWith('TEAMLIC-') || sku.sku_id.startsWith('EDULIC-') && (!sku.sku_id.startsWith('TEAMADD-') || !sku.sku_id.startsWith('EDUADD-'))) ?
                                   <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
                                     {
                                       // (currentSku?.quantity <= currentNewSku?.quantity) && currentSkuRenewalState?.quantity > currentSku?.quantity ?
@@ -301,15 +307,15 @@ export default function LicensesTable(props: LicensesTableProps) {
                             value={props.newSkus.find(item => item.sku_id === baseSkuInfo.sku_license)?.quantity}
                             aria-label="Cantidad"
                             onChange={(event) => {
-                              
-                              if ( props.newSkus && props.newSkus.length >= 1) {
+
+                              if (props.newSkus && props.newSkus.length >= 1) {
                                 // const thisSku = props.newSkus.find(item => item.sku_id === sku.sku_id)
                                 props.setNewSkus((prevSkus) =>
                                   prevSkus.map(sku =>
                                     ({ ...sku, quantity: sku.sku_id.startsWith("TEAM-") || sku.sku_id.startsWith("EDU-") ? 1 : Number(event.target.value) })
-                                ))
+                                  ))
                               }
-                              
+
 
                             }}
                             className="max-w-24"
@@ -350,6 +356,15 @@ export default function LicensesTable(props: LicensesTableProps) {
       }
 
       {/* ADDONS SKUS TABLE */}
+      {/* <AddonsTable
+        currentAddonSkus={addonSkus}
+        editMode={props.editMode}
+        skus={props.skus}
+        newSkus={props.newSkus}
+        setNewSkus={props.setNewSkus}
+        renewalStateSkus={props.renewalStateSkus}
+        formattedEndDate={props.formattedEndDate}
+      /> */}
       <Table isStriped radius="none" shadow="none" classNames={tableClassNames} aria-label="Addon SKUs table">
 
         <TableHeader className="bg-white">
@@ -389,14 +404,16 @@ export default function LicensesTable(props: LicensesTableProps) {
                 <TableCell>&nbsp;</TableCell>
                 <TableCell>&nbsp;</TableCell>
               </TableRow>
-              :
+            :
               null
           }
+
+
           {
             addonSkus && addonSkus.length >= 1 ?
               addonSkus.map((sku, index) => {
                 return (
-                  <TableRow key={index}>
+                  <TableRow key={`currentAddons-${index}`}>
                     <TableCell className={'w-1/2'}>
                       <span>{sku.sku_id}</span>
                     </TableCell>
@@ -411,9 +428,74 @@ export default function LicensesTable(props: LicensesTableProps) {
                             {
                               // checar si esta en current skus, mostrar eliminacion programada, si no, mostrar para agregar.
                               props.skus.some(item => item.sku_id === sku.sku_id) ?
-                              `Eliminación programada para ${props.formattedEndDate}`
-                              :
-                              `Seleccionado para agregar`
+                                `Eliminación programada para ${props.formattedEndDate}`
+                                :
+                                `Seleccionado para agregar`
+                              // !props.newSkus?.find(item => item.sku_id === sku.sku_id) ?
+                              //   `Eliminación programada para ${props.formattedEndDate}`
+                              //   :
+                              //   `Seleccionado para agregar`
+                            }
+                            {
+                              // console.log(`currentAddonSku: `, sku)
+                              // !props.renewalStateSkus.some(item => item.sku_id )
+                            }
+                          </Chip>
+                          :
+                          !props.newSkus?.find(item => item.sku_id === sku.sku_id) && props.editMode ?
+                            <Chip color="warning" radius={'full'} size={'sm'} className="ml-4 text-black text-tiny">
+                              {`Seleccionado para eliminación`}
+                            </Chip>
+                            :
+                            null
+                      }
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {
+                        // Show delete button only when we are in Edit Mode and if the SKU is not deleted.
+                        props.editMode && props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id) ?
+                          <Button
+                            color={'danger'}
+                            aria-label="Eliminar"
+                            variant={'faded'}
+                            size={'sm'}
+                            className={'bg-white'}
+                            onPress={() => handleRemoveAddon(sku.sku_id)}
+                          >
+                            Eliminar
+                          </Button>
+                          :
+                          <span>&nbsp;</span>
+                      }
+                    </TableCell>
+                  </TableRow>
+                )
+              })
+              :
+              null
+          }
+          {
+            newAddonSkus && newAddonSkus.length >= 1 ?
+              newAddonSkus.map((sku, index) => {
+                return (
+                  <TableRow key={`newAddons-${index}`}>
+                    <TableCell className={'w-1/2'}>
+                      <span>{sku.sku_id}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span>{sku.quantity}</span>
+                      {
+                        // If the current SKU is not found in renewalStateSkus, tag it with a Chip.
+                        !props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id) ?
+
+                          <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
+                            {/* If the current SKU is neither found in newSkus, show a "to be added" message. */}
+                            {
+                              // checar si esta en current skus, mostrar eliminacion programada, si no, mostrar para agregar.
+                              props.skus.some(item => item.sku_id === sku.sku_id) ?
+                                `Eliminación programada para ${props.formattedEndDate}`
+                                :
+                                `Seleccionado para agregar`
                               // !props.newSkus?.find(item => item.sku_id === sku.sku_id) ?
                               //   `Eliminación programada para ${props.formattedEndDate}`
                               //   :
@@ -461,6 +543,7 @@ export default function LicensesTable(props: LicensesTableProps) {
 
 
       </Table>
+
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
