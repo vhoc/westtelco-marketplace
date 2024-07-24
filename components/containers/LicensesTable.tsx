@@ -13,11 +13,11 @@ import { AddonsTable } from "./AddonsTable"
 
 interface LicensesTableProps {
   skus: Array<ISku>
-  renewalStateSkus?: Array<ISku> | undefined
+  renewalStateSkus?: Array<ISku>
   // initialSkus: Array<ISku>
   // setInicialSkus: Dispatch<SetStateAction<ISku[]>>
   newSkus: Array<ISku> | undefined// LIFTED
-  setNewSkus: Dispatch<SetStateAction<ISku[] | undefined>>// LIFTED
+  setNewSkus: Dispatch<SetStateAction<ISku[]>>// LIFTED
   editMode: boolean
   modifyStatus: "success" | "error" | "none"// LIFTED
   setModifyStatus: Dispatch<SetStateAction<"success" | "error" | "none">>// LIFTED
@@ -25,13 +25,15 @@ interface LicensesTableProps {
   setForceImmediate: Dispatch<SetStateAction<boolean>>// LIFTED
   teamEndDateTime: string
   formattedEndDate: string
+  setNewAddonSkus: Dispatch<SetStateAction<ISku[]>>
+  newAddonSkus: Array<ISku>
 }
 
 export default function LicensesTable(props: LicensesTableProps) {
 
   const [regularSkus, setRegularSkus] = useState<Array<ISku> | null>(null)
   const [addonSkus, setAddonSkus] = useState<Array<ISku> | null>(null)
-  const [newAddonSkus, setNewAddonSkus] = useState<Array<ISku>>([])
+  
 
   const [gracePeriodStatus, setGracePeriodStatus] = useState(false)
   const [newSkuToAdd, setNewSkuToAdd] = useState("")
@@ -90,8 +92,12 @@ export default function LicensesTable(props: LicensesTableProps) {
       }
 
       // Add entered addon sku to the newSkus to be sent to Dropbox
-      setNewAddonSkus((prevNewSkus) => (
+      props.setNewAddonSkus((prevNewSkus) => (
         // Quantity needs to be the total users count, including the base SKU's 3 licensed users.
+        [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
+      ))
+
+      props.setNewSkus((prevNewSkus) => (
         [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
       ))
 
@@ -167,19 +173,24 @@ export default function LicensesTable(props: LicensesTableProps) {
 
   // TEST
   useEffect(() => {
+    console.log(`skus: `, props.skus)
+  }, [props.skus])
+
+  useEffect(() => {
     console.log(`newSkus: `, props.newSkus)
   }, [props.newSkus])
 
   useEffect(() => {
-    console.log(`newAddonSkus: `, newAddonSkus)
-  }, [newAddonSkus])
+    console.log(`newAddonSkus: `, props.newAddonSkus)
+  }, [props.newAddonSkus])
 
   return (
     <div className="flex flex-col w-full">
 
       {/* REGULAR SKUS TABLE */}
       {
-        props.newSkus && props.newSkus.length >= 1 && regularSkus && regularSkus.length >= 1 ?
+        // props.newSkus && props.newSkus.length >= 1 && regularSkus && regularSkus.length >= 1 ?
+        props.skus && props.skus.length >= 1 && regularSkus && regularSkus.length >= 1 ?
           <Table isStriped radius="none" shadow="none" classNames={tableClassNames} aria-label="Tabla de SKUs">
 
             <TableHeader className="bg-white">
@@ -474,9 +485,12 @@ export default function LicensesTable(props: LicensesTableProps) {
               :
               null
           }
+
           {
-            newAddonSkus && newAddonSkus.length >= 1 ?
-              newAddonSkus.map((sku, index) => {
+            props.newAddonSkus && props.newAddonSkus.length >= 1 ?
+            // props.editMode && props.newSkus && props.newSkus.length >= 1 && ( props.newSkus.some(item => item.sku_id.startsWith('TEAMADD-')) || props.newSkus.some(item => item.sku_id.startsWith('EDUADD-')) ) ?
+              // props.newSkus.filter( (item) => (item.sku_id === item.sku_id.startsWith('TEAM-ADD') || item.sku_id === item.sku_id.startsWith('EDUADD-')) ).map((sku, index) => {
+              props.newAddonSkus.map((sku, index) => {
                 return (
                   <TableRow key={`newAddons-${index}`}>
                     <TableCell className={'w-1/2'}>
@@ -502,7 +516,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                               //   `Seleccionado para agregar`
                             }
                             {
-                              console.log(`currentAddonSku: `, sku)
+                              // console.log(`currentAddonSku: `, sku)
                               // !props.renewalStateSkus.some(item => item.sku_id )
                             }
                           </Chip>

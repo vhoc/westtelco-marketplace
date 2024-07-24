@@ -7,12 +7,12 @@ import { Chip } from "@nextui-org/react"
 import LicensesTable from "./LicensesTable"
 import { Modal, ModalContent, ModalBody, useDisclosure, ModalHeader, ModalFooter } from "@nextui-org/react"
 import { useState, useEffect } from "react"
-import { modifyTeamSkus } from "@/utils/team"
+
 interface LicenseBoxProps {
   baseSku: string
   license_description?: string | undefined
-  skus: Array<ISku> | undefined
-  renewalStateSkus?: Array<ISku> | undefined
+  skus: Array<ISku>
+  renewalStateSkus?: Array<ISku>
   num_licensed_users: number
   space_quota: number
   auto_renew: boolean
@@ -29,10 +29,14 @@ export default function LicenseBox(props: LicenseBoxProps) {
   const [modifyStatus, setModifyStatus] = useState<"error" | "success" | "none">("none")
 
   // LIFTED STATE from <LicensesTable>
-  const [newSkus, setNewSkus] = useState(props.skus)
+  // const [newSkus, setNewSkus] = useState(props.skus)
+  const [newSkus, setNewSkus] = useState<Array<ISku>>([])
 
   // LIFTED STATE from <LicensesTable>
   const [forceImmediate, setForceImmediate] = useState(false)
+
+  // LIFTED STATE from <LicensesTable>
+  const [newAddonSkus, setNewAddonSkus] = useState<Array<ISku>>([])
 
   const [formattedEndDate, setFormattedEndDate] = useState("")
 
@@ -81,6 +85,23 @@ export default function LicenseBox(props: LicenseBoxProps) {
     }
   }, [errorMessage, onOpenError])
 
+  // Triggered by editMode state
+  useEffect(() => {
+    if ( editMode ) {
+      // Update newSkus with currentSkus and filter out skus that are not present in the renewal state
+      const prepareNewSkus = (skus: Array<ISku>, renewalSkus: Array<ISku>) => {
+        return skus.filter( ({sku_id}) => renewalSkus.some(item => item.sku_id === sku_id) )
+      }
+
+      const updatedNewSkus = prepareNewSkus(props.skus, props.renewalStateSkus || [] )
+      // console.log(`editMode TRUE / updatedNewSkus: `, updatedNewSkus)
+      setNewSkus(updatedNewSkus)
+    } else {
+      // console.log(`editMode FALSE / updatedNewSkus: `, [])
+      setNewSkus([])
+    }
+  }, [editMode, props.skus, props.renewalStateSkus])
+
   return (
     <Card className="w-full flex flex-col" radius={'none'} shadow={'none'}>
 
@@ -105,7 +126,8 @@ export default function LicenseBox(props: LicenseBoxProps) {
                 endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
                 aria-label="Deshacer"
                 onClick={() => {
-                  setNewSkus(props.skus)
+                  // setNewSkus(props.skus)
+                  setNewAddonSkus([])
                   setEditMode(false)
                 }}
               >
@@ -176,6 +198,8 @@ export default function LicenseBox(props: LicenseBoxProps) {
               formattedEndDate={formattedEndDate}
               forceImmediate={forceImmediate}
               setForceImmediate={setForceImmediate}
+              setNewAddonSkus={setNewAddonSkus}
+              newAddonSkus={newAddonSkus}
             />
             :
             <p>Este cliente no cuenta con licencias.</p>

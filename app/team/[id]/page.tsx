@@ -59,8 +59,8 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
           <LicenseBox
             baseSku={team.data?.sku_id || 'Unknown'}
             license_description={skuInfo.description}
-            skus={team.data?.current_state.skus}
-            renewalStateSkus={team.data?.renewal_state.skus}
+            skus={team.data?.current_state.skus || []}
+            renewalStateSkus={team.data?.renewal_state.skus || []}
             num_licensed_users={ team.data?.num_licensed_users || 0 }
             space_quota={team.data?.current_state?.space_quota || 0}
             auto_renew={team.data?.auto_renew || false}
