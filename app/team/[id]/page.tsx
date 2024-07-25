@@ -8,8 +8,16 @@ import { getSkuInfo } from "@/utils/licenses"
 import { redirect } from "next/navigation"
 import { ISku } from "@/types"
 import Link from "next/link"
+import { createClient } from "@/utils/supabase/server"
 
 export default async function TeamPage({ params }: { params: { id: string } }) {
+
+  const supabase = createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+  if ( error || !data?.user ){
+    redirect('/login')
+  }
 
   // Get all the team info from the API using the params.id, then render below.
   const teamId = decodeURIComponent(params.id)

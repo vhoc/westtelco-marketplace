@@ -94,3 +94,18 @@ export interface ITeamData {
   usage: IUsage
   data_residency: string
 }
+
+export interface ICreateTeamFormFields {
+  name: string
+  country_code: string
+  invite_admin: string
+  invite_admin_confirmation: string
+  sku_id: string
+}
+
+export interface INewTeamData {
+  name: string
+  country_code: string
+  invite_admin: string
+  skus: Array<ISku>
+}

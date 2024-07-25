@@ -3,6 +3,7 @@ import { Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface FindTeamFormProps {
   message?: string | undefined
@@ -15,7 +16,7 @@ const FindTeamForm = ({ message, formAction, className }: FindTeamFormProps) => 
   const [teamId, setTeamId] = useState('')
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-
+  const router = useRouter()
 
   const handleTeamIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
@@ -54,8 +55,18 @@ const FindTeamForm = ({ message, formAction, className }: FindTeamFormProps) => 
         isDisabled={isSubmitDisabled || isLoading}
         onClick={handleSubmit}
         formAction={formAction}
+        size={'lg'}
       >
         {isLoading ? `Buscando...` : 'Buscar'}
+      </Button>
+
+      <Button
+        color="primary"
+        variant={'light'}
+        radius={'sm'}
+        onPress={() => router.push('/team/new')}
+      >
+        Crear Cliente
       </Button>
     </form>
   )

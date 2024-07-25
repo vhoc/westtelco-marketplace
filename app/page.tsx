@@ -1,10 +1,22 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
 import { Card } from "@nextui-org/react";
-import { navigateToTeam } from "@/utils/team";
-import FindTeamForm from "@/components/forms/FindTeamForm";
+// import { navigateToTeam } from "@/utils/team";
+// import FindTeamForm from "@/components/forms/FindTeamForm";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function Home({ searchParams }: { searchParams: { message: string } }) {
+export default async function Home({ searchParams }: { searchParams: { message: string } }) {
+
+  const supabase = createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+  if ( error || !data?.user ){
+    console.error(error)
+    return redirect('/login')
+  } else {
+    return redirect('/team')
+  }
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">

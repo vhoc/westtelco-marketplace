@@ -27,7 +27,7 @@ const UserDropdown = ({ user, userData }: UserDropdownProps) => {
       <DropdownMenu>
         <DropdownItem key={'signOut'}>
           <form action={signOut}>
-            <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
+            <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover text-black">
               {"Cerrar sesión"}
             </button>
           </form>

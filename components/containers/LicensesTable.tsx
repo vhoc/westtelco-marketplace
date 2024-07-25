@@ -33,7 +33,7 @@ export default function LicensesTable(props: LicensesTableProps) {
 
   const [regularSkus, setRegularSkus] = useState<Array<ISku> | null>(null)
   const [addonSkus, setAddonSkus] = useState<Array<ISku> | null>(null)
-  
+
 
   const [gracePeriodStatus, setGracePeriodStatus] = useState(false)
   const [newSkuToAdd, setNewSkuToAdd] = useState("")
@@ -262,12 +262,12 @@ export default function LicensesTable(props: LicensesTableProps) {
                               }
                               {
                                 props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id)?.quantity < sku.quantity ?
-                                <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
-                                  {`Cambio programado a ${ props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id)?.quantity } licencias en ${ props.formattedEndDate }`}
-                                </Chip>
-                                :
-                                null
-                                
+                                  <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
+                                    {`Cambio programado a ${props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id)?.quantity} licencias en ${props.formattedEndDate}`}
+                                  </Chip>
+                                  :
+                                  null
+
                                 // If a modification to the licenses has been made and the SKU id starts with TEAMLIC- OR EDULIC-,
                                 // ==OR== if the number of licenses to be renewed is lower than the licenses currently active, show the Chip with the message
                                 // (props.modifyStatus === "success" || currentSkuRenewalState?.quantity < currentSku?.quantity) && (sku.sku_id.startsWith('TEAMLIC-') || sku.sku_id.startsWith('EDULIC-') && (!sku.sku_id.startsWith('TEAMADD-') || !sku.sku_id.startsWith('EDUADD-'))) ?
@@ -308,7 +308,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                                           :
                                           Number(event.target.value)
                                     })
-                                  ))
+                                    ))
 
                                 }}
                                 className="max-w-24"
@@ -383,7 +383,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                                         :
                                         Number(event.target.value)
                                   })
-                                ))
+                                  ))
 
                               }
 
@@ -427,7 +427,7 @@ export default function LicensesTable(props: LicensesTableProps) {
       }
 
       {/* ADDONS SKUS TABLE */}
-      
+
       <Table isStriped radius="none" shadow="none" classNames={tableClassNames} aria-label="Addon SKUs table">
 
         <TableHeader className="bg-white">
@@ -467,7 +467,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                 <TableCell>&nbsp;</TableCell>
                 <TableCell>&nbsp;</TableCell>
               </TableRow>
-            :
+              :
               null
           }
 
@@ -483,12 +483,26 @@ export default function LicensesTable(props: LicensesTableProps) {
                     <TableCell>
                       <span>{sku.quantity}</span>
                       {
+                        props.editMode && !props.newSkus?.some(item => item.sku_id === sku.sku_id) ?
+                          <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
+                            {`Seleccionado para eliminación`}
+                          </Chip>
+                          : null
+                      }
+                      {
+                        !props.editMode && !props.renewalStateSkus?.some(item => item.sku_id === sku.sku_id) ?
+                          <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
+                            {`Eliminación programada para ${props.formattedEndDate}`}
+                          </Chip>
+                          : null
+                      }
+                      {
                         !props.editMode && props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id)?.quantity < sku.quantity ?
-                        <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
-                          {`Cambio programado a ${ props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id)?.quantity } licencias en ${ props.formattedEndDate }`}
-                        </Chip>
-                        :
-                        null
+                          <Chip radius={'full'} size={'sm'} className="ml-4 bg-primary-200 text-black text-tiny">
+                            {`Cambio programado a ${props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id)?.quantity} licencias en ${props.formattedEndDate}`}
+                          </Chip>
+                          :
+                          null
                         // // If the current SKU is not found in renewalStateSkus, tag it with a Chip.
                         // !props.renewalStateSkus?.find(item => item.sku_id === sku.sku_id) ?
 
@@ -546,7 +560,7 @@ export default function LicensesTable(props: LicensesTableProps) {
 
           {
             props.editMode && props.newAddonSkus && props.newAddonSkus.length >= 1 ?
-            // props.editMode && props.newSkus && props.newSkus.length >= 1 && ( props.newSkus.some(item => item.sku_id.startsWith('TEAMADD-')) || props.newSkus.some(item => item.sku_id.startsWith('EDUADD-')) ) ?
+              // props.editMode && props.newSkus && props.newSkus.length >= 1 && ( props.newSkus.some(item => item.sku_id.startsWith('TEAMADD-')) || props.newSkus.some(item => item.sku_id.startsWith('EDUADD-')) ) ?
               // props.newSkus.filter( (item) => (item.sku_id === item.sku_id.startsWith('TEAM-ADD') || item.sku_id === item.sku_id.startsWith('EDUADD-')) ).map((sku, index) => {
               props.newAddonSkus.map((sku, index) => {
                 return (

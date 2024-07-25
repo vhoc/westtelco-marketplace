@@ -32,7 +32,7 @@ export default async function AuthButton() {
     <div className="flex gap-2">
       <Link
         href="/login"
-        className="py-2 px-3 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+        className="py-2 px-3 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover text-black"
       >
         {"Ingresar"}
       </Link>

@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache"
-import { ISku, ITeamApiResponse, IApiErrorResponse } from "@/types";
+import { ISku, ITeamApiResponse, IApiErrorResponse, INewTeamData } from "@/types";
 
 const requestOptions = {
   method: 'POST',
@@ -56,7 +56,39 @@ export const getTeam = async (teamId: string): Promise<ITeamApiResponse> => {
 
     if (!response.ok) {
       const error = await response.json()
-      return { code: error.code, message: error.message }
+      return { code: error.code, message: 'No se encontró un cliente con ese ID, verifica que lo hayas ingresado correctamente o que el cliente exista.' }
+    }
+    revalidateTag('team')
+    const responseObject = await response.json()
+    return responseObject
+
+  } catch (error) {
+    console.error('There was an error!', error);
+    //@ts-ignore
+    return { code: 400, message: error.message }
+  }
+}
+
+export const createTeam = async ( teamData: INewTeamData ): Promise<ITeamApiResponse> => {
+  try {
+    const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
+      ...requestOptions,
+      body: JSON.stringify({
+        ...teamData,
+        "environment": process.env.API_ENV,
+        "reseller_ids": [],
+      }),
+      next: {
+        tags: [
+          'team'
+        ]
+      }
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      console.log(`response error: `, error)
+      return { code: error.code, message: error.data.user_message.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
     }
     revalidateTag('team')
     const responseObject = await response.json()

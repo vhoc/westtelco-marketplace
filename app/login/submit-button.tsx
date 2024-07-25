@@ -11,7 +11,7 @@ type Props = {
 export function SubmitButton(props: Props) {
   // const t = useTranslations("Dashboard")
   const signingIn = "Autenticando"
-  const signIn = "Ingresar"
+  const signIn = "Acceder"
   const { pending, action } = useFormStatus();
 
   const isPending = pending && action === props.formAction;
@@ -23,6 +23,8 @@ export function SubmitButton(props: Props) {
       type="submit"
       isLoading={pending}
       radius={'sm'}
+      color={'primary'}
+      className={'mt-6'}
     >
       {isPending ? `${signingIn}...` : signIn}
     </Button>
