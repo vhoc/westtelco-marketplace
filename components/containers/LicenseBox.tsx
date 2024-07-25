@@ -7,6 +7,7 @@ import { Chip } from "@nextui-org/react"
 import LicensesTable from "./LicensesTable"
 import { Modal, ModalContent, ModalBody, useDisclosure, ModalHeader, ModalFooter } from "@nextui-org/react"
 import { useState, useEffect } from "react"
+import { modifyTeamSkus } from "@/utils/team"
 
 interface LicenseBoxProps {
   baseSku: string
@@ -44,30 +45,36 @@ export default function LicenseBox(props: LicenseBoxProps) {
   const { isOpen: isOpenError, onOpen: onOpenError, onOpenChange: onOpenChangeError, onClose: onCloseError } = useDisclosure();
 
   const handleUpdate = () => {
-    // onOpen()
+    onOpen()
     if (props.teamId && props.baseSku && props.skus && newSkus) {
       // const skusToFilter = newSkus.filter(({sku_id}) => !props.renewalStateSkus?.some(r => r.sku_id === sku_id)).map(sku => sku.sku_id)
       console.log(`handleUpdate/newSkus: `, newSkus)
-      // modifyTeamSkus(props.teamId, props.skus, newSkus)
-      //   .then(data => {
-      //     if (data.code !== 200) {
-      //       setModifyStatus("error")
-      //       setErrorMessage(data?.message || "Error desconocido")
-      //       setNewSkus(props.skus)
-      //     }
-      //     // console.log(`modifyTeamSkus response: `, data)
-      //     setModifyStatus( "success" )
-      //   })
-      //   .catch(error => {
-      //     console.error(error)
-      //     setModifyStatus("error")
-      //     setErrorMessage(error)
-      //     setNewSkus(props.skus)
-      //   })
-      //   .finally(() => {
-      //     onClose()
-      //     setEditMode(false)
-      //   })
+      modifyTeamSkus(props.teamId, props.skus, newSkus)
+        .then(data => {
+          if (data.code !== 200) {
+            setModifyStatus("error")
+            setErrorMessage(data?.message || "Error desconocido")
+            // setNewSkus(props.skus)
+            setNewSkus([])
+            setNewAddonSkus([])
+          }
+          // console.log(`modifyTeamSkus response: `, data)
+          setModifyStatus( "success" )
+          setNewSkus([])
+          setNewAddonSkus([])
+        })
+        .catch(error => {
+          console.error(error)
+          setModifyStatus("error")
+          setErrorMessage(error)
+          // setNewSkus(props.skus)
+          setNewSkus([])
+          setNewAddonSkus([])
+        })
+        .finally(() => {
+          onClose()
+          setEditMode(false)
+        })
     }
   }
 
