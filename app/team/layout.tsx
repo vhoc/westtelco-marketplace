@@ -1,11 +1,17 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
+import getConfig from "next/config";
+
+
 
 export default function TeamsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const { publicRuntimeConfig } = getConfig();
+
   return (
     <div className="flex-1 w-full flex flex-col items-center">
       <nav className="w-full flex justify-center h-16 border-b-1 border-b-default-200">
@@ -29,13 +35,14 @@ export default function TeamsLayout({
         </main>
       </div>
 
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
+      <footer className="w-full border-t border-t-foreground/10 p-8 flex flex-col justify-center text-center items-center text-xs gap-4">
         <Image
           src={"https://www.westtelco.com.mx/wp-content/uploads/2022/01/West-Telco-Logo-Marca-Registrada-23.png"}
           width={170}
           height={30}
           alt="West Telco"
         />
+        <div className="text-default-500">Build { `${ JSON.stringify(publicRuntimeConfig?.version.version) }` }</div>
       </footer>
     </div>
   );

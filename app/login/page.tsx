@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { SubmitButton } from "./submit-button";
 import { login } from "./actions";
-// import { useTranslations } from "next-intl";
 import { Input } from "@nextui-org/react";
 import Image from "next/image";
+import getConfig from "next/config";
+
 export default function Login({
   searchParams,
 }: {
@@ -11,6 +11,7 @@ export default function Login({
 }) {
 
   // const t = useTranslations('Dashboard')
+  const { publicRuntimeConfig } = getConfig();
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-start gap-2 bg-[#f4f4f5]">
@@ -87,7 +88,7 @@ export default function Login({
             </p>
           )}
         </form>
-
+        <div className="text-default-500 text-sm mt-4">Build { `${ JSON.stringify(publicRuntimeConfig?.version.version) }` }</div>
       </div>
 
 

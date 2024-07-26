@@ -109,8 +109,6 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
  * @returns ITeamAPIResponse | { message: string }
  */
 export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
-  const username = 'cwpduqevlw5jwrd';
-  const password = '4fg7r9k3htx4nem';
 
 
   console.log(`body: `, JSON.stringify({
@@ -118,21 +116,19 @@ export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
     "reseller_ids": []
   }))
   try {
-    // const response = await fetch(`https://api.dropboxapi.com/2/resellers/team/cancel`, {
-
-    // })
-    const response = await fetch(`https://api.dropboxapi.com/2/resellers/team/cancel`,
+    const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
       {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Basic ${ Buffer.from(`${ username }:${ password }`).toString(`base64`) }`,
-        },
+        ...requestOptions,
         body: JSON.stringify({
           "id": teamId,
+          "environment": process.env.API_ENV,
           "reseller_ids": []
-        })
+        }),
+        next: {
+          tags: [
+            'team'
+          ]
+        }
       }
     )
 
@@ -153,9 +149,9 @@ export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
 }
 
 /**
- * cancelTeam
+ * reinstateTeam
  * 
- * Sends a request to change the team's active status to FALSE. It returns the team info in successful or a message if not.
+ * Sends a request to change the team's active status to TRUE. It returns the team info in successful or a message if not.
  * @param teamId 
  * @param skus
  * @returns ITeamAPIResponse | { message: string }
@@ -170,19 +166,20 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>): Promise<
     "reseller_ids": []
   }))
   try {
-    const response = await fetch(`https://api.dropboxapi.com/2/resellers/team/reinstate`,
+    const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/reinstate`,
       {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Basic ${ Buffer.from(`${ username }:${ password }`).toString(`base64`) }`,
-        },
+        ...requestOptions,
         body: JSON.stringify({
           "id": teamId,
           "skus": skus,
+          "environment": process.env.API_ENV,
           "reseller_ids": []
-        })
+        }),
+        next: {
+          tags: [
+            'team'
+          ]
+        }
       }
     )
 

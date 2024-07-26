@@ -1,3 +1,5 @@
+import version from './package.json' assert { type: 'json' }
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -9,6 +11,9 @@ const nextConfig = {
         pathname: '/wp-content/**'
       }
     ]
+  },
+  publicRuntimeConfig: {
+    version,
   }
 };
 
