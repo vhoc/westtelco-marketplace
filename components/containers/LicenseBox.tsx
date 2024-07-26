@@ -19,6 +19,7 @@ interface LicenseBoxProps {
   auto_renew: boolean
   end_datetime: string
   teamId: string
+  active: boolean
 }
 
 export default function LicenseBox(props: LicenseBoxProps) {
@@ -59,7 +60,7 @@ export default function LicenseBox(props: LicenseBoxProps) {
             setNewAddonSkus([])
           }
           // console.log(`modifyTeamSkus response: `, data)
-          setModifyStatus( "success" )
+          setModifyStatus("success")
           setNewSkus([])
           setNewAddonSkus([])
         })
@@ -94,13 +95,13 @@ export default function LicenseBox(props: LicenseBoxProps) {
 
   // Triggered by editMode state
   useEffect(() => {
-    if ( editMode ) {
+    if (editMode) {
       // Update newSkus with currentSkus and filter out skus that are not present in the renewal state
       const prepareNewSkus = (skus: Array<ISku>, renewalSkus: Array<ISku>) => {
-        return skus.filter( ({sku_id}) => renewalSkus.some(item => item.sku_id === sku_id) )
+        return skus.filter(({ sku_id }) => renewalSkus.some(item => item.sku_id === sku_id))
       }
 
-      const updatedNewSkus = prepareNewSkus(props.skus, props.renewalStateSkus || [] )
+      const updatedNewSkus = prepareNewSkus(props.skus, props.renewalStateSkus || [])
       // console.log(`editMode TRUE / updatedNewSkus: `, updatedNewSkus)
       setNewSkus(updatedNewSkus)
     } else {
@@ -116,40 +117,43 @@ export default function LicenseBox(props: LicenseBoxProps) {
       <CardHeader className="w-full flex justify-between items-center py-[10px] px-[22px] bg-[#52525B] border-default-700 border-1 text-white text-[14px]">
         <span>{props.baseSku}</span>
         {
-          !editMode ?
-            <Button
-              color="primary"
-              size={'sm'}
-              endContent={<FontAwesomeIcon icon={faPencil} size="lg" />}
-              onClick={() => setEditMode(true)}
-              aria-label="Editar SKU"
-            >
-              Editar SKU
-            </Button>
-            :
-            <div className="flex justify-end gap-x-2">
-              <Button
-                size={'sm'}
-                endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
-                aria-label="Deshacer"
-                onClick={() => {
-                  // setNewSkus(props.skus)
-                  setNewAddonSkus([])
-                  setEditMode(false)
-                }}
-              >
-                Deshacer
-              </Button>
+          props.active ?
+            !editMode ?
               <Button
                 color="primary"
                 size={'sm'}
-                endContent={<FontAwesomeIcon icon={faFloppyDisk} size="lg" />}
-                onClick={handleUpdate}
-                aria-label="Actualizar"
+                endContent={<FontAwesomeIcon icon={faPencil} size="lg" />}
+                onClick={() => setEditMode(true)}
+                aria-label="Editar SKU"
               >
-                Actualizar
+                Editar SKU
               </Button>
-            </div>
+              :
+              <div className="flex justify-end gap-x-2">
+                <Button
+                  size={'sm'}
+                  endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
+                  aria-label="Deshacer"
+                  onClick={() => {
+                    // setNewSkus(props.skus)
+                    setNewAddonSkus([])
+                    setEditMode(false)
+                  }}
+                >
+                  Deshacer
+                </Button>
+                <Button
+                  color="primary"
+                  size={'sm'}
+                  endContent={<FontAwesomeIcon icon={faFloppyDisk} size="lg" />}
+                  onClick={handleUpdate}
+                  aria-label="Actualizar"
+                >
+                  Actualizar
+                </Button>
+              </div>
+            :
+            null
         }
 
       </CardHeader>
@@ -179,7 +183,12 @@ export default function LicenseBox(props: LicenseBoxProps) {
             </div>
 
             {/* AUTORENEWAL */}
-            {props.auto_renew ? <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 '}>Autorenewal</Chip> : null}
+            {
+              !props.active ? <Chip radius={'sm'} size={'sm'} className={'bg-danger-100 text-danger-700 '}>Inactiva</Chip> : null
+            }
+            {
+              props.auto_renew ? <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 '}>Autorenewal</Chip> : null
+            }
 
             {/* PROVISIONED USERS */}
             <div className="flex gap-[8px]  flex-wrap">

@@ -21,11 +21,9 @@ export async function createNewTeam(formData: FormData) {
     ]
   }
 
-  console.log(`teamData: `, teamData)
 
   const createTeamResponse = await createTeam(teamData)
 
-  console.log(`createTeamResponse: `, createTeamResponse)
 
   if ( createTeamResponse.code !== 200 || !createTeamResponse.data ) {
     return redirect(`/team/new?message=${ encodeURI( createTeamResponse.message || 'Error desconocido.' ) }`)

@@ -69,7 +69,7 @@ export const getTeam = async (teamId: string): Promise<ITeamApiResponse> => {
   }
 }
 
-export const createTeam = async ( teamData: INewTeamData ): Promise<ITeamApiResponse> => {
+export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiResponse> => {
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
       ...requestOptions,
@@ -87,8 +87,109 @@ export const createTeam = async ( teamData: INewTeamData ): Promise<ITeamApiResp
 
     if (!response.ok) {
       const error = await response.json()
-      console.log(`response error: `, error)
       return { code: error.code, message: error.data.user_message.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
+    }
+    revalidateTag('team')
+    const responseObject = await response.json()
+    console.log(responseObject)
+    return responseObject
+
+  } catch (error) {
+    console.error('There was an error!', error);
+    //@ts-ignore
+    return { code: 400, message: error.message }
+  }
+}
+
+/**
+ * cancelTeam
+ * 
+ * Sends a request to change the team's active status to FALSE. It returns the team info in successful or a message if not.
+ * @param teamId 
+ * @returns ITeamAPIResponse | { message: string }
+ */
+export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
+  const username = 'cwpduqevlw5jwrd';
+  const password = '4fg7r9k3htx4nem';
+
+
+  console.log(`body: `, JSON.stringify({
+    "id": teamId,
+    "reseller_ids": []
+  }))
+  try {
+    // const response = await fetch(`https://api.dropboxapi.com/2/resellers/team/cancel`, {
+
+    // })
+    const response = await fetch(`https://api.dropboxapi.com/2/resellers/team/cancel`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Basic ${ Buffer.from(`${ username }:${ password }`).toString(`base64`) }`,
+        },
+        body: JSON.stringify({
+          "id": teamId,
+          "reseller_ids": []
+        })
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      console.log(error)
+      return { code: error.code, message: error.error_summary }
+    }
+    revalidateTag('team')
+    const responseObject = await response.json()
+    return responseObject
+
+  } catch (error) {
+    console.error('There was an error!', error);
+    //@ts-ignore
+    return { code: 400, message: error.message }
+  }
+}
+
+/**
+ * cancelTeam
+ * 
+ * Sends a request to change the team's active status to FALSE. It returns the team info in successful or a message if not.
+ * @param teamId 
+ * @param skus
+ * @returns ITeamAPIResponse | { message: string }
+ */
+export const reinstateTeam = async (teamId: string, skus: Array<ISku>): Promise<ITeamApiResponse> => {
+  const username = 'cwpduqevlw5jwrd';
+  const password = '4fg7r9k3htx4nem';
+
+  console.log(`body: `, JSON.stringify({
+    "id": teamId,
+    "skus": skus,
+    "reseller_ids": []
+  }))
+  try {
+    const response = await fetch(`https://api.dropboxapi.com/2/resellers/team/reinstate`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Basic ${ Buffer.from(`${ username }:${ password }`).toString(`base64`) }`,
+        },
+        body: JSON.stringify({
+          "id": teamId,
+          "skus": skus,
+          "reseller_ids": []
+        })
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      console.log(error)
+      return { code: error.code, message: error.error_summary }
     }
     revalidateTag('team')
     const responseObject = await response.json()

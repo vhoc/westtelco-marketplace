@@ -2,6 +2,7 @@
 import { Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUserSlash, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
+
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "@/utils/team"
 import { getSkuInfo } from "@/utils/licenses"
@@ -9,10 +10,12 @@ import { redirect } from "next/navigation"
 import { ISku } from "@/types"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
+import CancelClientButton from "@/components/buttons/CancelClientButton"
 
 export default async function TeamPage({ params }: { params: { id: string } }) {
 
   const supabase = createClient()
+  
 
   const { data, error } = await supabase.auth.getUser()
   if ( error || !data?.user ){
@@ -24,6 +27,8 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
   const team = await getTeam(teamId)
   const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-'))[0]
   const skuInfo = await getSkuInfo(baseSku?.sku_id)
+
+  
 
   // const licensedUsersTotal = team.data?.current_state.skus.reduce((total, sku) => total + sku.quantity, 0)
   if ( team.code !== 200 ) {
@@ -45,9 +50,11 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
 
         {/* TEAM INFO TOPBAR: RIGHT SECTION */}
         <div className="flex gap-4">
-          <Button color="danger" variant="ghost" size={'sm'} endContent={<FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" />}>
-            Suspender cliente
-          </Button>
+          <CancelClientButton
+            teamId={ teamId }
+            teamActive={team.data?.active || false}
+            skus={team.data?.current_state.skus}
+          />
 
           <Button
             size={'sm'}
@@ -74,6 +81,7 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
             auto_renew={team.data?.auto_renew || false}
             end_datetime={team.data?.end_datetime || 'Unknown'}
             teamId={team.data?.id || teamId}
+            active={team.data?.active || false}
           />
 
         </div>
