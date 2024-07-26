@@ -287,6 +287,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                             :
                             <div className="flex gap-8 items-center">
                               <Input
+                                min={1}
                                 type="number"
                                 variant="bordered"
                                 value={props.newSkus.find(item => item.sku_id === sku.sku_id)?.quantity}
@@ -331,7 +332,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                  * - No License SKU already exists in the newSkus (SKUs to be added) array.
                  * - This component is in EDIT mode.
                  */
-                !regularSkus?.some(item => item.sku_id.startsWith('TEAMLIC-')) && !props.newSkus?.some(item => item.sku_id === baseSkuInfo?.sku_license) && props.editMode ?
+                baseSkuInfo && baseSkuInfo.sku_base && !regularSkus?.some(item => item.sku_id.startsWith('TEAMLIC-')) && !props.newSkus?.some(item => item.sku_id === baseSkuInfo?.sku_license) && props.editMode ?
                   <TableRow key={'new-license-sku-row'}>
                     <TableCell>
                       <Button
@@ -341,7 +342,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                         aria-label="Agregar License SKU"
                         isLoading={isAddSkuButtonDisabled}
                         isDisabled={isAddSkuButtonDisabled}
-                        onPress={() => handleAddLicenseSku(baseSkuInfo?.sku_base, 1)}
+                        onPress={() => handleAddLicenseSku(baseSkuInfo.sku_base, 1)}
                       >
                         Agregar License SKU
                       </Button>
