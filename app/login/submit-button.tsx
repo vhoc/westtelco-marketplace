@@ -2,14 +2,12 @@
 
 import { useFormStatus } from "react-dom";
 import { Button } from "@nextui-org/react";
-// import { useTranslations } from "next-intl";
 
 type Props = {
   formAction?: (formData: FormData) => Promise<any>
 };
 
 export function SubmitButton(props: Props) {
-  // const t = useTranslations("Dashboard")
   const signingIn = "Autenticando"
   const signIn = "Acceder"
   const { pending, action } = useFormStatus();

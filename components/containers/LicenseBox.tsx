@@ -48,18 +48,15 @@ export default function LicenseBox(props: LicenseBoxProps) {
   const handleUpdate = () => {
     onOpen()
     if (props.teamId && props.baseSku && props.skus && newSkus) {
-      // const skusToFilter = newSkus.filter(({sku_id}) => !props.renewalStateSkus?.some(r => r.sku_id === sku_id)).map(sku => sku.sku_id)
       console.log(`handleUpdate/newSkus: `, newSkus)
       modifyTeamSkus(props.teamId, props.skus, newSkus)
         .then(data => {
           if (data.code !== 200) {
             setModifyStatus("error")
             setErrorMessage(data?.message || "Error desconocido")
-            // setNewSkus(props.skus)
             setNewSkus([])
             setNewAddonSkus([])
           }
-          // console.log(`modifyTeamSkus response: `, data)
           setModifyStatus("success")
           setNewSkus([])
           setNewAddonSkus([])
@@ -102,10 +99,8 @@ export default function LicenseBox(props: LicenseBoxProps) {
       }
 
       const updatedNewSkus = prepareNewSkus(props.skus, props.renewalStateSkus || [])
-      // console.log(`editMode TRUE / updatedNewSkus: `, updatedNewSkus)
       setNewSkus(updatedNewSkus)
     } else {
-      // console.log(`editMode FALSE / updatedNewSkus: `, [])
       setNewSkus([])
     }
   }, [editMode, props.skus, props.renewalStateSkus])

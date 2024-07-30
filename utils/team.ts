@@ -91,7 +91,6 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
     }
     revalidateTag('team')
     const responseObject = await response.json()
-    console.log(responseObject)
     return responseObject
 
   } catch (error) {
@@ -157,8 +156,6 @@ export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
  * @returns ITeamAPIResponse | { message: string }
  */
 export const reinstateTeam = async (teamId: string, skus: Array<ISku>): Promise<ITeamApiResponse> => {
-  const username = 'cwpduqevlw5jwrd';
-  const password = '4fg7r9k3htx4nem';
 
   console.log(`body: `, JSON.stringify({
     "id": teamId,
@@ -233,7 +230,6 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
     }
     revalidateTag('team')
     const responseObject = await response.json()
-    // console.log( `modifyTeamSkus response: `, responseObject )
     return responseObject
 
   } catch (error) {

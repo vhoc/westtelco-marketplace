@@ -1,7 +1,7 @@
 
 import { Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faUserSlash, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "@/utils/team"
@@ -28,9 +28,6 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
   const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-'))[0]
   const skuInfo = await getSkuInfo(baseSku?.sku_id)
 
-  
-
-  // const licensedUsersTotal = team.data?.current_state.skus.reduce((total, sku) => total + sku.quantity, 0)
   if ( team.code !== 200 ) {
     return redirect(`/team?message=${ encodeURI( team.message || 'Error desconocido.' ) }`)
   }

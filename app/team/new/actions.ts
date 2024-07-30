@@ -2,13 +2,11 @@
 
 import { redirect } from 'next/navigation'
 import { createTeam } from '@/utils/team'
-// import { createClient } from '@/utils/supabase/server'
 
 export async function createNewTeam(formData: FormData) {
-  // const supabase = createClient()
 
   // type-casting here for convenience
-  // in practice, you should validate your inputs
+  // Pending: validations.
   const teamData = {
     name: formData.get('name') as string,
     invite_admin: formData.get('invite_admin') as string,

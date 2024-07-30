@@ -1,8 +1,6 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
 import { Card } from "@nextui-org/react";
-// import { navigateToTeam } from "@/utils/team";
-// import FindTeamForm from "@/components/forms/FindTeamForm";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 

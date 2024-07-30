@@ -17,7 +17,6 @@ export const filterLicenseType = (skus: Array<ISku>, type: "regular" | "addon") 
     throw new Error("Invalid type specified.")
     result = []
   }
-  // console.log(`filterLicenseType result: ${ JSON.stringify(result, null, 1) }`)
   return result
 
 }
@@ -32,7 +31,6 @@ export const doesAddonSkuExist = async (skuId: string): Promise<IAddonApiRespons
     .single()
 
   if ( sku ) {
-    // console.log(`doesAddonSkuExist/sku: `, sku)
     return {
       code: 200,
       data: sku,
