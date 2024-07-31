@@ -61,6 +61,30 @@ export interface ITeamApiResponse {
   message?: string | undefined
 }
 
+export interface IPartnerApiResponse {
+  code: number
+  data?: IPartner | undefined
+  message?: string | undefined
+}
+
+export interface IPartner {
+  id: number
+  created_at: string
+  company_name: string
+  address_1?: string | undefined
+  address_2?: string | undefined
+  address_city?: string | undefined
+  address_state?: string | undefined
+  address_country?: string | undefined
+  address_postal_code?: string | undefined
+  invoice_data?: object | undefined
+  dropbox_reseller_id?: string | undefined
+  dropbox_admin_email?: string | undefined
+  currency?: TCurrency | undefined
+}
+
+export type TCurrency = "mxn" | "usd" | "brl"
+
 export interface ISkuInfoResponse {
   code: number
   data?: ISkuInfo | undefined
@@ -93,6 +117,7 @@ export interface ITeamData {
   country_code: string
   usage: IUsage
   data_residency: string
+  reseller_ids: Array<string>
 }
 
 export interface ICreateTeamFormFields {

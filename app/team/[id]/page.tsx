@@ -6,6 +6,7 @@ import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "@/utils/team"
 import { getSkuInfo } from "@/utils/licenses"
+import { getPartner, getPartners } from "@/utils/partner"
 import { redirect } from "next/navigation"
 import { ISku } from "@/types"
 import Link from "next/link"
@@ -15,10 +16,10 @@ import CancelClientButton from "@/components/buttons/CancelClientButton"
 export default async function TeamPage({ params }: { params: { id: string } }) {
 
   const supabase = createClient()
-  
+
 
   const { data, error } = await supabase.auth.getUser()
-  if ( error || !data?.user ){
+  if (error || !data?.user) {
     redirect('/login')
   }
 
@@ -27,9 +28,13 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
   const team = await getTeam(teamId)
   const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-'))[0]
   const skuInfo = await getSkuInfo(baseSku?.sku_id)
+  // const resellerIds = team.data?.reseller_ids.filter(id => id !== process.env.DISTRIBUITOR_ID)
+  const resellerIds = team.data?.reseller_ids
 
-  if ( team.code !== 200 ) {
-    return redirect(`/team?message=${ encodeURI( team.message || 'Error desconocido.' ) }`)
+  const partners = await getPartners(resellerIds || [])
+
+  if (team.code !== 200) {
+    return redirect(`/team?message=${encodeURI(team.message || 'Error desconocido.')}`)
   }
 
   return (
@@ -41,14 +46,30 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
         {/* TEAM INFO TOPBAR: LEFT SECTION */}
         <div className="flex flex-col gap-2">
           <span className={'text-primary-500 text-sm/[12px]'}>{teamId}</span>
-          <span className={'text-default-900 text-md'}>{team.data?.name || ''}</span>
+          <span className={'text-default-900 text-lg font-medium'}>{team.data?.name || ''}</span>
+
+          <div className="flex flex-col gap-2">
+            <span className={'text-[#71717A] text-xs/[8px]'}>Gestionado por</span>
+            {
+              partners && partners.length >= 1 ?
+                <ul className={'list-disc list-inside'}>
+                {
+                  partners.map((partner, index) => <li key={`partner-id${ index }`} className={'text-[#71717A] text-xs/[8px] leading-4'}>{`${ partner.company_name } [${partner.dropbox_reseller_id}]`}</li> )
+                }
+                </ul>
+              :
+              null
+            }
+          </div>
+
+          
           <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700'}>{team.data?.country_code}</Chip>
         </div>
 
         {/* TEAM INFO TOPBAR: RIGHT SECTION */}
         <div className="flex gap-4">
           <CancelClientButton
-            teamId={ teamId }
+            teamId={teamId}
             teamActive={team.data?.active || false}
             skus={team.data?.current_state.skus}
           />
@@ -73,7 +94,7 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
             license_description={skuInfo.description}
             skus={team.data?.current_state.skus || []}
             renewalStateSkus={team.data?.renewal_state.skus || []}
-            num_licensed_users={ team.data?.num_licensed_users || 0 }
+            num_licensed_users={team.data?.num_licensed_users || 0}
             space_quota={team.data?.current_state?.space_quota || 0}
             auto_renew={team.data?.auto_renew || false}
             end_datetime={team.data?.end_datetime || 'Unknown'}

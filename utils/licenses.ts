@@ -9,7 +9,6 @@ export const getSkuInfo = async (sku: string | undefined) => {
   
   const supabase = createClient()
   try {
-    console.log(`sku: `, sku)
     const { data: skuInfo, error } = await supabase
       .from('sku')
       .select('*')
