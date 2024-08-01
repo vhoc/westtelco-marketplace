@@ -159,13 +159,13 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
                 :
                 <div className={'flex flex-col gap-2'}>
                   <span>¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?</span>
-                  <Input
+                  {/* <Input
                     label={'Confirmación'}
                     placeholder={'Escribe "REINSTAURAR" aquí para confirmar'}
                     value={confirmationInput}
                     onValueChange={setConfirmationInput}
                     color={'success'}
-                  />
+                  /> */}
                 </div>
             }
           </ModalBody>
