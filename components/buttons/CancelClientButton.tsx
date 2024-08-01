@@ -149,12 +149,14 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
                 <div className={'flex flex-col gap-2'}>
                   <span>¿Estás seguro de que deseas suspender el servicio a éste cliente?</span>
                   <Input
-                    label={'Confirmación'}
-                    placeholder={'Escribe "SUSPENDER" aquí para confirmar'}
+                    type="text"
+                    label='Confirmación'
+                    placeholder='Escribe "SUSPENDER" aquí para confirmar'
                     value={confirmationInput}
                     onValueChange={setConfirmationInput}
                     color={'danger'}
                   />
+                  <input placeholder="Escribe 'SUSPENDER' aquí para confirmar" type="text" value={confirmationInput} onChange={(event) => setConfirmationInput(event.target.value)}/>
                 </div>
                 :
                 <div className={'flex flex-col gap-2'}>
