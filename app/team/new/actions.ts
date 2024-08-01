@@ -11,6 +11,7 @@ export async function createNewTeam(formData: FormData) {
     name: formData.get('name') as string,
     invite_admin: formData.get('invite_admin') as string,
     country_code: formData.get('country_code') as string,
+    reseller_ids: [ process.env.DISTRIBUITOR_ID, formData.get('reseller_id') as string ],
     skus: [
       {
         "sku_id": formData.get('sku_id') as string,

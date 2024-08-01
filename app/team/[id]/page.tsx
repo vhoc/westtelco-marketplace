@@ -47,6 +47,7 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-2">
           <span className={'text-primary-500 text-sm/[12px]'}>{teamId}</span>
           <span className={'text-default-900 text-lg font-medium'}>{team.data?.name || ''}</span>
+          <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 mb-2'}>{team.data?.country_code}</Chip>
 
           <div className="flex flex-col gap-2">
             <span className={'text-[#71717A] text-xs/[8px]'}>Gestionado por</span>
@@ -62,8 +63,6 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
             }
           </div>
 
-          
-          <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700'}>{team.data?.country_code}</Chip>
         </div>
 
         {/* TEAM INFO TOPBAR: RIGHT SECTION */}
@@ -72,6 +71,7 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
             teamId={teamId}
             teamActive={team.data?.active || false}
             skus={team.data?.current_state.skus}
+            resellerIds={team.data?.reseller_ids}
           />
 
           <Button

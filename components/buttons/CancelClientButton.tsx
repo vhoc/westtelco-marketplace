@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Button, ModalFooter, ModalHeader } from "@nextui-org/react"
+import { Button, ModalFooter, ModalHeader, Input } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import { cancelTeam, reinstateTeam } from "@/utils/team"
@@ -12,12 +12,14 @@ interface CancelClientButton {
   teamId: string
   teamActive: boolean
   skus?: Array<ISku> | undefined
+  resellerIds?: Array<string> | undefined
 }
 
-const CancelClientButton = ({ teamId,teamActive, skus, }: CancelClientButton) => {
+const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: CancelClientButton) => {
 
   const [cancelStatus, setCancelStatus] = useState<"error" | "success" | "none">("none")
   const [errorMessage, setErrorMessage] = useState("")
+  const [confirmationInput, setConfirmationInput] = useState("")
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const { isOpen: isOpenError, onOpen: onOpenError, onOpenChange: onOpenChangeError, onClose: onCloseError } = useDisclosure()
@@ -25,14 +27,14 @@ const CancelClientButton = ({ teamId,teamActive, skus, }: CancelClientButton) =>
 
   const handleCancel = () => {
     onOpen()
-    if (teamId) {
-      cancelTeam(teamId)
+    if (teamId && resellerIds) {
+      cancelTeam(teamId, resellerIds)
         .then(data => {
           console.log(`cancelTeam/then/data: `, data)
           if (!data) {
             setCancelStatus("error")
             //@ts-ignore : Dropbox API inconsistent response structure
-            setErrorMessage( "Error desconocido")
+            setErrorMessage("Error desconocido")
           }
 
           if (data.message) {
@@ -56,34 +58,34 @@ const CancelClientButton = ({ teamId,teamActive, skus, }: CancelClientButton) =>
   }
 
   const handleReinstate = () => {
-    if ( skus && skus.length >= 1 ) {
+    if (skus && skus.length >= 1 && resellerIds) {
       onOpen()
-      reinstateTeam(teamId, skus)
-      .then(data => {
-        console.log(`reinstateTeam/then/data: `, data)
-        if (!data) {
+      reinstateTeam(teamId, skus, resellerIds)
+        .then(data => {
+          console.log(`reinstateTeam/then/data: `, data)
+          if (!data) {
+            setCancelStatus("error")
+            //@ts-ignore : Dropbox API inconsistent response structure
+            setErrorMessage("Error desconocido")
+          }
+
+          if (data.message) {
+            setCancelStatus("error")
+            //@ts-ignore : Dropbox API inconsistent response structure
+            setErrorMessage(data.message)
+          }
+
+          setCancelStatus("success")
+
+        })
+        .catch(error => {
+          console.error(error)
           setCancelStatus("error")
-          //@ts-ignore : Dropbox API inconsistent response structure
-          setErrorMessage( "Error desconocido")
-        }
-
-        if (data.message) {
-          setCancelStatus("error")
-          //@ts-ignore : Dropbox API inconsistent response structure
-          setErrorMessage(data.message)
-        }
-
-        setCancelStatus("success")
-
-      })
-      .catch(error => {
-        console.error(error)
-        setCancelStatus("error")
-        setErrorMessage(error)
-      })
-      .finally(() => {
-        onClose()
-      })
+          setErrorMessage(error)
+        })
+        .finally(() => {
+          onClose()
+        })
     }
   }
 
@@ -97,18 +99,18 @@ const CancelClientButton = ({ teamId,teamActive, skus, }: CancelClientButton) =>
   return (
     <>
       <Button
-        color={teamActive ? "danger" : "success" }
+        color={teamActive ? "danger" : "success"}
         variant="ghost"
         size={'sm'}
         endContent={<FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" />}
         onPress={onOpenConfirmation}
       >
-      {
-        teamActive ?
-          `Suspender cliente`
-        :
-          `Reinstaurar cliente`
-      }
+        {
+          teamActive ?
+            `Suspender cliente`
+            :
+            `Reinstaurar cliente`
+        }
       </Button>
 
       {/* MODAL "WORKING" */}
@@ -136,33 +138,47 @@ const CancelClientButton = ({ teamId,teamActive, skus, }: CancelClientButton) =>
         shouldBlockScroll
         onClose={() => {
           setErrorMessage("")
+          setConfirmationInput("")
         }}
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1 text-black">CONFIRMACIÓN</ModalHeader>
           <ModalBody className={'text-black'}>
-          {
-            teamActive ?
-              `¿Estás seguro de que deseas suspender el servicio a éste cliente?`
-            :
-              `¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?`
-          }
+            {
+              teamActive ?
+              <div className={'flex flex-col gap-2'}>
+              <span>¿Estás seguro de que deseas suspender el servicio a éste cliente?</span>
+              <Input
+                name={'confirmation_input'}
+                placeholder={'Escribe "SUSPENDER" aquí para confirmar'}
+                aria-label="confirmation_input"
+                isRequired
+                value={confirmationInput}
+                onChange={(event) =>  setConfirmationInput(event.target.value)}
+              />
+            </div>
+                :
+                `¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?`
+            }
           </ModalBody>
           <ModalFooter>
-          <Button
+            <Button
               color="primary"
               variant={'light'}
               onPress={() => {
                 onCloseConfirmation()
+                setConfirmationInput("")
               }}
               aria-label="Cerrar mensaje de confirmación"
             >
               Cancelar
             </Button>
             <Button
-              color={ teamActive ? 'danger' : 'success' }
+              color={teamActive ? 'danger' : 'success'}
+              isDisabled={ (teamActive && confirmationInput !== 'SUSPENDER') || (!teamActive && confirmationInput !== 'REINSTAURAR') }
+
               onPress={() => {
-                if ( teamActive ) {
+                if (teamActive) {
                   handleCancel()
                 } else {
                   handleReinstate()

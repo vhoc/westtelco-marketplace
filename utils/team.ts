@@ -76,7 +76,6 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
       body: JSON.stringify({
         ...teamData,
         "environment": process.env.API_ENV,
-        "reseller_ids": [],
       }),
       next: {
         tags: [
@@ -107,12 +106,12 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
  * @param teamId 
  * @returns ITeamAPIResponse | { message: string }
  */
-export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
+export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Promise<ITeamApiResponse> => {
 
 
   console.log(`body: `, JSON.stringify({
     "id": teamId,
-    "reseller_ids": []
+    "reseller_ids": resellerIds
   }))
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
@@ -155,12 +154,12 @@ export const cancelTeam = async (teamId: string): Promise<ITeamApiResponse> => {
  * @param skus
  * @returns ITeamAPIResponse | { message: string }
  */
-export const reinstateTeam = async (teamId: string, skus: Array<ISku>): Promise<ITeamApiResponse> => {
+export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
 
   console.log(`body: `, JSON.stringify({
     "id": teamId,
     "skus": skus,
-    "reseller_ids": []
+    "reseller_ids": resellerIds
   }))
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/reinstate`,
@@ -204,9 +203,10 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>): Promise<
  * @param currentSkus Array<ISku>
  * @param newSkus Array<ISku>
  * @param forceImmediate boolean
+ * @param resellerIds Array<string>
  * @return Promise<ITeamApiResponse>
  */
-export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false): Promise<ITeamApiResponse> => {
+export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
   console.log(`modifyTeamSkus props: teamId:${teamId}, currentSkus: ${JSON.stringify(currentSkus)}, newSkus: ${JSON.stringify(newSkus)}, forceImmediate: ${forceImmediate}`)
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/skus/modify`,
@@ -217,7 +217,7 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
           "id": teamId,
           "current_skus": currentSkus,
           "new_skus": newSkus,
-          "reseller_ids": [],
+          "reseller_ids": resellerIds,
           "force_immediate": forceImmediate,
         })
       }

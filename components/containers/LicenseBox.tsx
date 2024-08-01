@@ -20,9 +20,10 @@ interface LicenseBoxProps {
   end_datetime: string
   teamId: string
   active: boolean
+  resellerIds?: Array<string> | undefined
 }
 
-export default function LicenseBox(props: LicenseBoxProps) {
+export default function LicenseBox({ resellerIds = [], ...props}: LicenseBoxProps) {
 
   const [editMode, setEditMode] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -47,9 +48,9 @@ export default function LicenseBox(props: LicenseBoxProps) {
 
   const handleUpdate = () => {
     onOpen()
-    if (props.teamId && props.baseSku && props.skus && newSkus) {
-      console.log(`handleUpdate/newSkus: `, newSkus)
-      modifyTeamSkus(props.teamId, props.skus, newSkus)
+    if (props.teamId && props.baseSku && props.skus && newSkus && resellerIds) {
+      // console.log(`handleUpdate/newSkus: `, newSkus)
+      modifyTeamSkus(props.teamId, props.skus, newSkus, false, resellerIds)
         .then(data => {
           if (data.code !== 200) {
             setModifyStatus("error")

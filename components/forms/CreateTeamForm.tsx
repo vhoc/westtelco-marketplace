@@ -18,6 +18,7 @@ interface ICreateTeamFormFields {
   invite_admin: string
   invite_admin_confirmation: string
   sku_id: string
+  reseller_id: string
 }
 
 const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps) => {
@@ -49,6 +50,7 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
     invite_admin: "",
     invite_admin_confirmation: "",
     sku_id: "",
+    reseller_id: "",
   })
 
   const handleUpdateFields = (property: string, value: string) => {
@@ -65,7 +67,8 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
       fields.invite_admin.length >=1 &&
       fields.invite_admin_confirmation.length >= 1 &&
       fields.invite_admin === fields.invite_admin_confirmation &&
-      fields.sku_id.length >= 1
+      fields.sku_id.length >= 1 &&
+      fields.reseller_id.length >= 1
     ) {
       setIsSubmitDisabled(false)
     } else {
@@ -116,6 +119,16 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
         isRequired
         value={fields.invite_admin_confirmation}
         onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
+      />
+
+      <Input
+        name={'reseller_id'}
+        label={'RESELLER ID'}
+        placeholder={'Ingresa el Reseller ID del Partner que tendrá a éste cliente'}
+        aria-label="reseller_id"
+        isRequired
+        value={fields.reseller_id}
+        onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
       />
 
       <div className="flex flex-col">
