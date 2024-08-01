@@ -162,12 +162,13 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
                 <div className={'flex flex-col gap-2'}>
                   <span>¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?</span>
                   <Input
-                    name={'confirmation_input'}
+                    type="text"
                     placeholder={'Escribe "REINSTAURAR" aquí para confirmar'}
                     aria-label="confirmation_input"
                     isRequired
                     value={confirmationInput}
                     onValueChange={setConfirmationInput}
+                    color={'success'}
                   />
                 </div>
             }
