@@ -1,7 +1,7 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
 import getConfig from "next/config";
-
+import logoWt from '../../public/wt-logo-2024.png'
 
 
 export default function TeamsLayout({
@@ -18,8 +18,8 @@ export default function TeamsLayout({
         <div className="w-full flex justify-between items-center p-3 text-sm px-[80px] bg-white">
           <div className="flex gap-4 items-center">
             <Image
-              src={"https://www.westtelco.com.mx/wp-content/uploads/2022/01/West-Telco-Logo-Marca-Registrada-23.png"}
-              width={109}
+              src={logoWt}
+              width={113}
               height={17}
               alt="West Telco"
             />
@@ -37,9 +37,9 @@ export default function TeamsLayout({
 
       <footer className="w-full border-t border-t-foreground/10 p-8 flex flex-col justify-center text-center items-center text-xs gap-4">
         <Image
-          src={"https://www.westtelco.com.mx/wp-content/uploads/2022/01/West-Telco-Logo-Marca-Registrada-23.png"}
-          width={170}
-          height={30}
+          src={logoWt}
+          width={113}
+          height={17}
           alt="West Telco"
         />
         <div className="text-default-500">Build { `${ JSON.stringify(publicRuntimeConfig?.version.version) }` }</div>

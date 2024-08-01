@@ -3,6 +3,7 @@ import { login } from "./actions";
 import { Input } from "@nextui-org/react";
 import Image from "next/image";
 import getConfig from "next/config";
+import logoWt from '../../public/wt-logo-2024.png'
 
 export default function Login({
   searchParams,
@@ -20,8 +21,8 @@ export default function Login({
 
         <div className="flex gap-2 flex-col items-center">
           <Image
-            src={"https://www.westtelco.com.mx/wp-content/uploads/2022/01/West-Telco-Logo-Marca-Registrada-23.png"}
-            width={109}
+            src={logoWt}
+            width={113}
             height={17}
             alt="West Telco"
           />
