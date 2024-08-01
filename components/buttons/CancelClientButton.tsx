@@ -149,7 +149,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
                 <div className={'flex flex-col gap-2'}>
                   <span>¿Estás seguro de que deseas suspender el servicio a éste cliente?</span>
                   <Input
-                    name={'confirmation_input'}
+                    type="text"
                     placeholder={'Escribe "SUSPENDER" aquí para confirmar'}
                     aria-label="confirmation_input"
                     isRequired
