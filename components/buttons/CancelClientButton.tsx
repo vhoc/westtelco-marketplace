@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Button, ModalFooter, ModalHeader, Slider } from "@nextui-org/react"
+import { Button, ModalFooter, ModalHeader } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import { cancelTeam, reinstateTeam } from "@/utils/team"
@@ -19,7 +19,6 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
 
   const [cancelStatus, setCancelStatus] = useState<"error" | "success" | "none">("none")
   const [errorMessage, setErrorMessage] = useState("")
-  const [sliderValue, setSliderValue] = useState<number>(0)
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const { isOpen: isOpenError, onOpen: onOpenError, onOpenChange: onOpenChangeError, onClose: onCloseError } = useDisclosure()
@@ -137,7 +136,6 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
         backdrop={'blur'}
         shouldBlockScroll
         onClose={() => {
-          setSliderValue(0)
           setErrorMessage("")
         }}
       >
@@ -148,35 +146,10 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
               teamActive ?
                 <div className={'flex flex-col gap-2'}>
                   <span>¿Estás seguro de que deseas suspender el servicio a éste cliente?</span>
-                  <span className={'text-default-400 text-xs'}>Desliza hacia la derecha para confirmar</span>
-                  <Slider
-                    size="lg"
-                    step={0.01}
-                    maxValue={1}
-                    minValue={0}
-                    aria-label="Confirmación"
-                    value={sliderValue}
-                    //@ts-ignore
-                    onChange={setSliderValue}
-                    color={'danger'}
-                  />
-                  <button onClick={() => setSliderValue(prevState => prevState + 0.1)}>Test Add</button>
                 </div>
                 :
                 <div className={'flex flex-col gap-2'}>
                   <span>¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?</span>
-                  <span className={'text-default-400 text-xs'}>Desliza hacia la derecha para confirmar</span>
-                  <Slider
-                    size="lg"
-                    step={0.01}
-                    maxValue={1}
-                    minValue={0}
-                    aria-label="Confirmación"
-                    value={sliderValue}
-                    //@ts-ignore
-                    onChange={setSliderValue}
-                    color={'success'}
-                  />
                 </div>
             }
           </ModalBody>
@@ -185,7 +158,6 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
               color="primary"
               variant={'light'}
               onPress={() => {
-                setSliderValue(0)
                 onCloseConfirmation()
               }}
               aria-label="Cerrar mensaje de confirmación"
@@ -194,8 +166,6 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
             </Button>
             <Button
               color={teamActive ? 'danger' : 'success'}
-              isDisabled={(teamActive && sliderValue < 1) || (!teamActive && sliderValue < 1)}
-
               onPress={() => {
                 if (teamActive) {
                   handleCancel()
