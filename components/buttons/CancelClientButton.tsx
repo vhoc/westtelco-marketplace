@@ -160,7 +160,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
                     onChange={setSliderValue}
                     color={'danger'}
                   />
-                  <button onClick={() => setSliderValue(prevState => prevState + 0.1)}></button>
+                  <button onClick={() => setSliderValue(prevState => prevState + 0.1)}>Test Add</button>
                 </div>
                 :
                 <div className={'flex flex-col gap-2'}>
