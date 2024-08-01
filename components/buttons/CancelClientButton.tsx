@@ -137,8 +137,8 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
         backdrop={'blur'}
         shouldBlockScroll
         onClose={() => {
-          setErrorMessage("")
           setConfirmationInput("")
+          setErrorMessage("")
         }}
       >
         <ModalContent>
@@ -178,8 +178,8 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
               color="primary"
               variant={'light'}
               onPress={() => {
-                onCloseConfirmation()
                 setConfirmationInput("")
+                onCloseConfirmation()
               }}
               aria-label="Cerrar mensaje de confirmación"
             >
