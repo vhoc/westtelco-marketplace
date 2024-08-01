@@ -19,7 +19,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
 
   const [cancelStatus, setCancelStatus] = useState<"error" | "success" | "none">("none")
   const [errorMessage, setErrorMessage] = useState("")
-  const [confirmationInput, setConfirmationInput] = useState("")
+  const [confirmationInput, setConfirmationInput] = useState("test")
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const { isOpen: isOpenError, onOpen: onOpenError, onOpenChange: onOpenChangeError, onClose: onCloseError } = useDisclosure()
