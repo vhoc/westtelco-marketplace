@@ -146,19 +146,29 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
           <ModalBody className={'text-black'}>
             {
               teamActive ?
-              <div className={'flex flex-col gap-2'}>
-              <span>¿Estás seguro de que deseas suspender el servicio a éste cliente?</span>
-              <Input
-                name={'confirmation_input'}
-                placeholder={'Escribe "SUSPENDER" aquí para confirmar'}
-                aria-label="confirmation_input"
-                isRequired
-                value={confirmationInput}
-                onChange={(event) =>  setConfirmationInput(event.target.value)}
-              />
-            </div>
+                <div className={'flex flex-col gap-2'}>
+                  <span>¿Estás seguro de que deseas suspender el servicio a éste cliente?</span>
+                  <Input
+                    name={'confirmation_input'}
+                    placeholder={'Escribe "SUSPENDER" aquí para confirmar'}
+                    aria-label="confirmation_input"
+                    isRequired
+                    value={confirmationInput}
+                    onValueChange={setConfirmationInput}
+                  />
+                </div>
                 :
-                `¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?`
+                <div className={'flex flex-col gap-2'}>
+                  <span>¿Estás seguro de que deseas reinstaurar el servicio a éste cliente?</span>
+                  <Input
+                    name={'confirmation_input'}
+                    placeholder={'Escribe "REINSTAURAR" aquí para confirmar'}
+                    aria-label="confirmation_input"
+                    isRequired
+                    value={confirmationInput}
+                    onValueChange={setConfirmationInput}
+                  />
+                </div>
             }
           </ModalBody>
           <ModalFooter>
@@ -175,7 +185,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
             </Button>
             <Button
               color={teamActive ? 'danger' : 'success'}
-              isDisabled={ (teamActive && confirmationInput !== 'SUSPENDER') || (!teamActive && confirmationInput !== 'REINSTAURAR') }
+              isDisabled={(teamActive && confirmationInput !== 'SUSPENDER') || (!teamActive && confirmationInput !== 'REINSTAURAR')}
 
               onPress={() => {
                 if (teamActive) {
