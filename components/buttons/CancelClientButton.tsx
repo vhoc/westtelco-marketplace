@@ -155,6 +155,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
                     isRequired
                     value={confirmationInput}
                     onValueChange={setConfirmationInput}
+                    color={'danger'}
                   />
                 </div>
                 :
