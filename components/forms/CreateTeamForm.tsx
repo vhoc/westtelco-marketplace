@@ -1,10 +1,12 @@
 "use client";
-import { Input, Select, SelectItem } from "@nextui-org/react";
+import { Input, Select, SelectItem, Switch, Skeleton } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "../buttons/SubmitButton";
+import { getPartners } from "@/utils/partner-client";
+import { IPartner } from "@/types";
 
 interface CreateTeamFormProps {
   message?: string | undefined
@@ -19,6 +21,7 @@ interface ICreateTeamFormFields {
   invite_admin_confirmation: string
   sku_id: string
   reseller_id: string
+  is_trial: string
 }
 
 const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps) => {
@@ -44,6 +47,8 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
   const router = useRouter()
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+  const [partners, setPartners] = useState<Array<IPartner>>([])
+  const [isLoadingPartners, setIsLoadingPartners] = useState(true)
   const [fields, setFields] = useState<ICreateTeamFormFields>({
     name: "",
     country_code: "MX",
@@ -51,20 +56,37 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
     invite_admin_confirmation: "",
     sku_id: "",
     reseller_id: "",
+    is_trial: "false",
   })
 
-  const handleUpdateFields = (property: string, value: string) => {
+  const handleUpdateFields = (property: string, value: string | boolean) => {
     setFields(prevFields => ({
       ...prevFields,
       [property]: value
     }))
   }
 
+  // Get Partners from supabase
+  useEffect(() => {
+    getPartners()
+      .then(data => {
+        console.log(`Partners: `, data)
+        setPartners(data)
+      })
+      .catch(error => {
+        console.error(error)
+        setPartners([])
+      })
+      .finally(() => {
+        setIsLoadingPartners(false)
+      })
+  }, [])
+
   // Fields validations
   useEffect(() => {
     if (
       fields.name.length >= 1 &&
-      fields.invite_admin.length >=1 &&
+      fields.invite_admin.length >= 1 &&
       fields.invite_admin_confirmation.length >= 1 &&
       fields.invite_admin === fields.invite_admin_confirmation &&
       fields.sku_id.length >= 1 &&
@@ -121,15 +143,33 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
         onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
       />
 
-      <Input
-        name={'reseller_id'}
-        label={'RESELLER ID'}
-        placeholder={'Ingresa el Reseller ID del Partner que tendrá a éste cliente'}
-        aria-label="reseller_id"
-        isRequired
-        value={fields.reseller_id}
-        onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
-      />
+      <Skeleton isLoaded={!isLoadingPartners} className={'rounded-xl'}>
+        <Select
+          isRequired
+          name={'reseller_id'}
+          label="RESELLER PARTNER"
+          onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
+          selectedKeys={[fields.reseller_id]}
+          showScrollIndicators
+        >
+          {/* Exclude West Telco for now? */}
+          {partners.filter(item => item.dropbox_reseller_id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID).map((partner, index) => (
+            <SelectItem key={partner.dropbox_reseller_id || String(index)} className="text-black">
+              {partner.company_name}
+            </SelectItem>
+          ))}
+        </Select>
+      </Skeleton>
+      <Skeleton isLoaded={!isLoadingPartners} className={'rounded-xl'}>
+        <Input
+          label={'RESELLER ID'}
+          aria-label="reseller_id"
+          isReadOnly
+          isDisabled
+          value={fields.reseller_id}
+        />
+      </Skeleton>
+
 
       <div className="flex flex-col">
         <div className="text-left text-[12px] font-medium text-default-500">SKU BASE</div>
@@ -143,6 +183,15 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
           onChange={(event) => handleUpdateFields('sku_id', event.target.value)}
         />
       </div>
+
+      <Switch
+        name={'is_trial'}
+        isSelected={fields.is_trial === "true"}
+        value={fields.is_trial}
+        onValueChange={(value) => handleUpdateFields('is_trial', String(value))}
+      >
+        <span className="text-sm">Trial de 30 días</span>
+      </Switch>
 
       {message && (
         <Toast type={'warning'}>

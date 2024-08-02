@@ -12,6 +12,7 @@ export async function createNewTeam(formData: FormData) {
     invite_admin: formData.get('invite_admin') as string,
     country_code: formData.get('country_code') as string,
     reseller_ids: [ process.env.DISTRIBUITOR_ID, formData.get('reseller_id') as string ],
+    is_trial: formData.get('is_trial') as string,
     skus: [
       {
         "sku_id": formData.get('sku_id') as string,
@@ -19,7 +20,6 @@ export async function createNewTeam(formData: FormData) {
       }
     ]
   }
-
 
   const createTeamResponse = await createTeam(teamData)
 
