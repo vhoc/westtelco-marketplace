@@ -13,7 +13,7 @@ export default async function Home({ searchParams }: { searchParams: { message: 
     console.error(error)
     return redirect('/login')
   } else {
-    return redirect('/team')
+    return redirect('/teams')
   }
 
   return (

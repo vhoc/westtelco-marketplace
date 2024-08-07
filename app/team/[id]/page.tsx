@@ -6,32 +6,34 @@ import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "@/utils/team"
 import { getSkuInfo } from "@/utils/licenses"
-import { getPartner, getPartners } from "@/utils/partner"
+import { getPartners } from "@/utils/partner"
 import { redirect } from "next/navigation"
 import { ISku } from "@/types"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import CancelClientButton from "@/components/buttons/CancelClientButton"
 
-export default async function TeamPage({ params }: { params: { id: string } }) {
+export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null } }) {
 
   const supabase = createClient()
-
 
   const { data, error } = await supabase.auth.getUser()
   if (error || !data?.user) {
     redirect('/login')
   }
-
   // Get all the team info from the API using the params.id, then render below.
   const teamId = decodeURIComponent(params.id)
-  const team = await getTeam(teamId)
+  const team = await getTeam(teamId, searchParams?.resellerId)
   const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-'))[0]
   const skuInfo = await getSkuInfo(baseSku?.sku_id)
   // const resellerIds = team.data?.reseller_ids.filter(id => id !== process.env.DISTRIBUITOR_ID)
   const resellerIds = team.data?.reseller_ids
 
   const partners = await getPartners(resellerIds || [])
+
+  if ( team.code === 409 ) {
+    return redirect(`/team?message=No se tiene acceso a éste cliente, verifique el estatus de éste cliente con Dropbox.')}`)
+  }
 
   if (team.code !== 200) {
     return redirect(`/team?message=${encodeURI(team.message || 'Error desconocido.')}`)
@@ -79,7 +81,7 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
             endContent={<FontAwesomeIcon icon={faRightFromBracket} size="lg" />}
             aria-label="Cerrar Cliente"
           >
-            <Link href="/team" aria-label="Cerrar cliente">Cerrar Cliente</Link>
+            <Link href="/teams" aria-label="Cerrar cliente">Cerrar Cliente</Link>
           </Button>
         </div>
 
@@ -91,9 +93,9 @@ export default async function TeamPage({ params }: { params: { id: string } }) {
 
           <LicenseBox
             baseSku={team.data?.sku_id || 'Unknown'}
-            license_description={skuInfo.description}
+            license_description={ skuInfo && skuInfo.description ? skuInfo.description : 'SKU sin información'}
             skus={team.data?.current_state.skus || []}
-            renewalStateSkus={team.data?.renewal_state.skus || []}
+            renewalStateSkus={team.data?.renewal_state?.skus || []}
             num_licensed_users={team.data?.num_licensed_users || 0}
             space_quota={team.data?.current_state?.space_quota || 0}
             auto_renew={team.data?.auto_renew || false}

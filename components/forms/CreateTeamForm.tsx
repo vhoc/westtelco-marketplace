@@ -215,10 +215,10 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
         color="primary"
         variant={'light'}
         radius={'sm'}
-        onPress={() => router.push('/team')}
+        onPress={() => router.push('/teams')}
         isDisabled={isLoading}
       >
-        Regresar a Encontrar Cliente
+        Regresar a Clientes
       </Button>
     </form>
   )

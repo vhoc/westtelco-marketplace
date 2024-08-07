@@ -26,18 +26,36 @@ export const getPartner = async (resellerId: string): Promise<IPartnerApiRespons
   }
 }
 
-export const getPartners = async (resellerIds: Array<string>): Promise<Array<IPartner>> => {
+export const getPartners = async (resellerIds?: Array<string> | undefined): Promise<Array<IPartner>> => {
+  "use server"
   const supabase = createClient()
-  
-  const { data, error } = await supabase
-    .from('partner')
-    .select('*')
-    .in('dropbox_reseller_id', resellerIds)
 
-  if (error) {
-    console.error(`Error retrieving partners from database: `, error)
-    return []
+  if (resellerIds && resellerIds.length >= 1) {
+    const { data, error } = await supabase
+      .from('partner')
+      .select('*')
+      .in('dropbox_reseller_id', resellerIds)
+
+    if (error) {
+      console.error(`Error retrieving partners from database: `, error)
+      return []
+    }
+
+    return data
+  } else {
+    const { data, error } = await supabase
+      .from('partner')
+      .select('*')
+
+    if (error) {
+      console.error(`Error retrieving partners from database: `, error)
+      return []
+    }
+
+    return data
   }
-  return data
+
+
+  return []
 }
 

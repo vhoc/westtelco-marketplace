@@ -1,7 +1,8 @@
 "use server";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache"
-import { ISku, ITeamApiResponse, IApiErrorResponse, INewTeamData } from "@/types";
+import { ISku, ITeamApiResponse, ITeamsApiResponse, IApiErrorResponse, INewTeamData, ITeamData } from "@/types";
+import { getPartners } from "./partner";
 
 const requestOptions = {
   method: 'POST',
@@ -21,12 +22,96 @@ const requestOptions = {
  */
 export const navigateToTeam = async (formData: FormData) => {
   const teamId = formData.get('teamId')
+  const resellerId = formData.get('resellerId')
   const urlEncoded = encodeURIComponent(teamId as string)
   if (teamId === 'test-error') {
     return redirect(`/team?message=La b%C3%BAsqueda no obtuvo coincidencias. Intenta de nuevo con otro TEAM ID o contacta a soporte West Telco.`)
   }
 
-  return redirect(`/team/${urlEncoded}`);
+  return redirect(`/team/${urlEncoded}?resellerId=${resellerId}`);
+}
+
+export const getTeamsOfPartner = async (resellerId: string): Promise<ITeamsApiResponse> => {
+  try {
+    const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/list2`,
+      {
+        ...requestOptions,
+        body: JSON.stringify({
+          "environment": process.env.API_ENV,
+          "reseller_ids": [resellerId]
+        }),
+      }
+    )
+
+    if (!response.ok) {
+      const error = await response.json()
+      return { code: error.code, message: 'Hubo un error al intentar obtener la lista de clientes del partner seleccionado.' }
+    }
+
+    const responseObject = await response.json()
+    return responseObject
+  } catch (error) {
+    console.error('There was an error!', error)
+    //@ts-ignore
+    return { code: 400, message: error.message }
+  }
+}
+
+
+
+export const getAllTeams = async (): Promise<Array<ITeamData>> => {
+  "use server"
+
+  try {
+    const allTeams = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        next: {
+          tags: [
+            'teams'
+          ]
+        }
+      })
+
+    // console.log(`allTeams: `, await allTeams.json())
+
+    if (!allTeams.ok) {
+      const error = await allTeams.json()
+      console.error(error.message)
+      return []
+    }
+    const responseObject = await allTeams.json()
+    return responseObject
+
+  } catch (error) {
+    console.error('There was an error!', error);
+    //@ts-ignore
+    return []
+    // // 1. Get all the partners (resellers)
+    // const partners = await getPartners()
+
+    // // 2. Loop through all the partners to get each one's teams
+    // if (partners && partners.length >= 1) {
+    //   const allTeams = []
+    //   for (const partner of partners) {
+    //     if ( partner && partner.dropbox_reseller_id ) {
+    //       const result = await getTeamsOfPartner(partner.dropbox_reseller_id)
+    //       if ( result && result.data && result.data.teams && result.data.teams.length >= 1 ) {
+    //         // 3. Assemble all teams into a single array
+    //         allTeams.push(result.data.teams)
+    //       }
+    //     }
+    //   }
+
+    //   // 4. Return the array
+    //   return allTeams.flat()
+    // } 
+
+    // return []
+  }
 }
 
 /**
@@ -36,7 +121,12 @@ export const navigateToTeam = async (formData: FormData) => {
  * @param teamId string
  * @returns Promise<ITeamApiResponse>
  */
-export const getTeam = async (teamId: string): Promise<ITeamApiResponse> => {
+export const getTeam = async (teamId: string, resellerId?: string | null | undefined): Promise<ITeamApiResponse> => {
+  console.log(`requestBody: `, JSON.stringify({
+    "environment": process.env.API_ENV,
+    "id": teamId,
+    "reseller_ids": [resellerId],
+  }, null, 2))
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
       {
@@ -44,7 +134,7 @@ export const getTeam = async (teamId: string): Promise<ITeamApiResponse> => {
         body: JSON.stringify({
           "environment": process.env.API_ENV,
           "id": teamId,
-          "reseller_ids": [],
+          "reseller_ids": [resellerId],
         }),
         next: {
           tags: [
@@ -109,10 +199,10 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
 export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Promise<ITeamApiResponse> => {
 
 
-  console.log(`body: `, JSON.stringify({
-    "id": teamId,
-    "reseller_ids": resellerIds
-  }))
+  // console.log(`body: `, JSON.stringify({
+  //   "id": teamId,
+  //   "reseller_ids": resellerIds
+  // }))
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
       {
@@ -207,7 +297,7 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
  * @return Promise<ITeamApiResponse>
  */
 export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
-  console.log(`modifyTeamSkus props: teamId:${teamId}, currentSkus: ${JSON.stringify(currentSkus)}, newSkus: ${JSON.stringify(newSkus)}, forceImmediate: ${forceImmediate}`)
+  // console.log(`modifyTeamSkus props: teamId:${teamId}, currentSkus: ${JSON.stringify(currentSkus)}, newSkus: ${JSON.stringify(newSkus)}, forceImmediate: ${forceImmediate}`)
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/skus/modify`,
       {
@@ -238,4 +328,3 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
     return { code: 400, message: error.message }
   }
 }
-

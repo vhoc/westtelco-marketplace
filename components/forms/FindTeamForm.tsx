@@ -4,14 +4,16 @@ import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Link } from "@nextui-org/react";
 
 interface FindTeamFormProps {
   message?: string | undefined
   formAction: any
   className?: string | undefined
+  resellerId?: string | undefined
 }
 
-const FindTeamForm = ({ message, formAction, className }: FindTeamFormProps) => {
+const FindTeamForm = ({ message, formAction, className, resellerId }: FindTeamFormProps) => {
 
   const [teamId, setTeamId] = useState('')
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
@@ -32,6 +34,11 @@ const FindTeamForm = ({ message, formAction, className }: FindTeamFormProps) => 
 
   return (
     <form action={formAction} className={className}>
+
+      <div className={'text-xl text-[#00336A] text-center'}>Encontrar cliente</div>
+
+      <input type="hidden" name="resellerId" value={resellerId} />
+
       <Input
         name={'teamId'}
         label={'TEAM ID'}
@@ -60,14 +67,14 @@ const FindTeamForm = ({ message, formAction, className }: FindTeamFormProps) => 
         {isLoading ? `Buscando...` : 'Buscar'}
       </Button>
 
-      <Button
+      {/* <Button
         color="primary"
         variant={'light'}
         radius={'sm'}
-        onPress={() => router.push('/team/new')}
+        onPress={() => router.push('/teams')}
       >
-        Crear Cliente
-      </Button>
+        Regresar a Clientes
+      </Button> */}
     </form>
   )
 

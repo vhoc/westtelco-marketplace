@@ -61,6 +61,13 @@ export interface ITeamApiResponse {
   message?: string | undefined
 }
 
+export interface ITeamsApiResponse {
+  code: number
+  status?: string | undefined
+  data?: { teams: Array<ITeamData> }
+  message?: string | undefined
+}
+
 export interface IPartnerApiResponse {
   code: number
   data?: IPartner | undefined
