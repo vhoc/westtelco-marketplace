@@ -134,7 +134,7 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
         body: JSON.stringify({
           "environment": process.env.API_ENV,
           "id": teamId,
-          "reseller_ids": [resellerId],
+          "reseller_ids": process.env.API_ENV === "PROD" ? [resellerId] : [],
         }),
         next: {
           tags: [

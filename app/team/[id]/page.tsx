@@ -2,7 +2,7 @@
 import { Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
-
+import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "@/utils/team"
 import { getSkuInfo } from "@/utils/licenses"
@@ -13,7 +13,7 @@ import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import CancelClientButton from "@/components/buttons/CancelClientButton"
 
-export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null } }) {
+export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
 
   const supabase = createClient()
 
@@ -31,7 +31,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
 
   const partners = await getPartners(resellerIds || [])
 
-  if ( team.code === 409 ) {
+  if (team.code === 409) {
     return redirect(`/team?message=No se tiene acceso a éste cliente, verifique el estatus de éste cliente con Dropbox.')}`)
   }
 
@@ -40,13 +40,14 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col">
 
       {/* TEAM INFO TOPBAR */}
       <div className={'py-4 px-[80px] bg-white w-full flex justify-between items-end border-b-1 border-b-default-200'}>
 
         {/* TEAM INFO TOPBAR: LEFT SECTION */}
         <div className="flex flex-col gap-2">
+
           <span className={'text-primary-500 text-sm/[12px]'}>{teamId}</span>
           <span className={'text-default-900 text-lg font-medium'}>{team.data?.name || ''}</span>
           <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 mb-2'}>{team.data?.country_code}</Chip>
@@ -56,12 +57,12 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
             {
               partners && partners.length >= 1 ?
                 <ul className={'list-disc list-inside'}>
-                {
-                  partners.map((partner, index) => <li key={`partner-id${ index }`} className={'text-[#71717A] text-xs/[8px] leading-4'}>{`${ partner.company_name } [${partner.dropbox_reseller_id}]`}</li> )
-                }
+                  {
+                    partners.map((partner, index) => <li key={`partner-id${index}`} className={'text-[#71717A] text-xs/[8px] leading-4'}>{`${partner.company_name} [${partner.dropbox_reseller_id}]`}</li>)
+                  }
                 </ul>
-              :
-              null
+                :
+                null
             }
           </div>
 
@@ -87,13 +88,23 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
 
       </div>
 
-      {/* TEAM CONTENT AND CONTROLS */}
-      <div className={'py-4 w-full flex justify-center px-[80px]'}>
-        <div className={'border-1 w-full max-w-[1280px]'}>
 
+
+      {/* TEAM CONTENT AND CONTROLS */}
+      <div className={'py-4 w-full flex flex-col items-center justify-center px-[80px]'}>
+        {
+          searchParams && searchParams.message ?
+          <div className="w-full flex justify-center rounded-md bg-danger-100 text-danger-800 mb-4 px-4 py-1">
+            <div>{searchParams.message}</div>
+          </div>          
+        :
+        null
+        }
+        
+        <div className={'border-1 w-full max-w-[1280px]'}>
           <LicenseBox
             baseSku={team.data?.sku_id || 'Unknown'}
-            license_description={ skuInfo && skuInfo.description ? skuInfo.description : 'SKU sin información'}
+            license_description={skuInfo && skuInfo.description ? skuInfo.description : 'SKU sin información'}
             skus={team.data?.current_state.skus || []}
             renewalStateSkus={team.data?.renewal_state?.skus || []}
             num_licensed_users={team.data?.num_licensed_users || 0}

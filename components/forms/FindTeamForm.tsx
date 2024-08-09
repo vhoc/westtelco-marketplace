@@ -4,7 +4,6 @@ import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Link } from "@nextui-org/react";
 
 interface FindTeamFormProps {
   message?: string | undefined
@@ -71,9 +70,9 @@ const FindTeamForm = ({ message, formAction, className, resellerId }: FindTeamFo
         color="primary"
         variant={'light'}
         radius={'sm'}
-        onPress={() => router.push('/teams')}
+        onPress={() => router.push('/team/new')}
       >
-        Regresar a Clientes
+        DEBUG: Nuevo cliente
       </Button> */}
     </form>
   )
