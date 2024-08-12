@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache"
 import { ISku, ITeamApiResponse, ITeamsApiResponse, IApiErrorResponse, INewTeamData, ITeamData } from "@/types";
-import { getPartners } from "./partner";
+// import { getPartners } from "./partner";
 
 const requestOptions = {
   method: 'POST',
@@ -38,7 +38,8 @@ export const getTeamsOfPartner = async (resellerId: string): Promise<ITeamsApiRe
         ...requestOptions,
         body: JSON.stringify({
           "environment": process.env.API_ENV,
-          "reseller_ids": [resellerId]
+          "reseller_ids": [resellerId],
+          "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
       }
     )
@@ -126,6 +127,7 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
     "environment": process.env.API_ENV,
     "id": teamId,
     "reseller_ids": [resellerId],
+    "country": process.env.DISTRIBUITOR_COUNTRY,
   }, null, 2))
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
@@ -135,6 +137,7 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
           "environment": process.env.API_ENV,
           "id": teamId,
           "reseller_ids": process.env.API_ENV === "PROD" ? [resellerId] : [],
+          "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
         next: {
           tags: [
@@ -166,6 +169,7 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
       body: JSON.stringify({
         ...teamData,
         "environment": process.env.API_ENV,
+        "country": process.env.DISTRIBUITOR_COUNTRY,
       }),
       next: {
         tags: [
@@ -210,7 +214,8 @@ export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Pr
         body: JSON.stringify({
           "id": teamId,
           "environment": process.env.API_ENV,
-          "reseller_ids": []
+          "reseller_ids": [],
+          "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
         next: {
           tags: [
@@ -249,7 +254,8 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
   console.log(`body: `, JSON.stringify({
     "id": teamId,
     "skus": skus,
-    "reseller_ids": resellerIds
+    "reseller_ids": resellerIds,
+    "country": process.env.DISTRIBUITOR_COUNTRY,
   }))
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/reinstate`,
@@ -259,7 +265,8 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
           "id": teamId,
           "skus": skus,
           "environment": process.env.API_ENV,
-          "reseller_ids": []
+          "reseller_ids": [],
+          "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
         next: {
           tags: [
@@ -304,6 +311,7 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
         ...requestOptions,
         body: JSON.stringify({
           "environment": process.env.API_ENV,
+          "country": process.env.DISTRIBUITOR_COUNTRY,
           "id": teamId,
           "current_skus": currentSkus,
           "new_skus": newSkus,

@@ -2,8 +2,8 @@ import { Card } from "@nextui-org/react";
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation";
 import TeamsTable from "@/components/containers/TeamsTable";
-import { getAllTeams } from "@/utils/team";
-import { ITeamData } from "@/types";
+// import { getAllTeams } from "@/utils/team";
+// import { ITeamData } from "@/types";
 
 export default async function TeamsHome({ searchParams }: { searchParams: { message: string } }) {
 
