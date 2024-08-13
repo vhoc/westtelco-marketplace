@@ -4,8 +4,8 @@ import { Input } from "@nextui-org/react";
 import Image from "next/image";
 import getConfig from "next/config";
 import logoWt from '../../public/wt-logo-2024.png'
-import flagMexico from '../../public/img/40px-Flag_of_Mexico.svg.png'
-import flagBrazil from '../../public/img/40px-Flag_of_Brazil.svg.png'
+import flagMexico from '../../public/img/flagMx.png'
+import flagBrazil from '../../public/img/flagBr.png'
 import { Link } from "@nextui-org/react";
 
 export default function Login({
@@ -64,12 +64,12 @@ export default function Login({
             </p>
           )}
         </form>
-        <div className={'flex justify-evenly gap-4 mt-10 w-full'}>
+        <div className={'flex justify-center gap-6 mt-10 w-full'}>
           <Link href={'/'}>
             <Image
               src={flagMexico}
-              width={70}
-              height={40}
+              width={28}
+              height={28}
               alt="Marketplace de México"
               className={'rounded-sm'}
             />
@@ -78,14 +78,16 @@ export default function Login({
           <Link href={'#'}>
             <Image
               src={flagBrazil}
-              width={57}
-              height={40}
+              width={28}
+              height={28}
               alt="Marketplace de Brasil"
               className={'grayscale cursor-not-allowed rounded-sm'}
             />
           </Link>
         </div>
-        <div className="text-default-500 text-sm mt-4">Build {`${JSON.stringify(publicRuntimeConfig?.version.version)}`}</div>
+        <div className="text-default-400 mt-8 text-xs">
+          Build {`${JSON.stringify(publicRuntimeConfig?.version.version)}`}
+        </div>
       </div>
 
 
