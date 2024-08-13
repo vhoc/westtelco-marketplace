@@ -1,6 +1,6 @@
 {
   "name": "westtelco-marketplace",
-  "version": "0.3.32",
+  "version": "0.3.61",
   "private": true,
   "scripts": {
     "dev": "next dev",

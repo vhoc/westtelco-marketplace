@@ -4,6 +4,9 @@ import { Input } from "@nextui-org/react";
 import Image from "next/image";
 import getConfig from "next/config";
 import logoWt from '../../public/wt-logo-2024.png'
+import flagMexico from '../../public/img/40px-Flag_of_Mexico.svg.png'
+import flagBrazil from '../../public/img/40px-Flag_of_Brazil.svg.png'
+import { Link } from "@nextui-org/react";
 
 export default function Login({
   searchParams,
@@ -15,7 +18,7 @@ export default function Login({
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-start gap-2 bg-[#f4f4f5]">
-      
+
 
       <div className="flex flex-col items-center p-[48px] text-black bg-white min-w-[496px] border-1 border-default-200 mt-[100px]">
 
@@ -54,14 +57,35 @@ export default function Login({
           <SubmitButton
             formAction={login}
           />
-          
+
           {searchParams?.message && (
             <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
               {searchParams.message}
             </p>
           )}
         </form>
-        <div className="text-default-500 text-sm mt-4">Build { `${ JSON.stringify(publicRuntimeConfig?.version.version) }` }</div>
+        <div className={'flex justify-evenly gap-4 mt-10 w-full'}>
+          <Link href={'/'}>
+            <Image
+              src={flagMexico}
+              width={70}
+              height={40}
+              alt="Marketplace de México"
+              className={'rounded-sm'}
+            />
+          </Link>
+
+          <Link href={'#'}>
+            <Image
+              src={flagBrazil}
+              width={57}
+              height={40}
+              alt="Marketplace de Brasil"
+              className={'grayscale cursor-not-allowed rounded-sm'}
+            />
+          </Link>
+        </div>
+        <div className="text-default-500 text-sm mt-4">Build {`${JSON.stringify(publicRuntimeConfig?.version.version)}`}</div>
       </div>
 
 
