@@ -7,10 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus, faPencil } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
-import { getAllTeams } from "@/utils/team"
+import { getAllTeams } from "@/app/teams/actions"
 import { getPartners } from "@/utils/partner"
 import FindTeamForm from "../forms/FindTeamForm"
-import { navigateToTeam } from "@/utils/team"
+import { navigateToTeam } from "@/app/teams/actions"
 
 const TeamsTable = () => {
 
