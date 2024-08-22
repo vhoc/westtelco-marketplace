@@ -6,6 +6,8 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function createNewTeam(formData: FormData) {
 
+  // console.log(`formData: `, formData)
+
   // type-casting here for convenience
   // Pending: validations.
   const teamData = {
@@ -14,7 +16,7 @@ export async function createNewTeam(formData: FormData) {
     country_code: formData.get('country_code') as string,
     reseller_ids: process.env.API_ENV === "PROD" ? [ process.env.DISTRIBUITOR_ID, formData.get('reseller_id') as string ] : [],
     // reseller_ids: [],// Uncomment this and comment the above for DEV environment.
-    is_trial: formData.get('is_trial') as string,
+    is_trial: formData.get('is_trial') as string || false,
     skus: [
       {
         "sku_id": formData.get('sku_id') as string,
@@ -22,6 +24,8 @@ export async function createNewTeam(formData: FormData) {
       }
     ]
   }
+
+  console.log(`teamData: `, teamData)
 
   const createTeamResponse = await createTeam(teamData)
 
