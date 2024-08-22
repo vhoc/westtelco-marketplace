@@ -7,22 +7,25 @@ export async function GET(request: Request) {
 
   if (response) {
     const { data } = await response.json()
-    // console.log(`data: `, data)
 
     if (data && data.length >= 1) {
       const allTeams = []
       for (const partner of data) {
         if (partner && partner.dropbox_reseller_id) {
-          const result = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/partners/${ partner.dropbox_reseller_id }/teams`)
+          const result = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/partners/${ partner.dropbox_reseller_id }/teams`, { cache: 'no-cache' })
           const currentResult = await result.json()
           
           if (currentResult && currentResult.data && currentResult.data.teams && currentResult.data.teams.length >= 1) {
+            
+            // if (currentResult.data.teams.find(item => item.reseller_ids[1] === "GJAJHK2J2M")) {
+            //   console.log(`currentResult: `, currentResult.data.teams.length)
+            // }
+            
+
             allTeams.push(currentResult.data.teams)
           }
         }
       }
-
-      // console.log(`allTeams: `, allTeams)
 
       return Response.json({
         code: 200,

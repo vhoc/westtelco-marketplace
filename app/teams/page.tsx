@@ -32,7 +32,7 @@ export default async function TeamsHome({ searchParams }: { searchParams: { mess
       <main className="flex-1 w-full flex flex-col gap-6 items-center px-16">
 
         <Card radius={'none'} shadow="none" className={'w-full px-[24px] py-[22px] gap-y-4'}>
-
+            
           <TeamsTable />
 
         </Card>

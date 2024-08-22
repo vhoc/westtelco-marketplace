@@ -11,6 +11,7 @@ import { getAllTeams } from "@/app/teams/actions"
 import { getPartners } from "@/utils/partner"
 import FindTeamForm from "../forms/FindTeamForm"
 import { navigateToTeam } from "@/app/teams/actions"
+import { refetchTeams } from "@/app/teams/actions"
 
 const TeamsTable = () => {
 
@@ -255,7 +256,7 @@ const TeamsTable = () => {
                 isDisabled={isLoadingTeamPage}
                 onPress={() => {
                   setIsLoadingTeamPage(true)
-                  router.push(`/team/${ urlEncodedId }?resellerId=${ currentResellerId[0] }`)
+                  router.push(`/team/${urlEncodedId}?resellerId=${currentResellerId[0]}`)
                 }}
               >
                 {
@@ -281,7 +282,8 @@ const TeamsTable = () => {
   useEffect(() => {
     setIsLoading(true)
     getAllTeams().then(data => {
-      // console.log(`data: `, data)
+
+      console.log(`data: `, data)
       setTeams(data)
     }).catch(error => {
       console.error(error)
@@ -306,7 +308,11 @@ const TeamsTable = () => {
     <>
 
       {/* TITLE */}
-      <div className={'text-xl'}>Clientes</div>
+      <div className="flex justify-between items-center">
+        <div className={'text-xl'}>Clientes</div>
+        {/* <Button onPress={() => refetchTeams()}>Reload</Button> */}
+      </div>
+
 
       {
         isLoading ?

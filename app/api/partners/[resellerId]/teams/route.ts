@@ -32,7 +32,8 @@ export async function GET(
           "reseller_ids": [resellerId],
           "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
-      }
+        cache: 'no-cache',
+      },
     )
   
     if (!response.ok) {
@@ -45,6 +46,7 @@ export async function GET(
     }
 
     const data = await response.json()
+    
     return Response.json(data, { status: 200 })
   
   } catch (error) {

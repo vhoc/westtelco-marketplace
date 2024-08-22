@@ -1,6 +1,7 @@
 "use server"
 import { ITeamData } from "@/types";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 
 /**
  * navigateToTeam
@@ -50,6 +51,7 @@ export const getAllTeams = async (): Promise<Array<ITeamData>> => {
       console.error(error.message)
       return []
     }
+    // revalidateTag('teams')
     const responseObject = await allTeams.json()
     if ( responseObject && responseObject.data && responseObject.data.teams && responseObject.data.teams.length >= 1 ) {
       return responseObject.data.teams
@@ -63,4 +65,10 @@ export const getAllTeams = async (): Promise<Array<ITeamData>> => {
     return []
     
   }
+}
+
+export const refetchTeams = async () => {
+  "use server"
+  revalidateTag('teams')
+  return redirect(`/teams`)
 }
