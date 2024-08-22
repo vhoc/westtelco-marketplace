@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
-import { getTeam } from "./actions"
+import { getTeam } from "../actions"
 import { getSkuInfo } from "@/utils/licenses"
 import { getPartners } from "@/utils/partner"
 import { redirect } from "next/navigation"
@@ -24,6 +24,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   // Get all the team info from the API using the params.id, then render below.
   const teamId = decodeURIComponent(params.id)
   const team = await (await getTeam(teamId, searchParams?.resellerId)).json()
+  // console.log(`team: `, team)
   const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku: ISku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-'))[0]
   const skuInfo = await getSkuInfo(baseSku?.sku_id)
   // const resellerIds = team.data?.reseller_ids.filter(id => id !== process.env.DISTRIBUITOR_ID)

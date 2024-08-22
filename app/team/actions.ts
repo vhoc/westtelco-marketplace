@@ -1,0 +1,87 @@
+"use server"
+import { IApiErrorResponse, ISku, ITeamApiResponse, ITeamData } from "@/types"
+import { revalidateTag } from "next/cache"
+
+/**
+ * Fetches a team's data
+ */
+export const getTeam = async (teamId: string, resellerId?: string | null | undefined) => {
+  "use server"
+
+  const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}${resellerId && resellerId.length >= 1 ? `?resellerId=${resellerId}` : ''}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      next: {
+        tags: [
+          'team' + teamId
+        ]
+      }
+    }
+  )
+
+  if (!response.ok) {
+    return Response.json(
+      {
+        error: "No se pudo obtener la información de éste cliente.",
+        status: response.status
+      }
+    )
+  }  
+
+  const data = await response.json()
+  revalidateTag('team' + teamId)
+  return Response.json(data, { status: 200 })
+
+}
+
+/**
+ * Modify a team's SKUs
+ * 
+ * Sends a modify request to change the SKU's of a team to the backend API, and returns the updated team info.
+ * @param teamId string
+ * @param currentSkus Array<ISku>
+ * @param newSkus Array<ISku>
+ * @param forceImmediate boolean
+ * @param resellerIds Array<string>
+ * @return Promise<ITeamApiResponse>
+ */
+export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
+  "use server"
+
+  const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `${process.env.API_KEY}`,
+      },
+      body: JSON.stringify({
+        "environment": process.env.API_ENV,
+        "country": process.env.DISTRIBUITOR_COUNTRY,
+        "id": teamId,
+        "current_skus": currentSkus,
+        "new_skus": newSkus,
+        "reseller_ids": resellerIds,
+        "force_immediate": forceImmediate,
+      })
+    }
+  )
+
+  // console.log(response)
+
+  // if (!response.ok) {
+  //   const errorResponse: IApiErrorResponse = await response.json()
+  //   console.log(`errorResponse: `, errorResponse)
+  //   return { code: errorResponse.code, message: errorResponse.data.error_summary }
+  // }
+  
+  const responseObject = await response.json()
+  revalidateTag('team' + teamId)
+  // console.log(`responseObject: `, responseObject)
+  return responseObject
+
+}

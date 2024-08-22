@@ -7,7 +7,7 @@ import { Chip } from "@nextui-org/react"
 import LicensesTable from "./LicensesTable"
 import { Modal, ModalContent, ModalBody, useDisclosure, ModalHeader, ModalFooter } from "@nextui-org/react"
 import { useState, useEffect } from "react"
-import { modifyTeamSkus } from "@/utils/team"
+import { modifyTeamSkus } from "@/app/team/actions"
 
 interface LicenseBoxProps {
   baseSku: string
