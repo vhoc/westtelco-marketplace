@@ -58,7 +58,8 @@ export interface IAddonApiResponse {
 export interface ITeamApiResponse {
   code: number
   data?: ITeamData | undefined
-  message?: string | undefined
+  // message?: string | { error_summary: string, error: any } | undefined
+  message?: any
 }
 
 export interface ITeamsApiResponse {

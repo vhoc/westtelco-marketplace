@@ -7,6 +7,7 @@ export async function GET(request: Request) {
 
   if (response) {
     const { data } = await response.json()
+    // console.log(`data: `, data)
 
     if (data && data.length >= 1) {
       const allTeams = []
@@ -20,6 +21,8 @@ export async function GET(request: Request) {
           }
         }
       }
+
+      // console.log(`allTeams: `, allTeams)
 
       return Response.json({
         code: 200,

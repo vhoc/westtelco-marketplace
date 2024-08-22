@@ -29,7 +29,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
     if (teamId && resellerIds) {
       cancelTeam(teamId, resellerIds)
         .then(data => {
-          console.log(`cancelTeam/then/data: `, data)
+          // console.log(`data: `, data)
           if (!data) {
             setCancelStatus("error")
             //@ts-ignore : Dropbox API inconsistent response structure
@@ -46,7 +46,6 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
 
         })
         .catch(error => {
-          console.error(error)
           setCancelStatus("error")
           setErrorMessage(error)
         })

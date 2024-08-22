@@ -88,7 +88,12 @@ const requestOptions = {
 // }
 
 export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiResponse> => {
-  try {
+  // console.log(`teamData: `, JSON.stringify({
+  //         ...teamData,
+  //         "environment": process.env.API_ENV,
+  //         "country": process.env.DISTRIBUITOR_COUNTRY,
+  //       }))
+  // try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
       ...requestOptions,
       body: JSON.stringify({
@@ -103,19 +108,22 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
       }
     })
 
+
     if (!response.ok) {
       const error = await response.json()
-      return { code: error.code, message: error.data.user_message.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
+
+      return { code: error.code, message: error.data.user_message?.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
     }
     revalidateTag('team')
     const responseObject = await response.json()
+    // console.log(`responseObject: `, responseObject)
     return responseObject
 
-  } catch (error) {
-    console.error('There was an error!', error);
-    //@ts-ignore
-    return { code: 400, message: error.message }
-  }
+  // } catch (error) {
+  //   console.error('There was an error!', error);
+  //   //@ts-ignore
+  //   return { code: 400, message: error.message }
+  // }
 }
 
 /**
@@ -132,7 +140,7 @@ export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Pr
   //   "id": teamId,
   //   "reseller_ids": resellerIds
   // }))
-  try {
+  // try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
       {
         ...requestOptions,
@@ -150,20 +158,24 @@ export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Pr
       }
     )
 
+    // console.log(`response: `, await response.json())
+
     if (!response.ok) {
       const error = await response.json()
-      console.log(error)
-      return { code: error.code, message: error.error_summary }
+      const errorMessage = error && error.data && error.data.error_summary ? error.data.error_summary : 'Error desconocido al intentar suspender al cliente.'
+      // console.log(`Error: `, error)
+      return { code: error.code, message: errorMessage }
     }
     revalidateTag('team')
     const responseObject = await response.json()
+    // console.log(`responseObject: `, responseObject)
     return responseObject
 
-  } catch (error) {
-    console.error('There was an error!', error);
-    //@ts-ignore
-    return { code: 400, message: error.message }
-  }
+  // } catch (error) {
+  //   console.error('There was an error!', error);
+  //   //@ts-ignore
+  //   return { code: 400, message: error.message }
+  // }
 }
 
 /**

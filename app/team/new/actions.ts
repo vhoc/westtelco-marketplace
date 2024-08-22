@@ -14,7 +14,7 @@ export async function createNewTeam(formData: FormData) {
     name: formData.get('name') as string,
     invite_admin: formData.get('invite_admin') as string,
     country_code: formData.get('country_code') as string,
-    reseller_ids: process.env.API_ENV === "PROD" ? [ process.env.DISTRIBUITOR_ID, formData.get('reseller_id') as string ] : [],
+    reseller_ids: process.env.API_ENV === "PROD" ? [ formData.get('reseller_id') as string ] : [],
     // reseller_ids: [],// Uncomment this and comment the above for DEV environment.
     is_trial: formData.get('is_trial') as string || false,
     skus: [
@@ -28,10 +28,12 @@ export async function createNewTeam(formData: FormData) {
   console.log(`teamData: `, teamData)
 
   const createTeamResponse = await createTeam(teamData)
+  // console.log(`createTeamResponse: `, createTeamResponse)
 
 
   if (createTeamResponse.code !== 200 || !createTeamResponse.data) {
-    return redirect(`/team/new?message=${encodeURI(createTeamResponse.message || 'Error desconocido.')}`)
+    const errorMessage = createTeamResponse.message && createTeamResponse.message.error_summary ? createTeamResponse.message.error_summary : 'Error desconocido'
+    return redirect(`/team/new?message=${encodeURI(errorMessage || 'Error desconocido.')}`)
   }
 
   // Insert the record in supabase

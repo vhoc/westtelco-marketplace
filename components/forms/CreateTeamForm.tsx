@@ -107,6 +107,7 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
         isRequired
         value={fields.name}
         onChange={(event) => handleUpdateFields('name', event.target.value)}
+        maxLength={20}
       />
 
       <Select
