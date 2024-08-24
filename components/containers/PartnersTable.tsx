@@ -2,35 +2,31 @@
 "use client"
 import React, { useState, useMemo, useEffect, useCallback } from "react"
 import { Input, Button, Skeleton } from "@nextui-org/react"
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip, Progress } from "@nextui-org/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus, faPencil } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
-import { getAllTeams } from "@/app/teams/actions"
-import { getPartners } from "@/utils/partner"
-import FindTeamForm from "../forms/FindTeamForm"
-import { navigateToTeam } from "@/app/teams/actions"
-import { refetchTeams } from "@/app/teams/actions"
 
-const TeamsTable = () => {
+interface PartnersTableProps {
+  partners: Array<IPartner>
+}
+
+const PartnersTable = ( { partners }: PartnersTableProps ) => {
 
   const router = useRouter()
-  const [teams, setTeams] = useState<Array<ITeamData>>([])
-  const [partners, setPartners] = useState<Array<IPartner>>([])
+  // const [teams, setTeams] = useState<Array<ITeamData>>([])
+  // const [partners, setPartners] = useState<Array<IPartner>>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingTeamPage, setIsLoadingTeamPage] = useState(false)
 
   const columns = [
-    { name: "NOMBRE DEL CLIENTE / TEAM ID", uid: "name" },
-    { name: "GESTIONADO POR", uid: "reseller_ids" },
-    { name: "BASE SKU", uid: "sku_id" },
-    { name: "LICENCIAS", uid: "num_licensed_users" },
-    { name: "STATUS", uid: "active" },
-    { name: "ACCIONES", uid: "actions" },
+    { name: "NOMBRE DEL PARTNER", uid: "name" },
+    { name: "RESELLER ID", uid: "reseller_id" },
+    { name: "ADMIN EMAIL", uid: "admin_email" },
   ]
 
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
   const [page, setPage] = useState(1)
   const [filterValue, setFilterValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -43,21 +39,21 @@ const TeamsTable = () => {
   const hasSearchFilter = Boolean(filterValue);
 
   const filteredItems = useMemo(() => {
-    let filteredTeams = [...teams];
+    let filteredPartners = [...partners];
 
     if (hasSearchFilter) {
-      filteredTeams = filteredTeams.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+      filteredPartners = filteredPartners.filter((user) =>
+        user.company_name.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredTeams = filteredTeams.filter((user) =>
+      filteredPartners = filteredPartners.filter((user) =>
         Array.from(statusFilter).includes(user.status),
       );
     }
 
-    return filteredTeams;
-  }, [teams, filterValue, statusFilter, hasSearchFilter]);
+    return filteredPartners;
+  }, [partners, filterValue, statusFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -118,13 +114,13 @@ const TeamsTable = () => {
               size={'sm'}
               variant={'bordered'}
               className="w-full max-w-[270px]"
-              placeholder="Buscar por nombre de cliente"
+              placeholder="Buscar por nombre de partner"
               startContent={<FontAwesomeIcon icon={faMagnifyingGlass} color={'#E0E0E3'} />}
               value={filterValue}
               onClear={() => onClear()}
               onValueChange={onSearchChange}
             />
-            <span className="text-default-500 text-[12px]">{sortedItems.length} de {teams.length} cuentas totales</span>
+            <span className="text-default-500 text-[12px]">{sortedItems.length} de {partners.length} partners</span>
           </div>
 
           <div className="flex flex-col items-end gap-y-3">
@@ -141,9 +137,9 @@ const TeamsTable = () => {
                 size={'sm'}
                 color={'primary'}
                 endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
-                onPress={() => router.push('/team/new')}
+                onPress={() => router.push('/partner/new')}
               >
-                Nuevo Cliente
+                Nuevo Partner
               </Button>
             </div>
             <label className="flex items-center text-default-500 text-tiny">
@@ -151,6 +147,7 @@ const TeamsTable = () => {
               <select
                 className="bg-[#EBEBED] outline-none text-default-500 text-tiny rounded-md ml-2 px-1"
                 onChange={onRowsPerPageChange}
+                defaultValue={"10"}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -166,7 +163,7 @@ const TeamsTable = () => {
   }, [
     filterValue,
     onRowsPerPageChange,
-    teams.length,
+    partners.length,
     onSearchChange,
     hasSearchFilter,
   ]);
@@ -179,7 +176,7 @@ const TeamsTable = () => {
             ? "All items selected"
             : `${selectedKeys.size} of ${filteredItems.length} selected`}
         </span> */}
-        <span className="text-default-500 text-[12px]">{sortedItems.length} de {teams.length} cuentas totales</span>
+        <span className="text-default-500 text-[12px]">{sortedItems.length} de {partners.length} partners</span>
 
         <div className="flex w-[70%] justify-end gap-2 items-center">
           <Pagination
@@ -204,69 +201,33 @@ const TeamsTable = () => {
     );
   }, [items.length, selectedKeys, page, pages, hasSearchFilter]);
 
-  const renderCell = useCallback((team: ITeamData, columnKey) => {
-    const cellValue = team[columnKey]
-    const currentResellerId = team.reseller_ids.filter(item => item !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID)
-    const urlEncodedId = encodeURIComponent(team.id as string)
+  const renderCell = useCallback((partner: IPartner, columnKey) => {
+    const cellValue = partner[columnKey]
+    const currentResellerId = partner.dropbox_reseller_id
+    // const urlEncodedId = encodeURIComponent(partner.id as string)
 
     if (currentResellerId) {
-      const currentPartner = partners.find(item => item.dropbox_reseller_id === currentResellerId[0])
+      // const currentPartner = partners.find(item => item.dropbox_reseller_id === currentResellerId[0])
       switch (columnKey) {
         case "name":
           return (
             <div className={'flex flex-col'}>
-              <span>{team.name}</span>
-              <span className={'text-tiny text-default-500'}>{team.id}</span>
+              <span>{partner.company_name}</span>
+              {/* <span className={'text-tiny text-default-500'}>{team.id}</span> */}
             </div>
           )
 
-        case "reseller_ids":
+        case "reseller_id":
           return (
             <div className="text-black">
-              {
-                currentPartner ?
-                  `${currentPartner.company_name} [${currentResellerId[0]}]`
-                  :
-                  'N/A'
-              }
+              { partner.dropbox_reseller_id }
             </div>
           )
 
-        case "active":
+        case "admin_email":
           return (
             <div>
-              <Chip radius={'sm'} size={'sm'} className={`text-tiny ${team.active ? 'bg-success-100' : 'bg-default-200'} ${team.active ? 'text-success-600' : 'text-default-400'}`}>
-                {
-                  team.active ?
-                    `ACTIVO`
-                    :
-                    `INACTIVO`
-                }
-              </Chip>
-            </div>
-          )
-
-        case "actions":
-          return (
-            <div className={'flex justify-end items-center'}>
-              <Button
-                size={'sm'}
-                variant={'light'}
-                isLoading={isLoadingTeamPage}
-                isDisabled={isLoadingTeamPage}
-                onPress={() => {
-                  setIsLoadingTeamPage(true)
-                  router.push(`/team/${urlEncodedId}?resellerId=${currentResellerId[0]}`)
-                }}
-              >
-                {
-                  !isLoading ?
-                    <FontAwesomeIcon icon={faPencil} color={'#71717A'} size={'lg'} />
-                    :
-                    '.'
-                }
-
-              </Button>
+              { partner.dropbox_admin_email }
             </div>
           )
 
@@ -278,55 +239,34 @@ const TeamsTable = () => {
 
   }, [partners, isLoadingTeamPage, isLoading, router])
 
-  // LOAD TEAMS AND PARTNERS
-  useEffect(() => {
-    setIsLoading(true)
-    getAllTeams().then(data => {
-
-      // console.log(`data: `, data)
-      setTeams(data)
-    }).catch(error => {
-      console.error(error)
-    }).finally(() => {
-      setIsLoading(false)
-    })
-  }, [])
-
-  // LOAD PARTNERS
-  useEffect(() => {
-    setIsLoading(true)
-    getPartners().then(data => {
-      setPartners(data)
-    }).catch(error => {
-      console.error(error)
-    }).finally(() => {
-      setIsLoading(false)
-    })
-  }, [])
-
   return (
     <>
 
       {/* TITLE */}
       <div className="flex justify-between items-center">
-        <div className={'text-xl'}>Clientes</div>
+        <div className={'text-xl'}>Partners</div>
         {/* <Button onPress={() => refetchTeams()}>Reload</Button> */}
       </div>
 
 
       {
         isLoading ?
-          <div className={'flex justify-center items-center gap-y-4 w-full text-center h-72'}>
-            <Progress
-              size="md"
-              isIndeterminate
-              aria-label="Obteniendo clientes de todos los partners..."
-              className="max-w-md"
-              label="Obteniendo clientes de todos los partners. Esto puede tomar unos segundos..."
-            />
+          <div className={'flex flex-col gap-y-4'}>
+            <Skeleton className="rounded-lg">
+              <div className="h-12 rounded-lg bg-default-300"></div>
+            </Skeleton>
+            <Skeleton className="rounded-lg flex flex-row gap-x-4">
+              <div className="h-8 rounded-lg bg-default-300"></div>
+            </Skeleton>
+            <Skeleton className="rounded-lg">
+              <div className="h-8 rounded-lg bg-default-300"></div>
+            </Skeleton>
+            <Skeleton className="rounded-lg">
+              <div className="h-8 rounded-lg bg-default-300"></div>
+            </Skeleton>
           </div>
           :
-          teams.length >= 1 && partners.length >= 1 ?
+          partners.length >= 1 ?
             <>
 
               {/* TABLE */}
@@ -347,9 +287,9 @@ const TeamsTable = () => {
                 </TableHeader>
 
                 <TableBody items={sortedItems} >
-                  {(team) => (
-                    <TableRow key={team.id}>
-                      {(columnKey) => <TableCell>{renderCell(team, columnKey)}</TableCell>}
+                  {(partner) => (
+                    <TableRow key={partner.id}>
+                      {(columnKey) => <TableCell>{renderCell(partner, columnKey)}</TableCell>}
                     </TableRow>
                   )}
                 </TableBody>
@@ -366,4 +306,4 @@ const TeamsTable = () => {
 
 }
 
-export default TeamsTable
+export default PartnersTable

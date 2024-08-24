@@ -4,7 +4,7 @@ import getConfig from "next/config";
 import logoWt from '../../public/wt-logo-2024.png'
 
 
-export default function PartnersLayout({
+export default function TeamsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

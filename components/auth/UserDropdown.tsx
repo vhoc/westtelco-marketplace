@@ -1,7 +1,7 @@
 "use client";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faRightFromBracket, faHandshake, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { User } from "@supabase/supabase-js";
 import { signOut } from "@/utils/auth";
 import Image from "next/image";
@@ -32,6 +32,20 @@ const UserDropdown = ({ user, userData }: UserDropdownProps) => {
 
       <DropdownMenu disabledKeys={['wtbr']}>
 
+        <DropdownItem key={'partners'} onPress={() => router.push('/partners')}>
+          <div className={'w-full flex text-black items-center gap-3'}>
+            <FontAwesomeIcon icon={faHandshake} color="#C2C2C5" />
+            <span>Partners</span>
+          </div>
+        </DropdownItem>
+
+        <DropdownItem key={'clientes'} onPress={() => router.push('/teams')} showDivider>
+          <div className={'w-full flex text-black items-center gap-3'}>
+            <FontAwesomeIcon icon={faUsers} color="#C2C2C5" />
+            <span>Clientes</span>
+          </div>
+        </DropdownItem>
+
         <DropdownItem key={'wtmx'} onPress={() => router.push('/')}>
           <div className={'w-full flex text-black items-center gap-3'}>
             <Image
@@ -44,7 +58,7 @@ const UserDropdown = ({ user, userData }: UserDropdownProps) => {
           </div>
         </DropdownItem>
 
-        <DropdownItem key={'wtbr'} onPress={() => router.push('/')}>
+        <DropdownItem key={'wtbr'} onPress={() => router.push('/')} showDivider>
           <div className={'w-full flex text-black items-center gap-3'}>
             <Image
               src={flagBrazil}
