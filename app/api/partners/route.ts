@@ -15,5 +15,7 @@ export async function GET(request: Request): Promise<void | Response> {
       return Response.json(error)
     }
 
-    return Response.json({ data })
+    const response = Response.json({data})
+
+    return response
 }
