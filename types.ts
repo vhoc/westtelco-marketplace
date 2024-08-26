@@ -134,6 +134,7 @@ export interface ICreateTeamFormFields {
   invite_admin: string
   invite_admin_confirmation: string
   sku_id: string
+  distribuitor_id?: number | undefined
 }
 
 export interface INewTeamData {
@@ -141,4 +142,5 @@ export interface INewTeamData {
   country_code: string
   invite_admin: string
   skus: Array<ISku>
+  distribuitor_id?: number | undefined
 }

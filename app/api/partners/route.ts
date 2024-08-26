@@ -9,6 +9,7 @@ export async function GET(request: Request): Promise<void | Response> {
   const { data, error } = await supabase
       .from('partner')
       .select('*')
+      .eq('distribuitor_id', process.env.DISTRIBUITOR_INTERNAL_ID)
 
     if (error) {
       console.error(`Error retrieving partners from database: `, error)

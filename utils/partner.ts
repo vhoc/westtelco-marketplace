@@ -35,17 +35,19 @@ export const getPartners = async (resellerIds?: Array<string> | undefined): Prom
       .from('partner')
       .select('*')
       .in('dropbox_reseller_id', resellerIds)
+      .eq('distribuitor_id', process.env.DISTRIBUITOR_INTERNAL_ID)
 
     if (error) {
       console.error(`Error retrieving partners from database: `, error)
       return []
     }
-
+    console.log(`getPartners data: `, data)
     return data
   } else {
     const { data, error } = await supabase
       .from('partner')
       .select('*')
+      .eq('distribuitor_id', process.env.DISTRIBUITOR_INTERNAL_ID)
 
     if (error) {
       console.error(`Error retrieving partners from database: `, error)

@@ -15,7 +15,6 @@ export async function createNewTeam(formData: FormData) {
     invite_admin: formData.get('invite_admin') as string,
     country_code: formData.get('country_code') as string,
     reseller_ids: process.env.API_ENV === "PROD" ? [ formData.get('reseller_id') as string ] : [],
-    // reseller_ids: [],// Uncomment this and comment the above for DEV environment.
     is_trial: formData.get('is_trial') as string || false,
     skus: [
       {
@@ -61,6 +60,7 @@ export async function createNewTeam(formData: FormData) {
         dropbox_reseller_id: createTeamResponse.data.reseller_ids[1] ? createTeamResponse.data.reseller_ids[1] : createTeamResponse.data.reseller_ids[0],
         contract_start: startDate,
         provisioning_method: "API",
+        distributor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
       }
     ])
     .select()

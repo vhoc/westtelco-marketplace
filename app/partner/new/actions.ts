@@ -35,12 +35,13 @@ export async function createNewPartner(formData: FormData) {
         address_postal_code: partnerData.address_postal_code,
         address_country: partnerData.address_country,
         currency: partnerData.currency,
+        distribuitor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
       }
     ])
     .select()
     .single()
 
-  console.log(`partnerResponse data: `, data)
+  // console.log(`partnerResponse data: `, data)
   const urlEncoded = encodeURIComponent(data?.id as string)
 
   if (error) {

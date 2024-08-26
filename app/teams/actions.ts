@@ -54,6 +54,10 @@ export const getAllTeams = async (): Promise<Array<ITeamData>> => {
     // revalidateTag('teams')
     const responseObject = await allTeams.json()
     if ( responseObject && responseObject.data && responseObject.data.teams && responseObject.data.teams.length >= 1 ) {
+      // console.log(`responseObject.data.teams: `, responseObject.data.teams)
+      // Filter only the current distribuitor's teams
+      // const distribuitorsTeams = responseObject.data.teams.filter((team: ITeamData & { distribuitor_id: number }) => team.distribuitor_id === Number(process.env.DISTRIBUITOR_INTERNAL_ID))
+      // console.log(`distribuitorsTeams: `, distribuitorsTeams)
       return responseObject.data.teams
     }
 

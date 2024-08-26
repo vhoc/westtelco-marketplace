@@ -1,12 +1,10 @@
 "use client";
-import { Input, Select, SelectItem, Switch, Skeleton } from "@nextui-org/react";
+import { Input, Select, SelectItem } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "../buttons/SubmitButton";
-import { getPartners } from "@/utils/partner-client";
-import { IPartner } from "@/types";
 
 interface CreatePartnerFormProps {
   message?: string | undefined
