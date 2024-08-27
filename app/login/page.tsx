@@ -65,7 +65,7 @@ export default function Login({
           )}
         </form>
         <div className={'flex justify-center gap-6 mt-10 w-full'}>
-          <Link href={'/'}>
+          <Link href={'https://market.wti.mx/'}>
             <Image
               src={flagMexico}
               width={28}
@@ -75,13 +75,13 @@ export default function Login({
             />
           </Link>
 
-          <Link href={'#'}>
+          <Link href={'https://brmarket.wti.mx/'}>
             <Image
               src={flagBrazil}
               width={28}
               height={28}
               alt="Marketplace de Brasil"
-              className={'grayscale cursor-not-allowed rounded-sm'}
+              className={'rounded-sm'}
             />
           </Link>
         </div>
