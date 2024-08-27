@@ -2,13 +2,15 @@ import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
 import getConfig from "next/config";
 import logoWt from '../../public/wt-logo-2024.png'
+import { isUserValid } from "@/utils/auth";
 
-
-export default function TeamsLayout({
+export default async function TeamsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  await isUserValid()
 
   const { publicRuntimeConfig } = getConfig();
 

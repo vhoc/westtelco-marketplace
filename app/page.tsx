@@ -1,20 +1,12 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
 import { Card } from "@nextui-org/react";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { isUserValid } from "@/utils/auth";
+// import { createClient } from "@/utils/supabase/server";
 
 export default async function Home({ searchParams }: { searchParams: { message: string } }) {
 
-  const supabase = createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if ( error || !data?.user ){
-    console.error(error)
-    return redirect('/login')
-  } else {
-    return redirect('/teams')
-  }
+  await isUserValid('/teams')
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
