@@ -59,7 +59,7 @@ export default function Login({
           />
 
           {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+            <p className="mt-4 p-4 bg-warning-200 text-foreground text-center rounded">
               {searchParams.message}
             </p>
           )}
