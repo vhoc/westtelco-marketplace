@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = 'force-dynamic' // defaults to auto
-export const revalidate = 120
+export const revalidate = 60
 
 export async function GET(request: Request): Promise<void | Response> {
   const supabase = createClient()

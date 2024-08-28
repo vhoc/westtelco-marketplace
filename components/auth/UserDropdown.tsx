@@ -20,7 +20,6 @@ const supabase = createClient()
 const UserDropdown = ({ user, userData }: UserDropdownProps) => {
 
   const router = useRouter()
-  console.log(userData)
 
   const [distribuitors, setDistribuitors] = useState<Array<{ id: number, name: string, marketplace_url: string, flag_base64: string }> | null>(null)
   const [isLoadingDistribuitors, setIsLoadingDistribuitors] = useState(true)
@@ -32,7 +31,6 @@ const UserDropdown = ({ user, userData }: UserDropdownProps) => {
         .select('id,name,marketplace_url,flag_base64,active')
         .eq('active', true)
 
-      console.log(`data: `, data)
 
       if (error) {
         console.error(error)
