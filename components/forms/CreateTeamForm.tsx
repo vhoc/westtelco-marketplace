@@ -5,13 +5,14 @@ import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "../buttons/SubmitButton";
-import { getPartners } from "@/utils/partner-client";
+// import { getPartners } from "@/utils/partner-client";
 import { IPartner } from "@/types";
 
 interface CreateTeamFormProps {
   message?: string | undefined
   formAction: any
   className?: string | undefined
+  partners: Array<IPartner>
 }
 
 interface ICreateTeamFormFields {
@@ -24,7 +25,7 @@ interface ICreateTeamFormFields {
   is_trial: string
 }
 
-const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps) => {
+const CreateTeamForm = ({ message, formAction, className, partners }: CreateTeamFormProps) => {
 
   const countries = [
     { name: "Argentina", code: "AR" },
@@ -47,8 +48,8 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
   const router = useRouter()
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const [partners, setPartners] = useState<Array<IPartner>>([])
-  const [isLoadingPartners, setIsLoadingPartners] = useState(true)
+  // const [partners, setPartners] = useState<Array<IPartner>>([])
+  // const [isLoadingPartners, setIsLoadingPartners] = useState(true)
   const [fields, setFields] = useState<ICreateTeamFormFields>({
     name: "",
     country_code: "MX",
@@ -66,21 +67,21 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
     }))
   }
 
-  // Get Partners from supabase
-  useEffect(() => {
-    getPartners()
-      .then(data => {
-        console.log(`Partners: `, data)
-        setPartners(data)
-      })
-      .catch(error => {
-        console.error(error)
-        setPartners([])
-      })
-      .finally(() => {
-        setIsLoadingPartners(false)
-      })
-  }, [])
+  // // Get Partners from supabase
+  // useEffect(() => {
+  //   getPartners()
+  //     .then(data => {
+  //       console.log(`Partners: `, data)
+  //       setPartners(data)
+  //     })
+  //     .catch(error => {
+  //       console.error(error)
+  //       setPartners([])
+  //     })
+  //     .finally(() => {
+  //       setIsLoadingPartners(false)
+  //     })
+  // }, [])
 
   // Fields validations
   useEffect(() => {
@@ -144,7 +145,6 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
         onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
       />
 
-      <Skeleton isLoaded={!isLoadingPartners} className={'rounded-xl'}>
         <Select
           isRequired
           name={'reseller_id'}
@@ -160,8 +160,6 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
             </SelectItem>
           ))}
         </Select>
-      </Skeleton>
-      <Skeleton isLoaded={!isLoadingPartners} className={'rounded-xl'}>
         <Input
           label={'RESELLER ID'}
           aria-label="reseller_id"
@@ -169,7 +167,6 @@ const CreateTeamForm = ({ message, formAction, className }: CreateTeamFormProps)
           isDisabled
           value={fields.reseller_id}
         />
-      </Skeleton>
 
 
       <div className="flex flex-col">
