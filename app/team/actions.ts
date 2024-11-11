@@ -85,3 +85,14 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
   return responseObject
 
 }
+
+export async function getPartners() {
+  const response = await fetch(`${ process.env.LOCAL_API_BASE_URL }/api/partners`, {
+    next: {
+      tags: ['partners']
+    }
+  })
+
+  const partners = await response.json()
+  return partners
+}

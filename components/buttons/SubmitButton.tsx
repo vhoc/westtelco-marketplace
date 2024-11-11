@@ -15,9 +15,10 @@ interface SubmitButtonProps {
   size?: "sm" | "md" | "lg" | undefined
   isLoading?: boolean | undefined
   setIsLoading?: Dispatch<SetStateAction<boolean>>
+  color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger" | undefined
 }
 
-export const SubmitButton = ( { formAction, loadingText = 'Cargando...', defaultText = 'Enviar', isLoading = false, setIsLoading, ...props }: SubmitButtonProps ) => {
+export const SubmitButton = ( { formAction, loadingText = 'Cargando...', defaultText = 'Enviar', isLoading = false, setIsLoading, color = 'default', ...props }: SubmitButtonProps ) => {
 
   const { pending: isBusy } = useFormStatus()
 
@@ -30,6 +31,7 @@ export const SubmitButton = ( { formAction, loadingText = 'Cargando...', default
   return (
     <Button
       type="submit"
+      color={color}
       isLoading={isBusy}
       radius={props.radius}
       className={props.className}

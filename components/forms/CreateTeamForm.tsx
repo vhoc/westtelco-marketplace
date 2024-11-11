@@ -1,11 +1,10 @@
 "use client";
-import { Input, Select, SelectItem, Switch, Skeleton } from "@nextui-org/react";
+import { Input, Select, SelectItem, Switch } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "../buttons/SubmitButton";
-// import { getPartners } from "@/utils/partner-client";
 import { IPartner } from "@/types";
 
 interface CreateTeamFormProps {
@@ -66,22 +65,6 @@ const CreateTeamForm = ({ message, formAction, className, partners }: CreateTeam
       [property]: value
     }))
   }
-
-  // // Get Partners from supabase
-  // useEffect(() => {
-  //   getPartners()
-  //     .then(data => {
-  //       console.log(`Partners: `, data)
-  //       setPartners(data)
-  //     })
-  //     .catch(error => {
-  //       console.error(error)
-  //       setPartners([])
-  //     })
-  //     .finally(() => {
-  //       setIsLoadingPartners(false)
-  //     })
-  // }, [])
 
   // Fields validations
   useEffect(() => {
@@ -145,28 +128,28 @@ const CreateTeamForm = ({ message, formAction, className, partners }: CreateTeam
         onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
       />
 
-        <Select
-          isRequired
-          name={'reseller_id'}
-          label="RESELLER PARTNER"
-          onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
-          selectedKeys={[fields.reseller_id]}
-          showScrollIndicators
-        >
-          {/* Exclude West Telco for now? */}
-          {partners.filter(item => item.dropbox_reseller_id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID).map((partner, index) => (
-            <SelectItem key={partner.dropbox_reseller_id || String(index)} className="text-black">
-              {partner.company_name}
-            </SelectItem>
-          ))}
-        </Select>
-        <Input
-          label={'RESELLER ID'}
-          aria-label="reseller_id"
-          isReadOnly
-          isDisabled
-          value={fields.reseller_id}
-        />
+      <Select
+        isRequired
+        name={'reseller_id'}
+        label="RESELLER PARTNER"
+        onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
+        selectedKeys={[fields.reseller_id]}
+        showScrollIndicators
+      >
+        {/* Exclude West Telco for now? */}
+        {partners.filter(item => item.dropbox_reseller_id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID).map((partner, index) => (
+          <SelectItem key={partner.dropbox_reseller_id || String(index)} className="text-black">
+            {partner.company_name}
+          </SelectItem>
+        ))}
+      </Select>
+      <Input
+        label={'RESELLER ID'}
+        aria-label="reseller_id"
+        isReadOnly
+        isDisabled
+        value={fields.reseller_id}
+      />
 
 
       <div className="flex flex-col">
@@ -196,7 +179,6 @@ const CreateTeamForm = ({ message, formAction, className, partners }: CreateTeam
           {message}
         </Toast>
       )}
-
 
       <SubmitButton
         radius={'sm'}

@@ -41,7 +41,6 @@ export const getPartners = async (resellerIds?: Array<string> | undefined): Prom
       console.error(`Error retrieving partners from database: `, error)
       return []
     }
-    console.log(`getPartners data: `, data)
     return data
   } else {
     const { data, error } = await supabase
