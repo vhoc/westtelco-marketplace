@@ -6,7 +6,10 @@ import "./globals.css";
 import { Providers } from "./providers";
 config.autoAddCss = false;
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: "West Telco Marketplace",
@@ -20,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body className={inter.className}>
           <Providers>
             <main className="min-h-screen flex flex-col items-center bg-[#f4f4f5] min-w-[768px]">

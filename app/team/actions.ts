@@ -96,3 +96,14 @@ export async function getPartners() {
   const partners = await response.json()
   return partners
 }
+
+export async function getSkus() {
+  const response = await fetch(`${ process.env.LOCAL_API_BASE_URL }/api/skus`, {
+    next: {
+      tags: ['skus']
+    }
+  })
+
+  const skus = await response.json()
+  return skus
+}

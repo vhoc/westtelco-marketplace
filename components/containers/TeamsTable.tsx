@@ -9,9 +9,9 @@ import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
 import { getAllTeams } from "@/app/teams/actions"
 import { getPartners } from "@/utils/partner"
-import FindTeamForm from "../forms/FindTeamForm"
-import { navigateToTeam } from "@/app/teams/actions"
-import { refetchTeams } from "@/app/teams/actions"
+// import FindTeamForm from "../forms/FindTeamForm"
+// import { navigateToTeam } from "@/app/teams/actions"
+// import { refetchTeams } from "@/app/teams/actions"
 
 const TeamsTable = () => {
 
@@ -129,7 +129,7 @@ const TeamsTable = () => {
 
           <div className="flex flex-col items-end gap-y-3">
             <div className={'flex gap-4 justify-end'}>
-              <Button
+              {/* <Button
                 size={'sm'}
                 className={'bg-black text-white cursor-not-allowed'}
                 endContent={<FontAwesomeIcon icon={faPeoplePulling} color={'white'} />}
@@ -137,7 +137,7 @@ const TeamsTable = () => {
                 isDisabled={true}
               >
                 Importar Cliente
-              </Button>
+              </Button> */}
               <Button
                 size={'sm'}
                 color={'primary'}
