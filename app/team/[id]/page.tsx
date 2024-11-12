@@ -2,7 +2,6 @@
 import { Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
-import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
 import { getTeam } from "../actions"
 import { getSkuInfo } from "@/utils/licenses"
