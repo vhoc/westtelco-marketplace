@@ -19,11 +19,29 @@ const requestOptions = {
  */
 export async function GET(
   request: Request,
-  { params }: { params: { teamId: string, resellerId: string } }
+  { params }: { params: { teamId: string } }
 ) {
 
+  const url = new URL(request.url);
+  const resellerId = url.searchParams.get('resellerId');
+
   const teamId = params.teamId
-  const resellerIds = process.env.API_ENV === "PROD" ? [params.resellerId] : [] // If we're calling the TEST environment, send an empty array.
+  const resellerIds = process.env.API_ENV === "PROD" ? [resellerId] : [] // If we're calling the TEST environment, send an empty array.
+  // console.log(`DEBUG: app/api/teams/[teamId]::GET params: `, params)
+  // console.log(`DEBUG: app/api/teams/[teamId]::GET resellerId: `, resellerId)
+  // console.log(`DEBUG: app/api/teams/[teamId]::GET params.teamId: `, params.teamId)
+  // console.log(`DEBUG: app/api/teams/[teamId]::GET params.resellerId: `, params.resellerId)
+
+  // console.log(`DEBUG: app/api/teams/[teamId]::GET fetch call: `, JSON.stringify({
+  //   fetchUrl: `${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
+  //   body: {
+  //     "environment": process.env.API_ENV,
+  //     "id": teamId,
+  //     "reseller_ids": resellerIds,
+  //     "country": process.env.DISTRIBUITOR_COUNTRY,
+  //   }
+  // }, null, 1))
+
 
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
@@ -32,7 +50,7 @@ export async function GET(
         body: JSON.stringify({
           "environment": process.env.API_ENV,
           "id": teamId,
-          "resellerIds": resellerIds,
+          "reseller_ids": resellerIds,
           "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
         next: {
@@ -42,6 +60,9 @@ export async function GET(
         }
       }
     )
+
+    // This causes a Body is unusable error if it remains uncommented.
+    // console.log(`DEBUG: app/api/teams/[teamId]::GET fetch response: `, await response.json())
 
     if (!response.ok) {
       return Response.json(
@@ -55,6 +76,7 @@ export async function GET(
     revalidateTag('team' + teamId)
 
     const data = await response.json()
+    // console.log(`data: `, data)
     return Response.json(data, { status: 200 })
 
   } catch (error) {

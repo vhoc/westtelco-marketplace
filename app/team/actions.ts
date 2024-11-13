@@ -1,5 +1,5 @@
 "use server"
-import { IApiErrorResponse, ISku, ITeamApiResponse, ITeamData } from "@/types"
+import {  ISku, ITeamApiResponse } from "@/types"
 import { revalidateTag } from "next/cache"
 
 /**
@@ -7,8 +7,16 @@ import { revalidateTag } from "next/cache"
  */
 export const getTeam = async (teamId: string, resellerId?: string | null | undefined) => {
   "use server"
+  // console.log(`DEBUG: app/team/actions/getTeam: teamId: `, teamId)
+  // console.log(`DEBUG: app/team/actions/getTeam: resellerId: `, resellerId)
 
-  const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}${resellerId && resellerId.length >= 1 ? `?resellerId=${resellerId}` : ''}`,
+  const fetchUrl = resellerId ? `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}?resellerId=${resellerId}`
+                              : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
+
+  // console.log(`DEBUG: app/team/actions/getTeam: fetchUrl: `, fetchUrl)
+  
+// console.log(`DEBUG: app/team/actions/getTeam: fetch call: `, `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}${resellerId && resellerId.length >= 1 ? `?resellerId=${resellerId}` : ''}`)
+  const response = await fetch(fetchUrl,
     {
       headers: {
         'Content-Type': 'application/json',
@@ -21,6 +29,8 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
       }
     }
   )
+
+  // console.log(`DEBUG: app/team/actions/getTeam: fetch response: `, await response.json())
 
   if (!response.ok) {
     return Response.json(
