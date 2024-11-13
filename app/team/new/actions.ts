@@ -24,7 +24,7 @@ export async function createNewTeam(formData: FormData) {
     ]
   }
 
-  console.log(`teamData: `, teamData)
+  console.log(`teamData: `, JSON.stringify(teamData, null, 1))
 
   const createTeamResponse = await createTeam(teamData)
   // console.log(`createTeamResponse: `, createTeamResponse)

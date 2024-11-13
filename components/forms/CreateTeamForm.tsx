@@ -227,7 +227,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                   onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
                 />
 
-                {/* <Select
+                <Select
                 isRequired
                 name={'reseller_id'}
                 label="RESELLER PARTNER"
@@ -247,7 +247,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                 isReadOnly
                 isDisabled
                 value={fields.reseller_id}
-              /> */}
+              />
 
 
                 {/* <div className="flex flex-col">
