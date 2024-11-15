@@ -88,35 +88,36 @@ const requestOptions = {
 // }
 
 export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiResponse> => {
-  console.log(`teamData: `, JSON.stringify({
-    ...teamData,
-    "environment": process.env.API_ENV,
-    "country": process.env.DISTRIBUITOR_COUNTRY,
-  }))
+  // console.log(`teamData: `, JSON.stringify({
+  //   ...teamData,
+  //   "environment": process.env.API_ENV,
+  //   "country": process.env.DISTRIBUITOR_COUNTRY,
+  // }))
 
-  // const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
-  //   ...requestOptions,
-  //   body: JSON.stringify({
-  //     ...teamData,
-  //     "environment": process.env.API_ENV,
-  //     "country": process.env.DISTRIBUITOR_COUNTRY,
-  //   }),
-  //   next: {
-  //     tags: [
-  //       'team'
-  //     ]
-  //   }
-  // })
+  const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
+    ...requestOptions,
+    body: JSON.stringify({
+      ...teamData,
+      "environment": process.env.API_ENV,
+      "country": process.env.DISTRIBUITOR_COUNTRY,
+    }),
+    next: {
+      tags: [
+        'team'
+      ]
+    }
+  })
 
 
-  // if (!response.ok) {
-  //   const error = await response.json()
+  if (!response.ok) {
+    const error = await response.json()
 
-  //   return { code: error.code, message: error.data.user_message?.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
-  // }
-  // revalidateTag('team')
-  // const responseObject = await response.json()
-  // return responseObject
+    return { code: error.code, message: error.data.user_message?.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
+  }
+  revalidateTag('team')
+  const responseObject = await response.json()
+  // console.log(`Newly created team: `, JSON.stringify(responseObject, null, 1))
+  return responseObject
 
 }
 

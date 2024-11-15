@@ -3,11 +3,12 @@ import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from
 import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { SubmitButton } from "../buttons/SubmitButton";
 import { IPartner, ISkuInfo } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import clsx from "clsx";
 
 interface CreateTeamFormProps {
   message?: string | undefined
@@ -50,7 +51,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
     { name: "Uruguay", code: "UY" },
   ]
 
-  const router = useRouter()
+  // const router = useRouter()
   const [currentPage, setCurrentPage] = useState(1)
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [baseSkuIncludedUsers, setBaseSkuIncludedUsers] = useState(3)
@@ -161,7 +162,12 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
               color={'default'}
               className="rounded-md bg-white text-[#006FEE]"
               size={'sm'}
-              onPress={() => setCurrentPage(1)}
+              onPress={() => {
+                setSelectedCommitmentType("")
+                handleUpdateFields('sku_id', '')
+                setLicenseSku('')
+                setCurrentPage(1)
+              }}
             >
               Regresar
             </Button>
@@ -180,77 +186,75 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
         <form action={formAction} className={className}>
 
           {/* STEP 1 */}
-          {
-            currentPage === 1 ?
-              <div className="flex flex-col gap-4">
-                <Input
-                  name={'name'}
-                  label={'NOMBRE DEL CLIENTE'}
-                  aria-label="name"
-                  isRequired
-                  value={fields.name}
-                  onChange={(event) => handleUpdateFields('name', event.target.value)}
-                  maxLength={20}
-                />
+          <div className={clsx(currentPage === 1 ? 'flex flex-col gap-4 transition-all' : 'hidden transition-all')}>
+            <Input
+              name={'name'}
+              label={'NOMBRE DEL CLIENTE'}
+              aria-label="name"
+              isRequired
+              value={fields.name}
+              onChange={(event) => handleUpdateFields('name', event.target.value)}
+              maxLength={20}
+            />
 
-                <Select
-                  isRequired
-                  name={'country_code'}
-                  label="CÓDIGO DEL PAÍS"
-                  // defaultSelectedKeys={["cat"]}
-                  onChange={(event) => handleUpdateFields('country_code', event.target.value)}
-                  selectedKeys={[fields.country_code]}
-                  showScrollIndicators
-                >
-                  {countries.map((country) => (
-                    <SelectItem key={country.code} className="text-black">
-                      {country.name}
-                    </SelectItem>
-                  ))}
-                </Select>
+            <Select
+              isRequired
+              name={'country_code'}
+              label="CÓDIGO DEL PAÍS"
+              // defaultSelectedKeys={["cat"]}
+              onChange={(event) => handleUpdateFields('country_code', event.target.value)}
+              selectedKeys={[fields.country_code]}
+              showScrollIndicators
+            >
+              {countries.map((country) => (
+                <SelectItem key={country.code} className="text-black">
+                  {country.name}
+                </SelectItem>
+              ))}
+            </Select>
 
-                <Input
-                  name={'invite_admin'}
-                  label={'E-MAIL DEL CLIENTE PARA ENVIAR INVITACIÓN'}
-                  aria-label="Invite admin Email"
-                  isRequired
-                  value={fields.invite_admin}
-                  onChange={(event) => handleUpdateFields('invite_admin', event.target.value)}
-                />
+            <Input
+              name={'invite_admin'}
+              label={'E-MAIL DEL CLIENTE PARA ENVIAR INVITACIÓN'}
+              aria-label="Invite admin Email"
+              isRequired
+              value={fields.invite_admin}
+              onChange={(event) => handleUpdateFields('invite_admin', event.target.value)}
+            />
 
-                <Input
-                  name={'invite_admin_confirmation'}
-                  label={'CONFIRMAR E-MAIL'}
-                  aria-label="Invite admin Email confirmation"
-                  isRequired
-                  value={fields.invite_admin_confirmation}
-                  onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
-                />
+            <Input
+              name={'invite_admin_confirmation'}
+              label={'CONFIRMAR E-MAIL'}
+              aria-label="Invite admin Email confirmation"
+              isRequired
+              value={fields.invite_admin_confirmation}
+              onChange={(event) => handleUpdateFields('invite_admin_confirmation', event.target.value)}
+            />
 
-                <Select
-                isRequired
-                name={'reseller_id'}
-                label="RESELLER PARTNER"
-                onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
-                selectedKeys={[fields.reseller_id]}
-                showScrollIndicators
-              >
-                {partners.filter(item => item.dropbox_reseller_id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID).map((partner, index) => (
-                  <SelectItem key={partner.dropbox_reseller_id || String(index)} className="text-black">
-                    {partner.company_name}
-                  </SelectItem>
-                ))}
-              </Select>
-              <Input
-                label={'RESELLER ID'}
-                aria-label="reseller_id"
-                isReadOnly
-                isDisabled
-                value={fields.reseller_id}
-              />
+            <Select
+              isRequired
+              name={'reseller_id'}
+              label="RESELLER PARTNER"
+              onChange={(event) => handleUpdateFields('reseller_id', event.target.value)}
+              selectedKeys={[fields.reseller_id]}
+              showScrollIndicators
+            >
+              {partners.filter(item => item.dropbox_reseller_id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID).map((partner, index) => (
+                <SelectItem key={partner.dropbox_reseller_id || String(index)} className="text-black">
+                  {partner.company_name}
+                </SelectItem>
+              ))}
+            </Select>
+            <Input
+              label={'RESELLER ID'}
+              aria-label="reseller_id"
+              isReadOnly
+              isDisabled
+              value={fields.reseller_id}
+            />
 
 
-                {/* <div className="flex flex-col">
+            {/* <div className="flex flex-col">
                 <div className="text-left text-[12px] font-medium text-default-500">SKU BASE</div>
                 <Input
                   name={'sku_id'}
@@ -265,221 +269,208 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
 
                */}
 
-                {message && (
-                  <Toast type={'warning'}>
-                    {message}
-                  </Toast>
-                )}
+            <RadioGroup
+              label={'Selecciona producto de Dropbox'}
+              className="text-left"
+              value={brand}
+              onValueChange={setBrand as ((value: string) => void) | undefined}
+            >
+              <Radio value={'dropbox'} >Dropbox</Radio>
+              <Radio value={'sign'} >Sign</Radio>
+            </RadioGroup>
 
-                <RadioGroup
-                  label={'Selecciona producto de Dropbox'}
-                  className="text-left"
-                  value={brand}
-                  onValueChange={setBrand as ((value: string) => void) | undefined}
-                >
-                  <Radio value={'dropbox'} >Dropbox</Radio>
-                  <Radio value={'sign'} >Sign</Radio>
-                </RadioGroup>
-
-                <Button
-                  color={'default'}
-                  radius="sm"
-                  className="w-full"
-                  // formAction={formAction}
-                  size="lg"
-                  isDisabled={isSubmitDisabled}
-                  onClick={() => setCurrentPage(2)}
-                >
-                  Continuar
-                </Button>
-
-
-
-
-              </div>
-              :
-              null
-          }
-
+            <Button
+              color={'default'}
+              radius="sm"
+              className="w-full"
+              // formAction={formAction}
+              size="lg"
+              isDisabled={isSubmitDisabled}
+              onClick={() => setCurrentPage(2)}
+            >
+              Continuar
+            </Button>
+          </div>
 
           {/* STEP 2 */}
-          {
-            currentPage === 2 ?
-              <div className="flex flex-col gap-4">
+          <div className={clsx(currentPage === 2 ? 'flex flex-col gap-4 transition-all' : 'hidden transition-all')}>
+            <Select
+              isRequired
+              name={'commitment_type'}
+              label="SELECCIONA MODALIDAD DE COSTO Y PAGO"
+              // defaultSelectedKeys={["cat"]}
+              onChange={(event) => {
+                setSelectedCommitmentType(event.target.value)
+                handleUpdateFields('sku_id', '')
+              }}
+              selectedKeys={[selectedCommitmentType]}
+              showScrollIndicators
+            >
+              {commitmentTypes.map((item) => (
+                <SelectItem key={item.value} className="text-black">
+                  {item.description}
+                </SelectItem>
+              ))}
+            </Select>
+
+            {
+              shownSkus && shownSkus.length >= 1 ?
                 <Select
                   isRequired
-                  name={'commitment_type'}
-                  label="SELECCIONA MODALIDAD DE COSTO Y PAGO"
+                  name={'sku_id'}
+                  label="Seleccione SKU base"
                   // defaultSelectedKeys={["cat"]}
-                  onChange={(event) => {
-                    setSelectedCommitmentType(event.target.value)
-                    handleUpdateFields('sku_id', '')
-                  }}
-                  selectedKeys={[selectedCommitmentType]}
+                  onChange={(event) => handleUpdateFields('sku_id', event.target.value)}
+                  selectedKeys={[fields.sku_id]}
                   showScrollIndicators
                 >
-                  {commitmentTypes.map((item) => (
-                    <SelectItem key={item.value} className="text-black">
-                      {item.description}
+                  {shownSkus.map((sku) => (
+                    <SelectItem key={sku.sku_base} className="text-black">
+                      {sku.description}
                     </SelectItem>
                   ))}
                 </Select>
+                :
+                null
+            }
 
-                {
-                  shownSkus && shownSkus.length >= 1 ?
-                    <Select
-                      isRequired
-                      name={'sku_id'}
-                      label="Seleccione SKU base"
-                      // defaultSelectedKeys={["cat"]}
-                      onChange={(event) => handleUpdateFields('sku_id', event.target.value)}
-                      selectedKeys={[fields.sku_id]}
-                      showScrollIndicators
-                    >
-                      {shownSkus.map((sku) => (
-                        <SelectItem key={sku.sku_base} className="text-black">
-                          {sku.description}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                    :
-                    null
-                }
+            {/* IS TRIAL SWITCH */}
+            { // Annual price, per license per month' doesn't support TRIAL
+              fields.sku_id.length >= 1 && selectedCommitmentType !== 'month-annual-payment' ?
+                <div className="flex justify-between items-center gap-2 mt-4">
+                  <div className="flex flex-col">
+                    <span className="text-sm leading-5 font-medium text-left">Activar trial de 30 días</span>
+                    <span className="text-default-500 text-left text-xs">Las licencias se renovarán automáticamente al expirar</span>
+                  </div>
 
-                {/* IS TRIAL SWITCH */}
-                { // Annual price, per license per month' doesn't support TRIAL
-                  fields.sku_id.length >= 1 && selectedCommitmentType !== 'month-annual-payment' ?
-                    <div className="flex justify-between items-center gap-2 mt-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm leading-5 font-medium text-left">Activar trial de 30 días</span>
-                        <span className="text-default-500 text-left text-xs">Las licencias se renovarán automáticamente al expirar</span>
-                      </div>
-
-                      <Switch
-                        name={'is_trial'}
-                        isSelected={fields.is_trial === "true"}
-                        value={fields.is_trial}
-                        onValueChange={(value) => handleUpdateFields('is_trial', String(value))}
-                      >
-                      </Switch>
-                    </div>
-                    :
-                    null
-                }
-
-                {/* LICENSES AMOUNTS */}
-                {
-                  fields.sku_id.length >= 1 ?
-                    <>
-                      <div className="text-medium text-default-500 text-left mt-4">Introduce cantidad de licencias</div>
-
-                      <div className="flex flex-col gap-2">
-
-                        {/* SKU BASE */}
-                        <div className="flex justify-between gap-2 items-center">
-                          <div className="flex flex-col">
-                            <span className="text-sm leading-5 font-medium text-left">Licencias en SKU base</span>
-                            <span className="text-default-500 text-left text-xs">{fields.sku_id}</span>
-                          </div>
-
-                          <Input
-                            readOnly
-                            type={'number'}
-                            variant={'bordered'}
-                            value={String(baseSkuIncludedUsers)}
-                            size={'lg'}
-                            isDisabled
-                            className="max-w-24 w-"
-                            classNames={{
-                              input: [
-                                "text-center text-sm",
-                                "pl-3",
-                              ],
-                              inputWrapper: [
-                                "min-w-20",
-                                "h-14",
-                                "bg-default-100"
-                              ]
-                            }}
-                          />
-                        </div>
-
-                        {/* SKU LICENSE */}
-                        <div className="flex justify-between gap-2 items-center">
-                          <div className="flex flex-col">
-                            <span className="text-sm leading-5 font-medium text-left">Licencias adicionales</span>
-                            <span className="text-default-500 text-left text-xs">{licenseSku}</span>
-                          </div>
-
-                          <Input
-                            type={'number'}
-                            variant={'bordered'}
-                            value={String(fields.license_sku_quantity)}
-                            size={'lg'}
-                            onChange={(event) => handleUpdateFields('license_sku_quantity', event.target.value)}
-                            min={0}
-                            className="max-w-24"
-                            classNames={{
-                              input: [
-                                "text-center text-sm",
-                                "pl-3",
-                              ],
-                              inputWrapper: [
-                                "min-w-20",
-                                "h-14",
-                                "bg-white"
-                              ]
-                            }}
-                          />
-                        </div>
-
-                        <div className="flex justify-between items-center bg-default-100 rounded-md py-2 pl-2 pr-11">
-                          <span className="text-xs text-default-500">Total de licencias</span>
-                          <span className="text-xs text-default-500">{Number(fields.license_sku_quantity) + baseSkuIncludedUsers}</span>
-                        </div>
-
-                        {/* WARNING MESSAGE */}
-                        <div className="bg-warning-100 rounded-lg py-3 px-3 flex gap-4 mt-2">
-                          <FontAwesomeIcon icon={faTriangleExclamation} color="#F5A524" size="lg" />
-
-                          <div className="flex flex-col">
-                            <p className="font-semibold text-sm text-warning-foreground text-left">Revisa la configuración antes de completar.</p>
-                            <p className="text-sm leading-5 font-normal text-warning-foreground text-left">
-                              Al finalizar éste paso se provisionarán las licencias de inmediato.
-                            </p>
-                          </div>
-                        </div>
-
-                        <SubmitButton
-                          radius={'sm'}
-                          color={'primary'}
-                          className="w-full mt-2"
-                          formAction={formAction}
-                          size={'lg'}
-                          loadingText="Creando cliente..."
-                          defaultText="Completar"
-                          isDisabled={isSubmitDisabled}
-                          setIsLoading={setIsLoading}
-                        />
-
-                      </div>
-                    </>
-                    :
-                    null
-                }
-
-
-                <div className="flex flex-col text-left">
-                  selectedCommitmentType: {selectedCommitmentType}<br />
-                  sku_id: {fields.sku_id}<br />
-                  skuInfo: <pre>{JSON.stringify(shownSkus?.filter(sku => sku.sku_base === fields.sku_id), null, 3)}</pre>
+                  <Switch
+                    name={'is_trial'}
+                    isSelected={fields.is_trial === "true"}
+                    value={fields.is_trial}
+                    onValueChange={(value) => handleUpdateFields('is_trial', String(value))}
+                  >
+                  </Switch>
                 </div>
+                :
+                null
+            }
 
+            {/* LICENSES AMOUNTS */}
+            {
+              fields.sku_id.length >= 1 ?
+                <>
+                  <div className="text-medium text-default-500 text-left mt-4">Introduce cantidad de licencias</div>
 
-              </div>
-              :
-              null
-          }
+                  <div className="flex flex-col gap-2">
+
+                    {/* SKU BASE */}
+                    <div className="flex justify-between gap-2 items-center">
+                      <div className="flex flex-col">
+                        <span className="text-sm leading-5 font-medium text-left">Licencias en SKU base</span>
+                        <span className="text-default-500 text-left text-xs">{fields.sku_id}</span>
+                      </div>
+
+                      <Input
+                        readOnly
+                        type={'number'}
+                        variant={'bordered'}
+                        value={String(baseSkuIncludedUsers)}
+                        size={'lg'}
+                        isDisabled
+                        className="max-w-24 w-"
+                        classNames={{
+                          input: [
+                            "text-center text-sm",
+                            "pl-3",
+                          ],
+                          inputWrapper: [
+                            "min-w-20",
+                            "h-14",
+                            "bg-default-100"
+                          ]
+                        }}
+                      />
+                    </div>
+
+                    {/* SKU LICENSE */}
+                    <div className="flex justify-between gap-2 items-center">
+                      <div className="flex flex-col">
+                        <span className="text-sm leading-5 font-medium text-left">Licencias adicionales</span>
+                        <span className="text-default-500 text-left text-xs">{licenseSku}</span>
+                      </div>
+                      <Input type={'hidden'} name="licenseSku" value={licenseSku}/>
+
+                      <Input
+                        name={'license_sku_quantity'}
+                        type={'number'}
+                        variant={'bordered'}
+                        value={String(fields.license_sku_quantity)}
+                        size={'lg'}
+                        onChange={(event) => handleUpdateFields('license_sku_quantity', event.target.value)}
+                        min={0}
+                        className="max-w-24"
+                        classNames={{
+                          input: [
+                            "text-center text-sm",
+                            "pl-3",
+                          ],
+                          inputWrapper: [
+                            "min-w-20",
+                            "h-14",
+                            "bg-white"
+                          ]
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex justify-between items-center bg-default-100 rounded-md py-2 pl-2 pr-11">
+                      <span className="text-xs text-default-500">Total de licencias</span>
+                      <span className="text-xs text-default-500">{Number(fields.license_sku_quantity) + baseSkuIncludedUsers}</span>
+                    </div>
+
+                    {/* WARNING MESSAGE */}
+                    <div className="bg-warning-100 rounded-lg py-3 px-3 flex gap-4 mt-2">
+                      <FontAwesomeIcon icon={faTriangleExclamation} color="#F5A524" size="lg" />
+
+                      <div className="flex flex-col">
+                        <p className="font-semibold text-sm text-warning-foreground text-left">Revisa la configuración antes de completar.</p>
+                        <p className="text-sm leading-5 font-normal text-warning-foreground text-left">
+                          Al finalizar éste paso se provisionarán las licencias de inmediato.
+                        </p>
+                      </div>
+                    </div>
+
+                    {message && (
+                      <Toast type={ message.startsWith('ERROR:') ? 'error' : 'warning'}>
+                        {message}
+                      </Toast>
+                    )}
+
+                    <SubmitButton
+                      radius={'sm'}
+                      color={'primary'}
+                      className="w-full mt-2"
+                      formAction={formAction}
+                      size={'lg'}
+                      loadingText="Creando cliente..."
+                      defaultText="Completar"
+                      isDisabled={isSubmitDisabled}
+                      setIsLoading={setIsLoading}
+                    />
+
+                  </div>
+                </>
+                :
+                null
+            }
+
+            {/* <div className="flex flex-col text-left">
+              selectedCommitmentType: {selectedCommitmentType}<br />
+              sku_id: {fields.sku_id}<br />
+              skuInfo: <pre>{JSON.stringify(shownSkus?.filter(sku => sku.sku_base === fields.sku_id), null, 3)}</pre>
+            </div> */}
+
+          </div>
 
 
         </form>

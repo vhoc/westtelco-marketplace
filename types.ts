@@ -5,7 +5,7 @@ export interface ISkuValidationResponse {
 
 export interface ISku {
   sku_id: string
-  quantity: number
+  quantity: number | string
 }
 
 export interface ISkuInfo {
