@@ -20,18 +20,29 @@ export async function createNewTeam(formData: FormData) {
       {
         "sku_id": formData.get('sku_id') as string,
         "quantity": 1
+      },
+      {
+        "sku_id": formData.get('licenseSku') as string,
+        "quantity": Number(formData.get('license_sku_quantity') as string)
       }
     ]
   }
 
-  console.log(`teamData: `, teamData)
+  // console.log(`teamData: `, JSON.stringify(teamData, null, 1))
 
   const createTeamResponse = await createTeam(teamData)
   // console.log(`createTeamResponse: `, createTeamResponse)
 
 
   if (createTeamResponse.code !== 200 || !createTeamResponse.data) {
+
+    // Email already exists
+    if ( createTeamResponse.message.error_summary.startsWith('user_on_another_team') ) {
+      return redirect(`/team/new?message=${encodeURI('ERROR: El email que has ingresado ya existe en otra cuenta.')}`)
+    }
+
     const errorMessage = createTeamResponse.message && createTeamResponse.message.error_summary ? createTeamResponse.message.error_summary : 'Error desconocido'
+
     return redirect(`/team/new?message=${encodeURI(errorMessage || 'Error desconocido.')}`)
   }
 
@@ -76,15 +87,4 @@ export async function createNewTeam(formData: FormData) {
 
 
   return redirect(`/team/${urlEncoded}`);
-}
-
-export async function getPartners() {
-  const response = await fetch(`${ process.env.LOCAL_API_BASE_URL }/api/partners`, {
-    next: {
-      tags: ['partners']
-    }
-  })
-
-  const partners = await response.json()
-  return partners
 }

@@ -4,14 +4,14 @@ import React, { useState, useMemo, useEffect, useCallback } from "react"
 import { Input, Button, Skeleton } from "@nextui-org/react"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip, Progress } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass, faUserPlus, faPencil } from "@fortawesome/free-solid-svg-icons"
+import { faMagnifyingGlass, faUserPlus, faPencil, faPeoplePulling } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
 import { getAllTeams } from "@/app/teams/actions"
 import { getPartners } from "@/utils/partner"
-import FindTeamForm from "../forms/FindTeamForm"
-import { navigateToTeam } from "@/app/teams/actions"
-import { refetchTeams } from "@/app/teams/actions"
+// import FindTeamForm from "../forms/FindTeamForm"
+// import { navigateToTeam } from "@/app/teams/actions"
+// import { refetchTeams } from "@/app/teams/actions"
 
 const TeamsTable = () => {
 
@@ -131,11 +131,12 @@ const TeamsTable = () => {
             <div className={'flex gap-4 justify-end'}>
               {/* <Button
                 size={'sm'}
-                className={'bg-black text-white'}
-                endContent={<FontAwesomeIcon icon={faMagnifyingGlass} color={'white'} />}
-                onPress={onOpen}
+                className={'bg-black text-white cursor-not-allowed'}
+                endContent={<FontAwesomeIcon icon={faPeoplePulling} color={'white'} />}
+                onPress={() => router.push('/team/import')}
+                isDisabled={true}
               >
-                Buscar por TEAM ID
+                Importar Cliente
               </Button> */}
               <Button
                 size={'sm'}

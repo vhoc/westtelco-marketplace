@@ -89,41 +89,36 @@ const requestOptions = {
 
 export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiResponse> => {
   // console.log(`teamData: `, JSON.stringify({
-  //         ...teamData,
-  //         "environment": process.env.API_ENV,
-  //         "country": process.env.DISTRIBUITOR_COUNTRY,
-  //       }))
-  // try {
-    const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
-      ...requestOptions,
-      body: JSON.stringify({
-        ...teamData,
-        "environment": process.env.API_ENV,
-        "country": process.env.DISTRIBUITOR_COUNTRY,
-      }),
-      next: {
-        tags: [
-          'team'
-        ]
-      }
-    })
+  //   ...teamData,
+  //   "environment": process.env.API_ENV,
+  //   "country": process.env.DISTRIBUITOR_COUNTRY,
+  // }))
 
-
-    if (!response.ok) {
-      const error = await response.json()
-
-      return { code: error.code, message: error.data.user_message?.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
+  const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
+    ...requestOptions,
+    body: JSON.stringify({
+      ...teamData,
+      "environment": process.env.API_ENV,
+      "country": process.env.DISTRIBUITOR_COUNTRY,
+    }),
+    next: {
+      tags: [
+        'team'
+      ]
     }
-    revalidateTag('team')
-    const responseObject = await response.json()
-    // console.log(`responseObject: `, responseObject)
-    return responseObject
+  })
 
-  // } catch (error) {
-  //   console.error('There was an error!', error);
-  //   //@ts-ignore
-  //   return { code: 400, message: error.message }
-  // }
+
+  if (!response.ok) {
+    const error = await response.json()
+
+    return { code: error.code, message: error.data.user_message?.text ? error.data.user_message.text : error.data ? error.data : 'Hubo un error al intentar crear el cliente.' }
+  }
+  revalidateTag('team')
+  const responseObject = await response.json()
+  // console.log(`Newly created team: `, JSON.stringify(responseObject, null, 1))
+  return responseObject
+
 }
 
 /**
@@ -141,35 +136,35 @@ export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Pr
   //   "reseller_ids": resellerIds
   // }))
   // try {
-    const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
-      {
-        ...requestOptions,
-        body: JSON.stringify({
-          "id": teamId,
-          "environment": process.env.API_ENV,
-          "reseller_ids": [],
-          "country": process.env.DISTRIBUITOR_COUNTRY,
-        }),
-        next: {
-          tags: [
-            'team'
-          ]
-        }
+  const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
+    {
+      ...requestOptions,
+      body: JSON.stringify({
+        "id": teamId,
+        "environment": process.env.API_ENV,
+        "reseller_ids": [resellerIds.find(resellerId => resellerId !== process.env.DISTRIBUITOR_ID)],// Select only the reseller ID that is not the distribuitor's
+        "country": process.env.DISTRIBUITOR_COUNTRY,
+      }),
+      next: {
+        tags: [
+          'team'
+        ]
       }
-    )
-
-    // console.log(`response: `, await response.json())
-
-    if (!response.ok) {
-      const error = await response.json()
-      const errorMessage = error && error.data && error.data.error_summary ? error.data.error_summary : 'Error desconocido al intentar suspender al cliente.'
-      // console.log(`Error: `, error)
-      return { code: error.code, message: errorMessage }
     }
-    revalidateTag('team')
-    const responseObject = await response.json()
-    // console.log(`responseObject: `, responseObject)
-    return responseObject
+  )
+
+  // console.log(`response: `, await response.json())
+
+  if (!response.ok) {
+    const error = await response.json()
+    const errorMessage = error && error.data && error.data.error_summary ? error.data.error_summary : 'Error desconocido al intentar suspender al cliente.'
+    // console.log(`Error: `, error)
+    return { code: error.code, message: errorMessage }
+  }
+  revalidateTag('team')
+  const responseObject = await response.json()
+  // console.log(`responseObject: `, responseObject)
+  return responseObject
 
   // } catch (error) {
   //   console.error('There was an error!', error);
