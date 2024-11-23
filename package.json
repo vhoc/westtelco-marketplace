@@ -1,6 +1,6 @@
 {
   "name": "westtelco-marketplace",
-  "version": "0.5.7",
+  "version": "0.6.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,6 +15,7 @@
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.5",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^11.2.11",
     "next": "14.2.4",
     "react": "^18",
