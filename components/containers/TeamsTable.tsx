@@ -1,17 +1,17 @@
 //@ts-nocheck
 "use client"
 import React, { useState, useMemo, useEffect, useCallback } from "react"
-import { Input, Button, Skeleton } from "@nextui-org/react"
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip, Progress } from "@nextui-org/react"
+import { Input, Button } from "@nextui-org/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Chip, Progress } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass, faUserPlus, faPencil, faPeoplePulling } from "@fortawesome/free-solid-svg-icons"
+import { faMagnifyingGlass, faUserPlus, faPencil, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
 import { getAllTeams } from "@/app/teams/actions"
 import { getPartners } from "@/utils/partner"
-// import FindTeamForm from "../forms/FindTeamForm"
-// import { navigateToTeam } from "@/app/teams/actions"
-// import { refetchTeams } from "@/app/teams/actions"
+import { getRemainingTime } from "@/utils/time"
+import { differenceInDays } from "date-fns"
+import clsx from "clsx"
 
 const TeamsTable = () => {
 
@@ -27,6 +27,8 @@ const TeamsTable = () => {
     { name: "BASE SKU", uid: "sku_id" },
     { name: "LICENCIAS", uid: "num_licensed_users" },
     { name: "STATUS", uid: "active" },
+    { name: "VENCIMIENTO", uid: "end_date" },
+    { name: "RENOVACIÓN", uid: "auto_renew" },
     { name: "ACCIONES", uid: "actions" },
   ]
 
@@ -247,6 +249,40 @@ const TeamsTable = () => {
             </div>
           )
 
+        case "end_date":
+          const humanReadableRemainingTime = getRemainingTime(new Date(team.end_date))
+          const daysDiff = differenceInDays(new Date(team.end_date), new Date())
+          return (
+            <div className={clsx(
+              new Date(team.end_date) <= new Date() ? "text-red-600" : "text-black",
+              "flex justify-between items-center"
+            )}>
+              <span>{`${humanReadableRemainingTime}`}</span>
+              {
+                daysDiff >= 0 && daysDiff <= 15 ?
+                  <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500" />
+                  :
+                  null
+              }
+            </div>
+          )
+
+        case "auto_renew":
+          return (
+            <div>
+              {
+                team.active ?
+                  <Chip radius={'sm'} size={'sm'} className={`text-tiny ${team.auto_renew ? 'bg-secondary-100' : 'bg-default-50'} ${team.auto_renew ? 'text-secondary-600' : 'text-default-500'}`}>
+                    {
+                      team.auto_renew ? 'AUTO' : 'MANUAL'
+                    }
+                  </Chip>
+                  :
+                  null
+              }
+            </div>
+          )
+
         case "actions":
           return (
             <div className={'flex justify-end items-center'}>
@@ -284,7 +320,7 @@ const TeamsTable = () => {
     setIsLoading(true)
     getAllTeams().then(data => {
 
-      // console.log(`data: `, data)
+      console.log(`teams: `, data)
       setTeams(data)
     }).catch(error => {
       console.error(error)
@@ -338,9 +374,6 @@ const TeamsTable = () => {
                 bottomContentPlacement="outside"
                 topContent={topContent}
                 topContentPlacement="outside"
-              // classNames={{
-              //   wrapper: "max-h-[382px]",
-              // }}
               >
 
                 <TableHeader columns={columns}>

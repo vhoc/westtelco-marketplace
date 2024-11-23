@@ -14,7 +14,7 @@ export async function GET(request: Request) {
         if (partner && partner.dropbox_reseller_id) {
           const result = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/partners/${ partner.dropbox_reseller_id }/teams`, { cache: 'no-cache' })
           const currentResult = await result.json()
-          console.log(`currentResult: `, currentResult)
+          // console.log(`currentResult: `, currentResult)
           
           if (currentResult && currentResult.data && currentResult.data.teams && currentResult.data.teams.length >= 1) {
             
