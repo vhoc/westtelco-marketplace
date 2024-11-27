@@ -27,6 +27,7 @@ export interface ILicenseState {
   skus: Array<ISku>
   num_licensed_users: number
   space_quota: number
+  is_trial?: boolean
 }
 
 export interface IUsage {
