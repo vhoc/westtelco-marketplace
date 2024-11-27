@@ -237,15 +237,50 @@ const TeamsTable = () => {
 
         case "active":
           return (
-            <div>
-              <Chip radius={'sm'} size={'sm'} className={`text-tiny ${team.active ? 'bg-success-100' : 'bg-default-200'} ${team.active ? 'text-success-600' : 'text-default-400'}`}>
-                {
-                  team.active ?
-                    `ACTIVO`
-                    :
-                    `INACTIVO`
-                }
-              </Chip>
+            <div className="flex gap-1">
+              {
+                team.active ?
+                  <Chip
+                    radius="sm"
+                    size="sm"
+                    className={clsx(
+                      'text-tiny',
+                      'bg-success-100',
+                      'text-success-600'
+                    )}
+                  >
+                    ACTIVO
+                  </Chip>
+                  :
+                  <Chip
+                    radius="sm"
+                    size="sm"
+                    className={clsx(
+                      'text-tiny',
+                      'bg-default-200',
+                      'text-default-400'
+                    )}
+                  >
+                    INACTIVO
+                  </Chip>
+              }
+              {
+                team.current_state.is_trial ?
+                  <Chip
+                    radius="sm"
+                    size="sm"
+                    className={clsx(
+                      'text-tiny',
+                      'bg-secondary-100',
+                      'text-secondary-600'
+                    )}
+                  >
+                    TRIAL
+                  </Chip>
+                :
+                  null
+              }
+              
             </div>
           )
 
@@ -320,7 +355,6 @@ const TeamsTable = () => {
     setIsLoading(true)
     getAllTeams().then(data => {
 
-      console.log(`teams: `, data)
       setTeams(data)
     }).catch(error => {
       console.error(error)
