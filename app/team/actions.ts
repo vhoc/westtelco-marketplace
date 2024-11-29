@@ -7,10 +7,8 @@ import { revalidateTag } from "next/cache"
  */
 export const getTeam = async (teamId: string, resellerId?: string | null | undefined) => {
   "use server"
-  // console.log(`DEBUG: app/team/actions/getTeam: teamId: `, teamId)
-  // console.log(`DEBUG: app/team/actions/getTeam: resellerId: `, resellerId)
   revalidateTag('team' + teamId)
-  
+
   const fetchUrl = resellerId ? `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}?resellerId=${resellerId}`
                               : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
 
