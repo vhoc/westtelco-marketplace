@@ -6,7 +6,7 @@ import { faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import { cancelTeam, reinstateTeam } from "@/utils/team"
 import { Modal, ModalContent, ModalBody, useDisclosure, Spinner } from "@nextui-org/react"
 import { ISku } from "@/types"
-
+import clsx from "clsx"
 
 interface CancelClientButton {
   teamId: string
@@ -100,14 +100,20 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
         color={teamActive ? "danger" : "success"}
         variant="ghost"
         size={'sm'}
-        endContent={<FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" />}
+        endContent={<FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" className={clsx( teamActive ? "text-[#ff0049] group-hover:text-white" : "text-[#00dc6c] group-hover:text-white" )}/>}
         onPress={onOpenConfirmation}
+        className={clsx(
+          teamActive ?
+            "group text-[#ff0049] group-hover:text-white"
+            :
+            "group text-[#00dc6c] group-hover:text-white"
+        )}
       >
         {
           teamActive ?
-            `Suspender cliente`
+            <span className="text-[#ff0049] group-hover:text-white">Suspender cliente</span>
             :
-            `Reinstaurar cliente`
+            <span className="text-[#00dc6c] group-hover:text-white">Reinstaurar cliente</span>
         }
       </Button>
 
