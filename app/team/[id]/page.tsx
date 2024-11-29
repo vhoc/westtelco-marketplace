@@ -23,9 +23,11 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   // Get all the team info from the API using the params.id, then render below.
   const teamId = decodeURIComponent(params.id)
   const team = await (await getTeam(teamId, searchParams?.resellerId)).json()
-  // console.log(`team: `, team)
-  const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku: ISku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-'))[0]
+  // console.log(`team: `, JSON.stringify(team.data, null, 1))
+  const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku: ISku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-') || sku.sku_id.startsWith('ENT-'))[0]
+  // console.log(`baseSku: `, baseSku)
   const skuInfo = await getSkuInfo(baseSku?.sku_id)
+  // console.log('skuInfo: ',skuInfo)
   // const resellerIds = team.data?.reseller_ids.filter(id => id !== process.env.DISTRIBUITOR_ID)
   const resellerIds = team.data?.reseller_ids
 

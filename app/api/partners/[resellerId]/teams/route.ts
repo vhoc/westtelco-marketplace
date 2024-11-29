@@ -1,3 +1,5 @@
+export const revalidate = 1440
+
 const requestOptions = {
   method: 'POST',
   headers: {
@@ -32,7 +34,7 @@ export async function GET(
           "reseller_ids": [resellerId],
           "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
-        cache: 'no-cache',
+        // cache: 'no-cache',
       },
     )
   

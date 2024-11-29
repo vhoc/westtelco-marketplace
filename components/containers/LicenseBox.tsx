@@ -113,7 +113,8 @@ export default function LicenseBox({ resellerIds = [], ...props}: LicenseBoxProp
       <CardHeader className="w-full flex justify-between items-center py-[10px] px-[22px] bg-[#52525B] border-default-700 border-1 text-white text-[14px]">
         <span>{props.baseSku}</span>
         {
-          props.active ?
+          // Can't edit ENTERPRISE type SKUs for now
+          !props.baseSku.startsWith('ENT-') && props.active ?
             !editMode ?
               <Button
                 color="primary"

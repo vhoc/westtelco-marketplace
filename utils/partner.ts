@@ -58,6 +58,5 @@ export const getPartners = async (resellerIds?: Array<string> | undefined): Prom
   }
 
 
-  return []
 }
 

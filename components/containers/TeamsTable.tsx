@@ -4,10 +4,10 @@ import React, { useState, useMemo, useEffect, useCallback } from "react"
 import { Input, Button } from "@nextui-org/react"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Chip, Progress } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass, faUserPlus, faPencil, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
+import { faMagnifyingGlass, faUserPlus, faPencil, faTriangleExclamation, faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
-import { getAllTeams } from "@/app/teams/actions"
+import { getAllTeams, refetchTeams } from "@/app/teams/actions"
 import { getPartners } from "@/utils/partner"
 import { getRemainingTime } from "@/utils/time"
 import { differenceInDays } from "date-fns"
@@ -43,6 +43,10 @@ const TeamsTable = () => {
   });
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const handleRefetchTeams = () => {
+    location.reload()
+  }
 
   const filteredItems = useMemo(() => {
     let filteredTeams = [...teams];
@@ -140,6 +144,15 @@ const TeamsTable = () => {
               >
                 Importar Cliente
               </Button> */}
+              <Button
+                size={'sm'}
+                color={'primary'}
+                variant={'ghost'}
+                endContent={<FontAwesomeIcon icon={faArrowsRotate} />}
+                onPress={() => handleRefetchTeams()}
+              >
+                Actualizar
+              </Button>
               <Button
                 size={'sm'}
                 color={'primary'}
@@ -277,10 +290,10 @@ const TeamsTable = () => {
                   >
                     TRIAL
                   </Chip>
-                :
+                  :
                   null
               }
-              
+
             </div>
           )
 
@@ -354,7 +367,6 @@ const TeamsTable = () => {
   useEffect(() => {
     setIsLoading(true)
     getAllTeams().then(data => {
-
       setTeams(data)
     }).catch(error => {
       console.error(error)

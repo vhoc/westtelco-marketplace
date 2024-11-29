@@ -1,5 +1,5 @@
 "use server"
-import { ITeamData } from "@/types";
+import { IPartner, ITeamData } from "@/types";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 
@@ -71,8 +71,16 @@ export const getAllTeams = async (): Promise<Array<ITeamData>> => {
   }
 }
 
-export const refetchTeams = async () => {
+export const refetchTeams = async (partners: Array<IPartner>) => {
   "use server"
+  
+  if (partners.length >= 1) {
+    partners.forEach((partner) => {
+      revalidateTag(`reseller-${partner.dropbox_reseller_id}-teams`)
+    })
+  }
+
   revalidateTag('teams')
-  return redirect(`/teams`)
+    
+  // return redirect(`/teams`)
 }
