@@ -15,6 +15,8 @@ export const getSkuInfo = async (sku: string | undefined) => {
       .eq('sku_base', sku)
       .single()
 
+      // console.log('skuInfo: ', skuInfo)//
+
     if (error) {
       console.error(error)
       return null

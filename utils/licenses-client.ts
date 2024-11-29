@@ -1,10 +1,10 @@
 "use client"
-import { ISku, IAddon, IAddonApiResponse, ISkuInfoResponse, ISkuValidationResponse } from "@/types";
+import { ISku, IAddonApiResponse, ISkuInfoResponse, ISkuValidationResponse } from "@/types";
 import { createClient } from "./supabase/client";
 
 export const filterLicenseType = (skus: Array<ISku>, type: "regular" | "addon") => {
   "use client"
-  const regularPrefixes = ["TEAM-", "TEAMLIC-", "EDU-", "EDULIC-"]
+  const regularPrefixes = ["TEAM-", "TEAMLIC-", "EDU-", "EDULIC-", "ENT-", "ENTLIC-"]
   const addonPrefixes = ["TEAMADD-", "EDUADD-"]
 
   let result = []

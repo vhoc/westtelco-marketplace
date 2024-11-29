@@ -112,11 +112,11 @@ export default function LicensesTable(props: LicensesTableProps) {
   }
 
   const handleAddLicenseSku = async (skuId: string, quantity: number) => {
-    console.log(`skuId: `, skuId)
+    // console.log(`skuId: `, skuId)
     setIsAddSkuButtonDisabled(true)
     try {
       const skuInfo = await getSkuInfo(skuId)
-      console.log(`skuInfo: `, skuInfo)
+      // console.log(`skuInfo: `, skuInfo)
       if (skuInfo && skuInfo.data) {
         props.setNewSkus((prevNewSkus) => {
           const updatedArr = prevNewSkus.map(item => {
@@ -141,8 +141,9 @@ export default function LicensesTable(props: LicensesTableProps) {
   // Initially, gets the current baseSku info:
   useEffect(() => {
     if (props.skus && props.skus.length >= 1) {
-      const baseSku = props.skus.filter(item => item.sku_id.startsWith('TEAM-'))
+      const baseSku = props.skus.filter(item => item.sku_id.startsWith('TEAM-') || item.sku_id.startsWith('ENT-'))
       if (baseSku) {
+        // console.log(`baseSku: `, baseSku)
         getSkuInfo(baseSku[0].sku_id).then(data => {
           if (data.data) {
             setBaseSkuInfo(data.data)
@@ -158,7 +159,7 @@ export default function LicensesTable(props: LicensesTableProps) {
       const regular = filterLicenseType(props.skus, "regular")
       // If editMode is TRUE, show newSkus in the addons table, instead of the current Skus.
       const addons = filterLicenseType(props.skus, "addon")
-
+      // console.log(`regular: `, regular)
       setRegularSkus(regular)
       setAddonSkus(addons)
     }
