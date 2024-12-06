@@ -145,3 +145,17 @@ export interface INewTeamData {
   skus: Array<ISku>
   distribuitor_id?: number | undefined
 }
+
+export type TLicense = "Standard" | "Business" | "Advanced" | "Business Plus" | "Education" | "Enterprise" | "Unknown"
+export type TCommitment = "Y" | "AC1M" | "1M" | "Unknown"
+export type TTransition = "Upgrade"  | "Downgrade" | "None" | "Commitment change" | "Cancellation"
+
+export interface ISkuType {
+  licenseType: TLicense
+  commitmentType: TCommitment
+}
+
+export interface ITransitionOutcome {
+  outcome: "Scheduled" | "Immediate" | "Not Allowed"
+  type: TTransition
+}
