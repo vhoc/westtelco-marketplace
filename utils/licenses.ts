@@ -1,5 +1,6 @@
 "use server"
 import { createClient } from "./supabase/server";
+import { type TLicense, type TCommitment, type ISkuType } from "@/types";
 
 export const getSkuInfo = async (sku: string | undefined) => {
   if ( !sku ) {
@@ -28,4 +29,29 @@ export const getSkuInfo = async (sku: string | undefined) => {
     return null
   }
 
+}
+
+export const getSkuTypes = (sku: string): ISkuType => {
+  const typeMatch = sku.match(/(TEAM-BIZPL|TEAM-ST|TEAM-BIZ|TEAM-AD|EDU-|ENT-)/);
+  const commitmentMatch = sku.match(/(1Y|AC1M|1M)$/)
+
+  const licenseTypeMap: { [key: string]: TLicense } = {
+    "TEAM-ST": "Standard",
+    "TEAM-BIZPL": "Business Plus",
+    "TEAM-BIZ": "Business",
+    "TEAM-AD": "Advanced",
+    "EDU-": "Education",
+    "ENT-": "Enterprise",
+  }
+
+  const commitmentTypeMap: { [key: string]: TCommitment } = {
+    "1Y": "Y",
+    "AC1M": "AC1M",
+    "1M": "1M",
+  }
+
+  return {
+    licenseType: licenseTypeMap[typeMatch ? typeMatch[0] : "Unknown"], // Default to Unknown if not found
+    commitmentType: commitmentTypeMap[commitmentMatch ? commitmentMatch[0] : "Unknown"], // Default to Unknown if not found
+  }
 }
