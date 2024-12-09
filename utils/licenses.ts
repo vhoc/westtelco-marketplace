@@ -1,6 +1,7 @@
 "use server"
+import { PostgrestError } from "@supabase/supabase-js";
 import { createClient } from "./supabase/server";
-import { type TLicense, type TCommitment, type ISkuType } from "@/types";
+import { type TLicense, type TCommitment, type ISkuType, type ISkuInfo } from "@/types";
 
 export const getSkuInfo = async (sku: string | undefined) => {
   if ( !sku ) {
@@ -10,7 +11,7 @@ export const getSkuInfo = async (sku: string | undefined) => {
   
   const supabase = createClient()
   try {
-    const { data: skuInfo, error } = await supabase
+    const { data: skuInfo, error }: { data: ISkuInfo | null, error: PostgrestError | null } = await supabase
       .from('sku')
       .select('*')
       .eq('sku_base', sku)
