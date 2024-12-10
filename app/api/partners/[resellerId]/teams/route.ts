@@ -1,4 +1,5 @@
-export const revalidate = 1440
+export const dynamic = 'force-dynamic' // defaults to auto
+// export const revalidate = 1440
 
 const requestOptions = {
   method: 'POST',
@@ -34,7 +35,7 @@ export async function GET(
           "reseller_ids": [resellerId],
           "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
-        // cache: 'no-cache',
+        cache: 'no-store',
       },
     )
   
