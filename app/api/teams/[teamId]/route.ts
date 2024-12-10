@@ -53,6 +53,7 @@ export async function GET(
           "reseller_ids": resellerIds,
           "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
+        cache: 'no-store',
         next: {
           tags: [
             'team' + teamId

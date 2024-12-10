@@ -1,5 +1,5 @@
-// export const dynamic = 'force-dynamic' // defaults to auto
-export const revalidate = 1440
+export const dynamic = 'force-dynamic' // defaults to auto
+// export const revalidate = 1440
 
 export async function GET(request: Request) {
 
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
           const result = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/partners/${ partner.dropbox_reseller_id }/teams`, 
             {
               // KEY IS HERE
-              // cache: 'no-store',
+              cache: 'no-store',
               next: {
                 tags: [
                   `reseller-${partner.dropbox_reseller_id}-teams`

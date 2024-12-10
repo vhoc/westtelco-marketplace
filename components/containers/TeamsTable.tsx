@@ -144,7 +144,7 @@ const TeamsTable = () => {
               >
                 Importar Cliente
               </Button> */}
-              <Button
+              {/* <Button
                 size={'sm'}
                 color={'primary'}
                 variant={'ghost'}
@@ -152,7 +152,7 @@ const TeamsTable = () => {
                 onPress={() => handleRefetchTeams()}
               >
                 Actualizar
-              </Button>
+              </Button> */}
               <Button
                 size={'sm'}
                 color={'primary'}
