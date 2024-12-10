@@ -12,6 +12,7 @@ import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import CancelClientButton from "@/components/buttons/CancelClientButton"
 import { getRemainingTime } from "@/utils/time"
+import { getSkus } from "../actions"
 
 export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
 
@@ -33,6 +34,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   const resellerIds = team.data?.reseller_ids
   const remainingTime = getRemainingTime(team.data.end_datetime)
   const partners = await getPartners(resellerIds || [])
+  const { data: allSkus } = await getSkus()
 
   if (team.code === 409) {
     return redirect(`/team?message=No se tiene acceso a éste cliente, verifique el estatus de éste cliente con Dropbox.')}`)
@@ -130,9 +132,11 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
             auto_renew={team.data?.auto_renew || false}
             end_datetime={team.data?.end_datetime || 'Unknown'}
             teamId={team.data?.id || teamId}
+            teamName={team.data?.name || ''}
             active={team.data?.active || false}
             remainingTime={remainingTime}
             currentState={team.data.current_state}
+            allSkus={allSkus}
           />
 
         </div>

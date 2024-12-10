@@ -32,7 +32,7 @@ export const getSkuInfo = async (sku: string | undefined) => {
 
 }
 
-export const getSkuTypes = (sku: string): ISkuType => {
+export const getSkuTypes = async (sku: string): Promise<ISkuType> => {
   const typeMatch = sku.match(/(TEAM-BIZPL|TEAM-ST|TEAM-BIZ|TEAM-AD|EDU-|ENT-)/);
   const commitmentMatch = sku.match(/(1Y|AC1M|1M)$/)
 

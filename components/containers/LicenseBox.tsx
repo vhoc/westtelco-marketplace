@@ -10,6 +10,7 @@ import { useState, useEffect } from "react"
 import { modifyTeamSkus } from "@/app/team/actions"
 import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"
 import { differenceInDays } from "date-fns"
+import PlanChangeDrawer from "../drawers/PlanChangeDrawer"
 import clsx from "clsx"
 
 interface LicenseBoxProps {
@@ -23,10 +24,12 @@ interface LicenseBoxProps {
   auto_renew: boolean
   end_datetime: string
   teamId: string
+  teamName: string
   active: boolean
   resellerIds?: Array<string> | undefined
   remainingTime?: string
   currentState?: ILicenseState
+  allSkus: Array<ISkuInfo>
 }
 
 export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxProps) {
@@ -146,17 +149,14 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
         </div>
         <div className="flex justify-end gap-x-2">
           {
-            !props.currentState?.is_trial ?
-              <Button
-                color={'default'}
-                size="sm"
-                endContent={<FontAwesomeIcon icon={faHandshake} size="lg" />}
-                //onClick
-                aria-label="Cambios de Plan"
-                className="bg-content3-foreground text-white"
-              >
-                Cambios de Plan
-              </Button>
+            props.skuInfo && !props.currentState?.is_trial ?
+              <PlanChangeDrawer
+                teamId={props.teamId}
+                teamName={props.teamName}
+                currentSkuInfo={props.skuInfo}
+                num_licensed_users={props.num_licensed_users}
+                allSkus={props.allSkus}
+              />
             :
               null
           }
