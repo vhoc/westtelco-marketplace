@@ -23,7 +23,12 @@ interface LicenseBoxProps {
   resellerIds?: Array<string> | undefined
 }
 
-export default function LicenseBox({ resellerIds = [], ...props}: LicenseBoxProps) {
+export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxProps) {
+
+  // console.log(resellerIds)
+  // Removes our partner ID from the array leaving only the sub-partner's ID.
+  const subPartnerResellerId = resellerIds.filter(id => id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID) 
+  // console.log('subPartnerResellerId: ', subPartnerResellerId)
 
   const [editMode, setEditMode] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -48,13 +53,12 @@ export default function LicenseBox({ resellerIds = [], ...props}: LicenseBoxProp
 
   const handleUpdate = () => {
     onOpen()
-    if (props.teamId && props.baseSku && props.skus && newSkus && resellerIds) {
-      // console.log(`handleUpdate/newSkus: `, newSkus)
-      modifyTeamSkus(props.teamId, props.skus, newSkus, false, resellerIds)
+    if (props.teamId && props.baseSku && props.skus && newSkus && subPartnerResellerId) {
+      modifyTeamSkus(props.teamId, props.skus, newSkus, false, subPartnerResellerId)
         .then(data => {
           if (data.code !== 200) {
             setModifyStatus("error")
-            setErrorMessage(data?.message || "Error desconocido")
+            setErrorMessage(data?.message || data.error || "Error desconocido")
             setNewSkus([])
             setNewAddonSkus([])
           }
@@ -73,7 +77,7 @@ export default function LicenseBox({ resellerIds = [], ...props}: LicenseBoxProp
         .finally(() => {
           onClose()
           setEditMode(false)
-        })
+      })
     }
   }
 

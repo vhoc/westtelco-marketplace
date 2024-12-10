@@ -98,7 +98,8 @@ export async function GET(
 export async function PUT(request: Request) {
 
   const requestBody = await request.json()
-  // console.log(`requestBody: `, requestBody)
+
+  // console.log(`requestBody`, requestBody)
 
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/skus/modify`,
@@ -111,7 +112,8 @@ export async function PUT(request: Request) {
     if (!response.ok) {
       return Response.json(
         {
-          error: `No se pudo realizar el cambio en el cliente. ${response.statusText}`,
+          response: response,
+          error: `No se pudo realizar el cambio en el cliente. Respuesta de Dropbox: "${response.statusText}"`,
           stauts: response.status
         }
       )

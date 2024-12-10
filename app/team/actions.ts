@@ -60,6 +60,7 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
 export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
   "use server"
 
+
   const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`,
     {
       method: 'PUT',
@@ -89,6 +90,7 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
   // }
   
   const responseObject = await response.json()
+  // console.log(`responseObject: `, responseObject)
   revalidateTag('team' + teamId)
   // console.log(`responseObject: `, responseObject)
   return responseObject
