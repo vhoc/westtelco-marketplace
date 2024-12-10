@@ -30,6 +30,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   // console.log('skuInfo: ',skuInfo)
   // const resellerIds = team.data?.reseller_ids.filter(id => id !== process.env.DISTRIBUITOR_ID)
   const resellerIds = team.data?.reseller_ids
+  // console.log('resellerIds: ', resellerIds)
 
   const partners = await getPartners(resellerIds || [])
 
@@ -115,6 +116,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
             end_datetime={team.data?.end_datetime || 'Unknown'}
             teamId={team.data?.id || teamId}
             active={team.data?.active || false}
+            resellerIds={resellerIds}
           />
 
         </div>
