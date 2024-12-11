@@ -1,16 +1,21 @@
 "use client"
-import { ISku } from "@/types"
+import { ILicenseState, ISku, ISkuInfo } from "@/types"
 import { Card, CardHeader, CardBody, Divider, Button, Spinner } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPencil, faUsers, faRotateLeft, faFloppyDisk } from "@fortawesome/free-solid-svg-icons"
+import { faPencil, faUsers, faRotateLeft, faFloppyDisk, faHandshake, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import { Chip } from "@nextui-org/react"
 import LicensesTable from "./LicensesTable"
 import { Modal, ModalContent, ModalBody, useDisclosure, ModalHeader, ModalFooter } from "@nextui-org/react"
 import { useState, useEffect } from "react"
 import { modifyTeamSkus } from "@/app/team/actions"
+import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"
+import { differenceInDays } from "date-fns"
+import PlanChangeDrawer from "../drawers/PlanChangeDrawer"
+import clsx from "clsx"
 
 interface LicenseBoxProps {
   baseSku: string
+  skuInfo: ISkuInfo | null
   license_description?: string | undefined
   skus: Array<ISku>
   renewalStateSkus?: Array<ISku>
@@ -19,8 +24,12 @@ interface LicenseBoxProps {
   auto_renew: boolean
   end_datetime: string
   teamId: string
+  teamName: string
   active: boolean
   resellerIds?: Array<string> | undefined
+  remainingTime?: string
+  currentState?: ILicenseState
+  allSkus: Array<ISkuInfo>
 }
 
 export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxProps) {
@@ -114,48 +123,89 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
     <Card className="w-full flex flex-col" radius={'none'} shadow={'none'}>
 
       {/* TOP BAR */}
-      <CardHeader className="w-full flex justify-between items-center py-[10px] px-[22px] bg-[#52525B] border-default-700 border-1 text-white text-[14px]">
-        <span>{props.baseSku}</span>
-        {
-          // Can't edit ENTERPRISE type SKUs for now
-          !props.baseSku.startsWith('ENT-') && props.active ?
-            !editMode ?
-              <Button
-                color="primary"
-                size={'sm'}
-                endContent={<FontAwesomeIcon icon={faPencil} size="lg" />}
-                onClick={() => setEditMode(true)}
-                aria-label="Editar SKU"
-              >
-                Editar SKU
-              </Button>
+      <CardHeader
+        className={clsx(
+          `w-full flex justify-between items-center py-[10px] px-[22px] 
+          border-1 text-white text-[14px]`,
+          props.currentState?.is_trial ?
+            'bg-primary-600 border-primary-700'
+            :
+            'bg-[#52525B] border-default-700 '
+        )}
+      >
+
+        <div className="flex gap-4 items-center">
+          { // TRIAL indicator chip
+            props.currentState?.is_trial ?
+              <Chip radius="sm" className="bg-secondary-100 text-secondary-600 text-xs">
+                TRIAL
+              </Chip>
               :
-              <div className="flex justify-end gap-x-2">
-                <Button
-                  size={'sm'}
-                  endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
-                  aria-label="Deshacer"
-                  onClick={() => {
-                    // setNewSkus(props.skus)
-                    setNewAddonSkus([])
-                    setEditMode(false)
-                  }}
-                >
-                  Deshacer
-                </Button>
+              null
+          }
+          <span className="text-xl leading-7 font-medium text-white">{props.skuInfo?.description}</span>
+          {
+            props.skuInfo ?
+              <span className="text-xs leading-4 font-normal text-white pt-2">{commitmentTypesMapHF[props.skuInfo?.commitment_type]}</span>
+              :
+              <span></span>
+          }
+        </div>
+        <div className="flex justify-end gap-x-2">
+          {
+            props.skuInfo && !props.currentState?.is_trial ?
+              <PlanChangeDrawer
+                teamId={props.teamId}
+                teamName={props.teamName}
+                currentSkuInfo={props.skuInfo}
+                num_licensed_users={props.num_licensed_users}
+                allSkus={props.allSkus}
+              />
+            :
+              null
+          }
+
+          {
+            // Can't edit ENTERPRISE type SKUs for now
+            !props.baseSku.startsWith('ENT-') && props.active ?
+              !editMode ?
                 <Button
                   color="primary"
                   size={'sm'}
-                  endContent={<FontAwesomeIcon icon={faFloppyDisk} size="lg" />}
-                  onClick={handleUpdate}
-                  aria-label="Actualizar"
+                  endContent={<FontAwesomeIcon icon={faPencil} size="lg" />}
+                  onClick={() => setEditMode(true)}
+                  aria-label="Editar SKU"
                 >
-                  Actualizar
+                  Editar SKU
                 </Button>
-              </div>
-            :
-            null
-        }
+                :
+                <div className="flex justify-end gap-x-2">
+                  <Button
+                    size={'sm'}
+                    endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
+                    aria-label="Deshacer"
+                    onClick={() => {
+                      // setNewSkus(props.skus)
+                      setNewAddonSkus([])
+                      setEditMode(false)
+                    }}
+                  >
+                    Deshacer
+                  </Button>
+                  <Button
+                    color="primary"
+                    size={'sm'}
+                    endContent={<FontAwesomeIcon icon={faFloppyDisk} size="lg" />}
+                    onClick={handleUpdate}
+                    aria-label="Actualizar"
+                  >
+                    Actualizar
+                  </Button>
+                </div>
+              :
+              null
+          }
+        </div>
 
       </CardHeader>
 
@@ -165,10 +215,6 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
 
         {/* CARD BODY TOP SECTION */}
         <div className="flex justify-between gap-x-[16px] flex-wrap">
-
-          <div className="shrink">
-            <span className={'leading-7 text-[#00336A] text-medium text-[20px]'}>{props.license_description}</span>
-          </div>
 
           <div className="flex flex-col justify-end content-start md:items-center text-right gap-x-[16px] gap-y-[4px] md:flex-row">
             {/* SPACE QUOTA */}
@@ -188,11 +234,35 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
               !props.active ? <Chip radius={'sm'} size={'sm'} className={'bg-danger-100 text-danger-700 '}>Inactiva</Chip> : null
             }
             {
-              props.auto_renew ? <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 '}>Autorenewal</Chip> : null
+              props.auto_renew ?
+                <span className="text-sm leading-5 text-default-500">
+                  Renovación:
+                  <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 ml-4'}>AUTO</Chip>
+                </span>
+
+                :
+                null
             }
 
-            {/* PROVISIONED USERS */}
-            <div className="flex gap-[8px]  flex-wrap">
+
+          </div>
+
+          {/* PROVISIONED USERS */}
+          <div className="flex gap-[12px] flex-wrap items-center">
+            {// Show the renovation warning only when the remaining days are equal or less than 15.
+              differenceInDays(new Date(props.end_datetime), new Date()) >= 0 && differenceInDays(new Date(props.end_datetime), new Date()) <= 15 ?
+                <Chip
+                  radius={'sm'}
+                  className={'bg-warning-100 py-4'}
+                >
+                  <span className="text-sm text-[#11181C]">{`Renovación programada en ${props.remainingTime}`}</span>
+                  <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500 ml-2" />
+                </Chip>
+                :
+                null
+            }
+
+            <div className="flex gap-4 items-center">
               <FontAwesomeIcon icon={faUsers} size="xl" color="#D4D4D8" />
               <span className="text-xl leading-7 font-medium text-black">{String(props.num_licensed_users)}</span>
             </div>

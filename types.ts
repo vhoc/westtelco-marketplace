@@ -10,6 +10,7 @@ export interface ISku {
 
 export interface ISkuInfo {
   id: number
+  created_at?: string
   sku_base: string
   sku_license: string
   description: string
@@ -21,6 +22,7 @@ export interface ISkuInfo {
   jpy: number
   license_type: string
   commitment_type: string
+  included_users?: number
 }
 
 export interface ILicenseState {
