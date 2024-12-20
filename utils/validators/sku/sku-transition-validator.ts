@@ -5,9 +5,9 @@ import { getSkuTypes } from "@/utils/licenses"
 
 export const validateSKUTransition = async (originalSku: string, newSku: string): Promise<ITransitionOutcome> => {
   const originalInfo = await getSkuTypes(originalSku)
-  console.log("originalInfo: ", originalInfo)
+  // console.log("originalInfo: ", originalInfo)
   const newInfo = await getSkuTypes(newSku)
-  console.log("newInfo: ", newInfo)
+  // console.log("newInfo: ", newInfo)
 
   // DA RULES ↴
 

@@ -10,7 +10,7 @@ import { useState, useEffect } from "react"
 import { modifyTeamSkus } from "@/app/team/actions"
 import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"
 import { differenceInDays } from "date-fns"
-import PlanChangeDrawer from "../drawers/PlanChangeDrawer"
+import PlanChangeDrawer from "../drawers/PlanChangeDrawer/PlanChangeDrawer"
 import clsx from "clsx"
 
 interface LicenseBoxProps {
@@ -22,6 +22,7 @@ interface LicenseBoxProps {
   num_licensed_users: number
   space_quota: number
   auto_renew: boolean
+  end_date: string
   end_datetime: string
   teamId: string
   teamName: string
@@ -152,7 +153,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
           }
         </div>
         <div className="flex justify-end gap-x-2">
-          {
+          {/* {
             props.skuInfo && !props.currentState?.is_trial ?
               <PlanChangeDrawer
                 teamId={props.teamId}
@@ -160,10 +161,14 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                 currentSkuInfo={props.skuInfo}
                 num_licensed_users={props.num_licensed_users}
                 allSkus={props.allSkus}
+                end_date={props.end_date}
+                license_description={props.license_description ?? 'SKU sin información'}
+                current_skus={props.skus}
+                resellerIds={subPartnerResellerId}
               />
             :
               null
-          }
+          } */}
 
           {
             // Can't edit ENTERPRISE type SKUs for now

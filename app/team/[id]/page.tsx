@@ -130,6 +130,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
             num_licensed_users={team.data?.num_licensed_users || 0}
             space_quota={team.data?.current_state?.space_quota || 0}
             auto_renew={team.data?.auto_renew || false}
+            end_date={team.data?.end_date || 'Unknown'}
             end_datetime={team.data?.end_datetime || 'Unknown'}
             teamId={team.data?.id || teamId}
             teamName={team.data?.name || ''}

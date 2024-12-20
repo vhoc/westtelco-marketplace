@@ -10,8 +10,6 @@ interface ToastProps {
 
 const Toast = ( { type = 'warning', children }: ToastProps ) => {
 
-  console.log()
-
   return (
     <div
       className={clsx(
