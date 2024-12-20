@@ -3,9 +3,11 @@ import { type ITransitionOutcome } from "@/types"
 import { getSkuTypes } from "@/utils/licenses"
 
 
-export const validateSKUTransition = (originalSku: string, newSku: string): ITransitionOutcome => {
-  const originalInfo = getSkuTypes(originalSku)
-  const newInfo = getSkuTypes(newSku)
+export const validateSKUTransition = async (originalSku: string, newSku: string): Promise<ITransitionOutcome> => {
+  const originalInfo = await getSkuTypes(originalSku)
+  // console.log("originalInfo: ", originalInfo)
+  const newInfo = await getSkuTypes(newSku)
+  // console.log("newInfo: ", newInfo)
 
   // DA RULES ↴
 
@@ -1202,6 +1204,12 @@ export const validateSKUTransition = (originalSku: string, newSku: string): ITra
     (originalInfo.licenseType === "Standard" && originalInfo.commitmentType === "1M") &&
     (newInfo.licenseType === "Standard" && newInfo.commitmentType === "Y")
   ) {
+    // console.log({
+    //   originalLicenseType: originalInfo.licenseType,
+    //   originalCommitmentType: originalInfo.commitmentType,
+    //   newLicenseType: newInfo.licenseType,
+    //   newCommitmentType: newInfo.commitmentType
+    // })
     return {
       outcome: "Immediate",
       type: "Commitment change",
