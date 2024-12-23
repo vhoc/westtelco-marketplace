@@ -4,7 +4,6 @@ import {
   Drawer, DrawerContent, DrawerHeader, DrawerBody,
   DrawerFooter, Button, useDisclosure,
   Select, SelectItem, Skeleton,
-  Input
 } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHandshake } from "@fortawesome/free-solid-svg-icons"
@@ -13,7 +12,8 @@ import { ISkuInfo, ISku } from "@/types"
 import { commitmentTypes } from "@/utils/commitmentTypes"
 import useCompatibleSkus from "@/utils/hooks/useCompatibleSkus"
 import ConfirmationBox from "./ConfirmationBox"
-import { set } from "date-fns"
+import { getSkuInfo } from "@/utils/licenses-client"
+import Toast from "@/components/feedback/Toast"
 
 interface PlanChangeDrawerProps {
   teamId: string
@@ -36,6 +36,9 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
   const { compatibleSkus, isLoading: loadingCompatibleSkus } = useCompatibleSkus(allSkus, currentSkuInfo.sku_base, selectedCommitmentType)
   const [newSkus, setNewSkus] = useState<Array<ISku>>(current_skus)
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
   // DEBUG
   // useEffect(() => {
   //   console.log('compatibleSkus: ', compatibleSkus)
@@ -49,13 +52,22 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
    * Update the newSkus array with the selectedBaseSku   * 
    */
   useEffect(() => {
-    setNewSkus(prevState =>
-      prevState.map((item, index) =>
-        index === 0
-          ? { ...item, sku_id: selectedBaseSku }
-          : item
-      )
-    );
+    // Get the selectedBaseSku's License SKU:
+    getSkuInfo(selectedBaseSku).then(data => {
+      if ( data?.code === 200 && data.data?.sku_license ) {
+
+        setNewSkus(prevState =>
+          prevState.map((item, index) =>
+            index === 0 // Substitute the first sku_id which is the BASE SKU
+              ? { ...item, sku_id: selectedBaseSku }
+              : index === 1 && data.data?.sku_license // Substitute the second sku_id which is the LICENSE SKU
+                ? { ...item, sku_id: data.data.sku_license }
+                : item // Leave the rest as they are
+          )
+        );
+      }
+    })
+
   }, [selectedBaseSku])
 
   // useEffect(() => {
@@ -69,17 +81,31 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
   //   )
   // },[selectedBaseSku])
 
-  useEffect(() => {
-    console.log('currentSkuInfo: ', currentSkuInfo)
-  },[currentSkuInfo])
+  // useEffect(() => {
+  //   console.log('currentSkuInfo: ', currentSkuInfo)
+  // },[currentSkuInfo])
 
-  useEffect(() => {
-    console.log('selectedBaseSku: ', selectedBaseSku)
-  },[selectedBaseSku])
+  // useEffect(() => {
+  //   console.log('selectedBaseSku: ', selectedBaseSku)
+  // },[selectedBaseSku])
 
-  useEffect(() => {
-    console.log('newSkus: ', JSON.stringify(newSkus, null, 1))
-  }, [newSkus])
+  // useEffect(() => {
+  //   console.log('current_skus: ', JSON.stringify(current_skus, null, 1))
+  // }, [current_skus, newSkus])
+
+  // useEffect(() => {
+  //   console.log('newSkus: ', JSON.stringify(newSkus, null, 1))
+  // }, [newSkus])
+
+  // useEffect(() => {
+  //   console.log('preparedBody: ', JSON.stringify({
+  //     environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
+  //     id: teamId,
+  //     current_skus: current_skus,
+  //     new_skus: newSkus,
+  //     reseller_ids: resellerIds,
+  //   }, null, 1))
+  // }, [current_skus, newSkus, resellerIds, teamId])
 
 
 
@@ -113,6 +139,21 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
 
                   {/* TOP SECTION */}
                   <div>
+
+                    {/* ERROR/SUCCESS MESSAGES */}
+                      {
+                        errorMessage || successMessage ?
+                          <Toast
+                            type={errorMessage ? 'error' : 'success'}
+                          >
+                            <span className="text-sm leading-4 font-normal text-default-900">
+                              {errorMessage || successMessage}
+                            </span>
+                          </Toast>
+                        :
+                        null
+                      }
+              
                     {/* CURRENT PLAN INFO BOX */}
                     <div className="flex flex-col w-full gap-2 p-4">
                       <span className="text-tiny text-primary-500">{teamId}</span>
@@ -213,6 +254,10 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
                           current_skus={current_skus}
                           resellerIds={resellerIds}
                           new_skus={newSkus}
+                          setErrorMessage={setErrorMessage}
+                          setSuccessMessage={setSuccessMessage}
+                          setSelectedCommitmentType={setSelectedCommitmentType}
+                          setSelectedBaseSku={setSelectedBaseSku}
                         />
                       </div>
                       :

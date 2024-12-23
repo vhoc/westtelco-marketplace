@@ -1,10 +1,11 @@
 "use client"
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
+import { faCheckCircle, faInfoCircle, faCircleXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import clsx from "clsx"
 
 interface ToastProps {
-  type: "warning" | "error" | "info",
+  type: "warning" | "error" | "info" | "success",
   children?: React.ReactNode | Array<React.ReactNode> | undefined
 }
 
@@ -17,21 +18,28 @@ const Toast = ( { type = 'warning', children }: ToastProps ) => {
         type === "error" ? 'bg-danger-100' : '',
         type === "warning" ? 'bg-warning-100' : '',
         type === "info" ? 'bg-blue-100' : '',
+        type === "success" ? 'bg-success-100' : '',
         `p-[8px] flex gap-[10px]`
       )}
     >
       <FontAwesomeIcon
-        icon={faTriangleExclamation}
+        icon={
+          type === "success" ? faCheckCircle :
+          type === "info" ? faInfoCircle :
+          type === "error" ? faCircleXmark :
+          faTriangleExclamation }
         color={
           type === "error" ? '##cd3131' :
           type === "warning" ?'#F5A524' :
           type === "info" ?'#2472c8' :
+          type === "success" ?'#00A870' :
             'black'
         }
         className={clsx(
           type === "error" ? 'text-red-600' : null,
           type === "warning" ? 'text-[#F5A524]' : null,
           type === "info" ? 'text-[#2472c8]' : null,
+          type === "success" ? 'text-[#00A870]' : null,
         )}
         size="lg"
       />

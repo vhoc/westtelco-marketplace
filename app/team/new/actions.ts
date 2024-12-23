@@ -25,10 +25,10 @@ export async function createNewTeam(formData: FormData) {
         "sku_id": formData.get('licenseSku') as string,
         "quantity": Number(formData.get('license_sku_quantity') as string)
       }
-    ]
+    ],
   }
 
-  // console.log(`teamData: `, JSON.stringify(teamData, null, 1))
+  console.log(`teamData: `, JSON.stringify(teamData, null, 1))
 
   const createTeamResponse = await createTeam(teamData)
   // console.log(`createTeamResponse: `, createTeamResponse)
@@ -72,6 +72,7 @@ export async function createNewTeam(formData: FormData) {
         contract_start: startDate,
         provisioning_method: "API",
         distributor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
+        admin_email: formData.get('invite_admin') as string,
       }
     ])
     .select()
