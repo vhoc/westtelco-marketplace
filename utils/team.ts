@@ -1,6 +1,6 @@
 "use server";
 import { revalidateTag } from "next/cache"
-import { ISku, ITeamApiResponse, IApiErrorResponse, INewTeamData } from "@/types";
+import { ISku, ITeamApiResponse, INewTeamData } from "@/types";
 
 const requestOptions = {
   method: 'POST',
@@ -10,82 +10,6 @@ const requestOptions = {
     'Authorization': `${process.env.API_KEY}`,
   },
 }
-
-
-
-// export const getTeamsOfPartner = async (resellerId: string): Promise<ITeamsApiResponse> => {
-//   try {
-//     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/list2`,
-//       {
-//         ...requestOptions,
-//         body: JSON.stringify({
-//           "environment": process.env.API_ENV,
-//           "reseller_ids": [resellerId],
-//           "country": process.env.DISTRIBUITOR_COUNTRY,
-//         }),
-//       }
-//     )
-
-//     if (!response.ok) {
-//       const error = await response.json()
-//       return { code: error.code, message: 'Hubo un error al intentar obtener la lista de clientes del partner seleccionado.' }
-//     }
-
-//     const responseObject = await response.json()
-//     return responseObject
-//   } catch (error) {
-//     console.error('There was an error!', error)
-//     //@ts-ignore
-//     return { code: 400, message: error.message }
-//   }
-// }
-
-/**
- * getTeam
- * 
- * Retrieves from the backend API the information of a team using its teamId and returns it in an object
- * @param teamId string
- * @returns Promise<ITeamApiResponse>
- */
-// export const getTeam = async (teamId: string, resellerId?: string | null | undefined): Promise<ITeamApiResponse> => {
-//   console.log(`requestBody: `, JSON.stringify({
-//     "environment": process.env.API_ENV,
-//     "id": teamId,
-//     "reseller_ids": [resellerId],
-//     "country": process.env.DISTRIBUITOR_COUNTRY,
-//   }, null, 2))
-//   try {
-//     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
-//       {
-//         ...requestOptions,
-//         body: JSON.stringify({
-//           "environment": process.env.API_ENV,
-//           "id": teamId,
-//           "reseller_ids": process.env.API_ENV === "PROD" ? [resellerId] : [],
-//           "country": process.env.DISTRIBUITOR_COUNTRY,
-//         }),
-//         next: {
-//           tags: [
-//             'team'
-//           ]
-//         }
-//       }
-//     )
-
-//     if (!response.ok) {
-//       const error = await response.json()
-//       return { code: error.code, message: 'No se encontró un cliente con ese ID, verifica que lo hayas ingresado correctamente o que el cliente exista.' }
-//     }
-//     revalidateTag('team')
-//     const responseObject = await response.json()
-//     return responseObject
-
-//   } catch (error) {
-//     console.error('There was an error!', error);
-//     //@ts-ignore
-//     return { code: 400, message: error.message }
-//   }
-// }
 
 export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiResponse> => {
   // console.log(`teamData: `, JSON.stringify({

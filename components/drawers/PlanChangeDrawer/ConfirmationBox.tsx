@@ -5,6 +5,7 @@ import { ITransitionOutcome, ISku } from "@/types"
 import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-validator"
 import { Button, Input } from "@nextui-org/react"
 import { modifyTeamSkus } from "@/app/team/actions"
+import { revalidateTagFromClientComponent } from "@/utils/revalidateTagFromClientComponent"
 
 interface ConfirmationBoxProps {
   current_sku_base: string
@@ -16,13 +17,18 @@ interface ConfirmationBoxProps {
   current_skus: Array<ISku>
   new_skus: Array<ISku>
   resellerIds: Array<string>
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>
+  setSuccessMessage: React.Dispatch<React.SetStateAction<string | null>>
+  setSelectedCommitmentType: React.Dispatch<React.SetStateAction<string>>
+  setSelectedBaseSku: React.Dispatch<React.SetStateAction<string>>
 }
 
-const ConfirmationBox = ({ current_sku_base, new_sku_base, new_license_description, end_date, onCloseDrawer, teamId, current_skus, new_skus, resellerIds }: ConfirmationBoxProps) => {
+const ConfirmationBox = ({ current_sku_base, new_sku_base, new_license_description, end_date, onCloseDrawer, teamId, current_skus, new_skus, resellerIds, setErrorMessage, setSuccessMessage, setSelectedCommitmentType, setSelectedBaseSku }: ConfirmationBoxProps) => {
 
   // const [ transitionType, setTransitionType ] = useState<"downgrade" | "upgrade">("downgrade")
   const [transitionValidationResult, setTransitionValidationResult] = useState<ITransitionOutcome>()
   const [confirmationInput, setConfirmationInput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   // Validate the transition
   useEffect(() => {
@@ -108,25 +114,42 @@ const ConfirmationBox = ({ current_sku_base, new_sku_base, new_license_descripti
       <Button
         variant={'flat'}
         color={'default'}
-        isDisabled={confirmationInput.toLowerCase() !== transitionValidationResult?.type?.toLowerCase()}
+        isDisabled={(confirmationInput.toLowerCase() !== transitionValidationResult?.type?.toLowerCase()) || isLoading}
         radius={'sm'}
         size="lg"
         className="text-default-foreground text-sm"
+        isLoading={isLoading}
         onPress={() => {
           // TODO: Send the request to the backend
-          console.log('Confirming the transition')
-          console.log(JSON.stringify({
-            teamId: teamId,
-            current_skus: current_skus,
-            // new_skus: new_skus,
-            resellerIds: resellerIds,
-          }, null, 1))
+          // console.log('Confirming the transition')
+          // console.log(JSON.stringify({
+          //   environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
+          //   id: teamId,
+          //   current_skus: current_skus,
+          //   new_skus: new_skus,
+          //   resellerIds: resellerIds,
+          // }, null, 1))
           // Do the thing and then, close the drawer
-          // modifyTeamSkus()
-          // onCloseDrawer?.()
+          setIsLoading(true)
+          modifyTeamSkus(teamId, current_skus, new_skus, false, resellerIds)
+            .then(data => {
+              if (data.code !== 200) {
+                setSuccessMessage(null)
+                setErrorMessage(data?.message || data.error || "Error desconocido")
+                revalidateTagFromClientComponent('team' + teamId)
+              } else {
+                setErrorMessage(null)
+                setSuccessMessage(`${transitionValidationResult?.type} ${transitionValidationResult?.outcome === 'Immediate' ? 'realizado' : 'programado'} con éxito.`)
+              }
+            })
+            .finally(() => {
+              setSelectedCommitmentType("")
+              setSelectedBaseSku("")
+            })
+            
         }}
       >
-        Confirmar
+        { isLoading ? 'Aplicando cambios...' : 'Confirmar' }
       </Button>
     </div>
   )

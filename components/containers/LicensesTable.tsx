@@ -9,7 +9,6 @@ import { isInGracePeriod } from "@/utils/team-client"
 import { doesAddonSkuExist } from "@/utils/licenses-client"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlusCircle, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
-import { AddonsTable } from "./AddonsTable"
 
 interface LicensesTableProps {
   skus: Array<ISku>
@@ -31,7 +30,6 @@ export default function LicensesTable(props: LicensesTableProps) {
 
   const [regularSkus, setRegularSkus] = useState<Array<ISku> | null>(null)
   const [addonSkus, setAddonSkus] = useState<Array<ISku> | null>(null)
-
 
   const [gracePeriodStatus, setGracePeriodStatus] = useState(false)
   const [newSkuToAdd, setNewSkuToAdd] = useState("")
@@ -178,6 +176,11 @@ export default function LicensesTable(props: LicensesTableProps) {
     }
   }, [errorMessage, onOpen])
 
+  // DEBUG: props.newSkus
+  // useEffect(() => {
+  //   console.log('LicenseTable/newSkus: ', JSON.stringify(props.newSkus, null, 1))
+  // }, [props.newSkus])
+
   return (
     <div className="flex flex-col w-full">
 
@@ -230,7 +233,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                                   :
                                   null
 
-                                
+
                               }
                             </span>
                             :
@@ -242,7 +245,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                                 value={props.newSkus.find(item => item.sku_id === sku.sku_id)?.quantity}
                                 aria-label="Cantidad"
                                 onChange={(event) => {
-                                  
+                                  // console.log(`event: `, event.target.value)
                                   props.setNewSkus((prevSkus) =>
                                     prevSkus.map(sku =>
                                     ({
@@ -312,7 +315,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                             onChange={(event) => {
 
                               if (props.newSkus && props.newSkus.length >= 1) {
-                                
+
                                 props.setNewSkus((prevSkus) =>
                                   prevSkus.map(sku =>
                                   ({
@@ -443,7 +446,7 @@ export default function LicensesTable(props: LicensesTableProps) {
                           </Chip>
                           :
                           null
-                        
+
                       }
                     </TableCell>
                     <TableCell className="text-right">

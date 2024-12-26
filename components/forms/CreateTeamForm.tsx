@@ -8,6 +8,7 @@ import { SubmitButton } from "../buttons/SubmitButton";
 import { IPartner, ISkuInfo } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { isEmailValid } from "@/utils/validators/input-fields/email";
 import clsx from "clsx";
 
 interface CreateTeamFormProps {
@@ -29,6 +30,7 @@ interface ICreateTeamFormFields {
   license_sku_quantity: number,
   reseller_id: string
   is_trial: string
+  admin_email?: string
 }
 
 const CreateTeamForm = ({ message, formAction, className, partners, commitmentTypes, skus }: CreateTeamFormProps) => {
@@ -220,7 +222,10 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
               aria-label="Invite admin Email"
               isRequired
               value={fields.invite_admin}
-              onChange={(event) => handleUpdateFields('invite_admin', event.target.value)}
+              onChange={(event) => {
+                  handleUpdateFields('invite_admin', event.target.value)
+                }
+              }
             />
 
             <Input

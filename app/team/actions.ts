@@ -1,6 +1,7 @@
 "use server"
-import {  ISku, ITeamApiResponse } from "@/types"
+import { INewTeamData, ISku, ITeamApiResponse } from "@/types"
 import { revalidateTag } from "next/cache"
+import { createClient } from "@/utils/supabase/server"
 
 /**
  * Fetches a team's data
@@ -8,13 +9,15 @@ import { revalidateTag } from "next/cache"
 export const getTeam = async (teamId: string, resellerId?: string | null | undefined) => {
   "use server"
   revalidateTag('team' + teamId)
+  console.log(`DEBUG: app/team/actions/getTeam: teamId: `, teamId)
+  console.log(`DEBUG: app/team/actions/getTeam: resellerId: `, resellerId)
 
   const fetchUrl = resellerId ? `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}?resellerId=${resellerId}`
-                              : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
+    : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
 
   // console.log(`DEBUG: app/team/actions/getTeam: fetchUrl: `, fetchUrl)
-  
-// console.log(`DEBUG: app/team/actions/getTeam: fetch call: `, `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}${resellerId && resellerId.length >= 1 ? `?resellerId=${resellerId}` : ''}`)
+
+  // console.log(`DEBUG: app/team/actions/getTeam: fetch call: `, `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}${resellerId && resellerId.length >= 1 ? `?resellerId=${resellerId}` : ''}`)
   const response = await fetch(fetchUrl,
     {
       headers: {
@@ -38,7 +41,7 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
         status: response.status
       }
     )
-  }  
+  }
 
   const data = await response.json()
   revalidateTag('team' + teamId)
@@ -59,7 +62,6 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
  */
 export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
   "use server"
-
 
   const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`,
     {
@@ -88,9 +90,9 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
   //   console.log(`errorResponse: `, errorResponse)
   //   return { code: errorResponse.code, message: errorResponse.data.error_summary }
   // }
-  
+
   const responseObject = await response.json()
-  // console.log(`responseObject: `, responseObject)
+  console.log(`responseObject: `, responseObject)
   revalidateTag('team' + teamId)
   // console.log(`responseObject: `, responseObject)
   return responseObject
@@ -98,7 +100,7 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
 }
 
 export async function getPartners() {
-  const response = await fetch(`${ process.env.LOCAL_API_BASE_URL }/api/partners`, {
+  const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/partners`, {
     next: {
       tags: ['partners']
     }
@@ -109,7 +111,7 @@ export async function getPartners() {
 }
 
 export async function getSkus() {
-  const response = await fetch(`${ process.env.LOCAL_API_BASE_URL }/api/skus`, {
+  const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/skus`, {
     next: {
       tags: ['skus']
     }
@@ -117,4 +119,46 @@ export async function getSkus() {
 
   const skus = await response.json()
   return skus
+}
+
+/**
+ * Obtains the team from the database (supabase)
+ * @param teamId 
+ * @returns 
+ */
+export const getTeamFromDatabase = async (teamId: string) => {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('team')
+    .select('*')
+    .eq('team_id', teamId)
+    .single()
+
+  if (error) {
+    console.error(error)
+  }
+
+  return { data, error }
+}
+
+/**
+ * Updates the admin_email field of the team in the database (supabase)
+ * @param teamId 
+ * @param teamData 
+ * @returns 
+ */
+export const updateDbTeamAdminEmail = async (teamId: string, admin_email: string) => {
+  const supabase = createClient()
+  const { data, error }: { data: INewTeamData | null, error: any } = await supabase
+    .from('team')
+    .update({ admin_email })
+    .eq('team_id', teamId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error(error)
+  }
+
+  return { data, error }
 }

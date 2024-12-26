@@ -139,14 +139,17 @@ export interface ICreateTeamFormFields {
   invite_admin_confirmation: string
   sku_id: string
   distribuitor_id?: number | undefined
+  admin_email?: string | undefined
 }
 
 export interface INewTeamData {
+  team_id?: string
   name: string
   country_code: string
   invite_admin: string
   skus: Array<ISku>
   distribuitor_id?: number | undefined
+  admin_email?: string | undefined
 }
 
 export type TLicense = "Standard" | "Business" | "Advanced" | "Business Plus" | "Education" | "Enterprise" | "Unknown"

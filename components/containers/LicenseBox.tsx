@@ -12,6 +12,10 @@ import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"
 import { differenceInDays } from "date-fns"
 import PlanChangeDrawer from "../drawers/PlanChangeDrawer/PlanChangeDrawer"
 import clsx from "clsx"
+import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-validator"
+import { ITransitionOutcome } from "@/types"
+
+/** TODO: Edit mode CHECK the license quantity of the license SKU, it is null, and updating it returns Conflict */
 
 interface LicenseBoxProps {
   baseSku: string
@@ -19,6 +23,7 @@ interface LicenseBoxProps {
   license_description?: string | undefined
   skus: Array<ISku>
   renewalStateSkus?: Array<ISku>
+  renewalSkuInfo?: ISkuInfo | null
   num_licensed_users: number
   space_quota: number
   auto_renew: boolean
@@ -35,10 +40,8 @@ interface LicenseBoxProps {
 
 export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxProps) {
 
-  // console.log(resellerIds)
   // Removes our partner ID from the array leaving only the sub-partner's ID.
-  const subPartnerResellerId = resellerIds.filter(id => id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID) 
-  // console.log('subPartnerResellerId: ', subPartnerResellerId)
+  const subPartnerResellerId = resellerIds.filter(id => id !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID)
 
   const [editMode, setEditMode] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -48,7 +51,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
 
   // LIFTED STATE from <LicensesTable>
   // const [newSkus, setNewSkus] = useState(props.skus)
-  const [newSkus, setNewSkus] = useState<Array<ISku>>([])
+  const [newSkus, setNewSkus] = useState<Array<ISku>>(props.skus)
 
   // LIFTED STATE from <LicensesTable>
   const [forceImmediate, setForceImmediate] = useState(false)
@@ -58,38 +61,55 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
 
   const [formattedEndDate, setFormattedEndDate] = useState("")
 
+  // Validation result of the transition
+  const [transitionValidationResult, setTransitionValidationResult] = useState<ITransitionOutcome>()
+
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { isOpen: isOpenError, onOpen: onOpenError, onOpenChange: onOpenChangeError, onClose: onCloseError } = useDisclosure();
 
   const handleUpdate = () => {
     onOpen()
     if (props.teamId && props.baseSku && props.skus && newSkus && subPartnerResellerId) {
+      // console.log(`props.skus: `, JSON.stringify(props.skus, null, 1))
+      // console.log(`newSkus: `, JSON.stringify(newSkus, null, 1))
       modifyTeamSkus(props.teamId, props.skus, newSkus, false, subPartnerResellerId)
         .then(data => {
           if (data.code !== 200) {
             setModifyStatus("error")
             setErrorMessage(data?.message || data.error || "Error desconocido")
-            setNewSkus([])
+            setNewSkus(props.skus)
+            setNewAddonSkus([])
+          } else {
+            setModifyStatus("success")
+            setNewSkus(newSkus)
             setNewAddonSkus([])
           }
-          setModifyStatus("success")
-          setNewSkus([])
-          setNewAddonSkus([])
         })
         .catch(error => {
           console.error(error)
           setModifyStatus("error")
           setErrorMessage(error)
-          // setNewSkus(props.skus)
-          setNewSkus([])
+          setNewSkus(props.skus)
           setNewAddonSkus([])
         })
         .finally(() => {
           onClose()
           setEditMode(false)
-      })
+        })
     }
   }
+
+  // Validate the transition
+  useEffect(() => {
+    const validateTransition = async () => {
+      if (props.skus.length >= 1 && props.renewalStateSkus && props.renewalStateSkus?.length >= 1) {
+        const outcome = await validateSKUTransition(props.skus[0].sku_id, props.renewalStateSkus?.[0].sku_id)
+        setTransitionValidationResult(outcome)
+      }
+    }
+
+    validateTransition()
+  }, [props.skus, props.renewalStateSkus])
 
   useEffect(() => {
     if (props.end_datetime && props.end_datetime.length >= 1) {
@@ -106,19 +126,25 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
   }, [errorMessage, onOpenError])
 
   // Triggered by editMode state
-  useEffect(() => {
-    if (editMode) {
-      // Update newSkus with currentSkus and filter out skus that are not present in the renewal state
-      const prepareNewSkus = (skus: Array<ISku>, renewalSkus: Array<ISku>) => {
-        return skus.filter(({ sku_id }) => renewalSkus.some(item => item.sku_id === sku_id))
-      }
+  // useEffect(() => {
+  //   if (editMode) {
+  //     // Update newSkus with currentSkus and filter out skus that are not present in the renewal state
+  //     const prepareNewSkus = (skus: Array<ISku>, renewalSkus: Array<ISku>) => {
+  //       return skus.filter(({ sku_id }) => renewalSkus.some(item => item.sku_id === sku_id))
+  //     }
 
-      const updatedNewSkus = prepareNewSkus(props.skus, props.renewalStateSkus || [])
-      setNewSkus(updatedNewSkus)
-    } else {
-      setNewSkus([])
-    }
-  }, [editMode, props.skus, props.renewalStateSkus])
+  //     const updatedNewSkus = prepareNewSkus(props.skus, props.renewalStateSkus || [])
+  //     // console.log('updatedNewSkus: ', updatedNewSkus)
+  //     setNewSkus(updatedNewSkus)
+  //   } else {
+  //     setNewSkus(props.skus)
+  //   }
+  // }, [editMode, props.skus, props.renewalStateSkus])
+
+  // DEBUG: newSkus
+  // useEffect(() => {
+  //   console.log('newSkus: ', JSON.stringify(newSkus, null, 1))
+  // }, [newSkus])
 
   return (
     <Card className="w-full flex flex-col" radius={'none'} shadow={'none'}>
@@ -153,7 +179,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
           }
         </div>
         <div className="flex justify-end gap-x-2">
-          {/* {
+          {
             props.skuInfo && !props.currentState?.is_trial ?
               <PlanChangeDrawer
                 teamId={props.teamId}
@@ -166,9 +192,9 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                 current_skus={props.skus}
                 resellerIds={subPartnerResellerId}
               />
-            :
+              :
               null
-          } */}
+          }
 
           {
             // Can't edit ENTERPRISE type SKUs for now
@@ -190,7 +216,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                     endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
                     aria-label="Deshacer"
                     onClick={() => {
-                      // setNewSkus(props.skus)
+                      setNewSkus(props.skus)
                       setNewAddonSkus([])
                       setEditMode(false)
                     }}
@@ -219,9 +245,9 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
       <CardBody className={'px-[32px] py-[24px] flex flex-col'}>
 
         {/* CARD BODY TOP SECTION */}
-        <div className="flex justify-between gap-x-[16px] flex-wrap">
+        <div className="flex flex-col gap-x-[16px] gap-y-2 lg:flex-row justify-between">
 
-          <div className="flex flex-col justify-end content-start md:items-center text-right gap-x-[16px] gap-y-[4px] md:flex-row">
+          <div className="flex flex-col lg:flex-row content-start gap-x-[16px] gap-y-[4px]">
             {/* SPACE QUOTA */}
             <div className="flex flex-wrap">
               <span className="text-sm leading-5 text-default-500">Space Quota:&nbsp;</span>
@@ -253,7 +279,22 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
           </div>
 
           {/* PROVISIONED USERS */}
-          <div className="flex gap-[12px] flex-wrap items-center">
+          <div className="flex flex-col lg:flex-row gap-[12px] lg:justify-end lg:items-center w-full lg:w-1/2">
+            {
+              props.renewalSkuInfo && (props.renewalStateSkus?.[0].sku_id !== props.skus[0].sku_id) && transitionValidationResult ?
+                <div
+                  className={'bg-warning-100 py-1 px-3 max-w-fit min-w-72 rounded-md w-full'}
+                >
+                  {/* Truncate this span to fit the chip */}
+                  <div className="text-sm text-[#11181C] truncate whitespace-nowrap overflow-hidden min-w-72">{`${transitionValidationResult.type} a ${props.renewalSkuInfo?.description} programado en ${props.remainingTime}`}
+                    <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500 ml-2" />
+                  </div>
+
+                </div>
+                :
+                null
+            }
+
             {// Show the renovation warning only when the remaining days are equal or less than 15.
               differenceInDays(new Date(props.end_datetime), new Date()) >= 0 && differenceInDays(new Date(props.end_datetime), new Date()) <= 15 ?
                 <Chip
@@ -275,9 +316,29 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
 
         </div>
 
+        {
+          // If there is a plan change schedule, show this warning in Edit Mode
+          editMode && props.renewalSkuInfo && (props.renewalStateSkus?.[0].sku_id !== props.skus[0].sku_id) && transitionValidationResult ?
+            <div
+              className={'bg-warning-100 py-1 px-3 min-w-72 rounded-md w-full mt-4'}
+            >
+              {/* Truncate this span to fit the chip */}
+              <div className="text-sm text-[#11181C] min-w-72 flex">
+                <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500 mr-2" />
+                <div className="flex flex-col gap-y-2">
+                  <span><strong> Advertencia:</strong> Hay un <strong>{transitionValidationResult.type}</strong> de plan programado para ésta cuenta. Si realizas un cambio y presionas <strong> Actualizar <FontAwesomeIcon icon={faFloppyDisk} size="lg" /></strong>, el {transitionValidationResult.type} programado se <strong>cancelará.</strong> </span>
+                  <span>Si requires hacer un upsale o downsale, puedes hacerlo pero deberás volver a programar el cambio de plan.</span>
+                </div>
+              </div>
+
+            </div>
+            :
+            null
+        }
+
         {/* CARD BODY BOTTOM SECTION */}
         {
-          props.skus && props.skus.length >= 1 ?
+          props.skus && props.skus.length >= 1 && newSkus && newSkus.length >= 1 ?
             <LicensesTable
               skus={props.skus}
               renewalStateSkus={props.renewalStateSkus}
