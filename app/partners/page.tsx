@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getPartners } from "@/utils/partner";
 import PartnersTable from "@/components/containers/PartnersTable";
 
-export default async function PartnersHome({ searchParams }: { searchParams: { message: string } }) {
+export default async function PartnersHome() {
 
   const supabase = createClient()
 

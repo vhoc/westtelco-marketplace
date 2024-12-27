@@ -17,7 +17,6 @@ const FindTeamForm = ({ message, formAction, className, resellerId }: FindTeamFo
   const [teamId, setTeamId] = useState('')
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
   const handleTeamIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
@@ -65,15 +64,6 @@ const FindTeamForm = ({ message, formAction, className, resellerId }: FindTeamFo
       >
         {isLoading ? `Buscando...` : 'Buscar'}
       </Button>
-
-      {/* <Button
-        color="primary"
-        variant={'light'}
-        radius={'sm'}
-        onPress={() => router.push('/team/new')}
-      >
-        DEBUG: Nuevo cliente
-      </Button> */}
     </form>
   )
 

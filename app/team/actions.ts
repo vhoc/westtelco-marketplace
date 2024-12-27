@@ -15,9 +15,7 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
   const fetchUrl = resellerId ? `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}?resellerId=${resellerId}`
     : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
 
-  // console.log(`DEBUG: app/team/actions/getTeam: fetchUrl: `, fetchUrl)
 
-  // console.log(`DEBUG: app/team/actions/getTeam: fetch call: `, `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}${resellerId && resellerId.length >= 1 ? `?resellerId=${resellerId}` : ''}`)
   const response = await fetch(fetchUrl,
     {
       headers: {
@@ -31,8 +29,6 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
       }
     }
   )
-
-  // console.log(`DEBUG: app/team/actions/getTeam: fetch response: `, await response.json())
 
   if (!response.ok) {
     return Response.json(
@@ -83,18 +79,9 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
     }
   )
 
-  // console.log(response)
-
-  // if (!response.ok) {
-  //   const errorResponse: IApiErrorResponse = await response.json()
-  //   console.log(`errorResponse: `, errorResponse)
-  //   return { code: errorResponse.code, message: errorResponse.data.error_summary }
-  // }
-
   const responseObject = await response.json()
   console.log(`responseObject: `, responseObject)
   revalidateTag('team' + teamId)
-  // console.log(`responseObject: `, responseObject)
   return responseObject
 
 }

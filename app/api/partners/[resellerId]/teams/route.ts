@@ -1,5 +1,4 @@
 export const dynamic = 'force-dynamic' // defaults to auto
-// export const revalidate = 1440
 
 const requestOptions = {
   method: 'POST',

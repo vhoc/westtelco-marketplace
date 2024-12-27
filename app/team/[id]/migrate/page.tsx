@@ -23,7 +23,6 @@ export default async function MigrateTeamPage({ params, searchParams }: { params
                 message={searchParams?.message ? searchParams?.message : undefined}
                 partners={partners}
                 origin_reseller_id={params?.id}
-                // originResellerId={params?.resellerId}
               />
               :
               <div>No se encontraron partners.</div>

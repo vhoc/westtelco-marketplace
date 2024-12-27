@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { skuId: string } }
 ): Promise<void | Response> {
   const supabase = createClient()

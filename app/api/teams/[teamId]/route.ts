@@ -27,21 +27,6 @@ export async function GET(
 
   const teamId = params.teamId
   const resellerIds = process.env.API_ENV === "PROD" ? [resellerId] : [] // If we're calling the TEST environment, send an empty array.
-  // console.log(`DEBUG: app/api/teams/[teamId]::GET params: `, params)
-  // console.log(`DEBUG: app/api/teams/[teamId]::GET resellerId: `, resellerId)
-  // console.log(`DEBUG: app/api/teams/[teamId]::GET params.teamId: `, params.teamId)
-  // console.log(`DEBUG: app/api/teams/[teamId]::GET params.resellerId: `, params.resellerId)
-
-  // console.log(`DEBUG: app/api/teams/[teamId]::GET fetch call: `, JSON.stringify({
-  //   fetchUrl: `${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
-  //   body: {
-  //     "environment": process.env.API_ENV,
-  //     "id": teamId,
-  //     "reseller_ids": resellerIds,
-  //     "country": process.env.DISTRIBUITOR_COUNTRY,
-  //   }
-  // }, null, 1))
-
 
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/get`,
@@ -62,9 +47,6 @@ export async function GET(
       }
     )
 
-    // This causes a Body is unusable error if it remains uncommented.
-    // console.log(`DEBUG: app/api/teams/[teamId]::GET fetch response: `, await response.json())
-
     if (!response.ok) {
       return Response.json(
         {
@@ -77,7 +59,6 @@ export async function GET(
     revalidateTag('team' + teamId)
 
     const data = await response.json()
-    // console.log(`data: `, data)
     return Response.json(data, { status: 200 })
 
   } catch (error) {
@@ -99,8 +80,6 @@ export async function PUT(request: Request) {
 
   const requestBody = await request.json()
 
-  // console.log(`requestBody`, requestBody)
-
   try {
     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/skus/modify`,
       {
@@ -120,8 +99,6 @@ export async function PUT(request: Request) {
     }
 
     revalidateTag('team' + requestBody.id)
-    // const responseObject = await response.json()
-    // return responseObject
     const data = await response.json()
     return Response.json(data, { status: 200 })
 

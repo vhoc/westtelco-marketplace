@@ -5,7 +5,6 @@ import { useFormStatus } from "react-dom"
 import { useEffect } from "react"
 
 interface SubmitButtonProps {
-  // isSubmitDisabled?: boolean
   formAction: any
   loadingText?: string | undefined
   defaultText?: string | undefined
@@ -36,7 +35,6 @@ export const SubmitButton = ( { formAction, loadingText = 'Cargando...', default
       radius={props.radius}
       className={props.className}
       isDisabled={props.isDisabled || isBusy}
-      // onClick={handleSubmit}
       formAction={formAction}
       size={props.size}
     >

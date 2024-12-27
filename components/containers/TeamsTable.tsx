@@ -144,15 +144,6 @@ const TeamsTable = () => {
               >
                 Importar Cliente
               </Button> */}
-              {/* <Button
-                size={'sm'}
-                color={'primary'}
-                variant={'ghost'}
-                endContent={<FontAwesomeIcon icon={faArrowsRotate} />}
-                onPress={() => handleRefetchTeams()}
-              >
-                Actualizar
-              </Button> */}
               <Button
                 size={'sm'}
                 color={'primary'}

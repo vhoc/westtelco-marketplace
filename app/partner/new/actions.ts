@@ -41,8 +41,6 @@ export async function createNewPartner(formData: FormData) {
     .select()
     .single()
 
-  // console.log(`partnerResponse data: `, data)
-  const urlEncoded = encodeURIComponent(data?.id as string)
 
   if (error) {
     console.error(error)
@@ -51,7 +49,6 @@ export async function createNewPartner(formData: FormData) {
 
   if (data && data.id) {
     // TODO: INDIVIDUAL PARTNER PAGE
-    // return redirect(`/partner/${urlEncoded}`);
     return redirect(`/partners`)
   }
 

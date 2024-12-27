@@ -6,9 +6,6 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function createNewTeam(formData: FormData) {
 
-  // console.log(`formData: `, formData)
-
-  // type-casting here for convenience
   // Pending: validations.
   const teamData = {
     name: formData.get('name') as string,
@@ -31,7 +28,6 @@ export async function createNewTeam(formData: FormData) {
   console.log(`teamData: `, JSON.stringify(teamData, null, 1))
 
   const createTeamResponse = await createTeam(teamData)
-  // console.log(`createTeamResponse: `, createTeamResponse)
 
 
   if (createTeamResponse.code !== 200 || !createTeamResponse.data) {
@@ -47,7 +43,6 @@ export async function createNewTeam(formData: FormData) {
   }
 
   // Insert the record in supabase
-  // console.log(`createTeamResponse.data: `, JSON.stringify(createTeamResponse.data, null, 3))
 
   // Calculate the start contract date from the end_date
   let endDate = new Date(createTeamResponse.data.end_datetime)
@@ -83,9 +78,6 @@ export async function createNewTeam(formData: FormData) {
     console.error(error)
     return redirect(`/team/${urlEncoded}?message=El cliente fue creado con exito en Dropbox pero no pudo ser dado de alta en la base de datos de West Telco Marketplace. Por favor contactar a soporte de UX Neighbor.`);
   }
-
-  // console.log(`data: `, data)
-
 
   return redirect(`/team/${urlEncoded}`);
 }

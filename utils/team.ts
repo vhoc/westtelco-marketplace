@@ -12,11 +12,6 @@ const requestOptions = {
 }
 
 export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiResponse> => {
-  // console.log(`teamData: `, JSON.stringify({
-  //   ...teamData,
-  //   "environment": process.env.API_ENV,
-  //   "country": process.env.DISTRIBUITOR_COUNTRY,
-  // }))
 
   const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/create`, {
     ...requestOptions,
@@ -40,7 +35,6 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
   }
   revalidateTag('team')
   const responseObject = await response.json()
-  // console.log(`Newly created team: `, JSON.stringify(responseObject, null, 1))
   return responseObject
 
 }
@@ -54,12 +48,6 @@ export const createTeam = async (teamData: INewTeamData): Promise<ITeamApiRespon
  */
 export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Promise<ITeamApiResponse> => {
 
-
-  // console.log(`body: `, JSON.stringify({
-  //   "id": teamId,
-  //   "reseller_ids": resellerIds
-  // }))
-  // try {
   const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/cancel`,
     {
       ...requestOptions,
@@ -77,24 +65,16 @@ export const cancelTeam = async (teamId: string, resellerIds: Array<string>): Pr
     }
   )
 
-  // console.log(`response: `, await response.json())
 
   if (!response.ok) {
     const error = await response.json()
     const errorMessage = error && error.data && error.data.error_summary ? error.data.error_summary : 'Error desconocido al intentar suspender al cliente.'
-    // console.log(`Error: `, error)
     return { code: error.code, message: errorMessage }
   }
   revalidateTag('team')
   const responseObject = await response.json()
-  // console.log(`responseObject: `, responseObject)
   return responseObject
 
-  // } catch (error) {
-  //   console.error('There was an error!', error);
-  //   //@ts-ignore
-  //   return { code: 400, message: error.message }
-  // }
 }
 
 /**
@@ -147,48 +127,3 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
     return { code: 400, message: error.message }
   }
 }
-
-// /**
-//  * modifyTeamSkus
-//  * 
-//  * Sends a modify request to change the SKU's of a team to the backend API, and returns the updated team info.
-//  * @param teamId string
-//  * @param currentSkus Array<ISku>
-//  * @param newSkus Array<ISku>
-//  * @param forceImmediate boolean
-//  * @param resellerIds Array<string>
-//  * @return Promise<ITeamApiResponse>
-//  */
-// export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
-//   // console.log(`modifyTeamSkus props: teamId:${teamId}, currentSkus: ${JSON.stringify(currentSkus)}, newSkus: ${JSON.stringify(newSkus)}, forceImmediate: ${forceImmediate}`)
-//   try {
-//     const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/skus/modify`,
-//       {
-//         ...requestOptions,
-//         body: JSON.stringify({
-//           "environment": process.env.API_ENV,
-//           "country": process.env.DISTRIBUITOR_COUNTRY,
-//           "id": teamId,
-//           "current_skus": currentSkus,
-//           "new_skus": newSkus,
-//           "reseller_ids": resellerIds,
-//           "force_immediate": forceImmediate,
-//         })
-//       }
-//     )
-
-//     if (!response.ok) {
-//       const errorResponse: IApiErrorResponse = await response.json()
-//       console.log(`errorResponse: `, errorResponse)
-//       return { code: errorResponse.code, message: errorResponse.data.error_summary }
-//     }
-//     revalidateTag('team')
-//     const responseObject = await response.json()
-//     return responseObject
-
-//   } catch (error) {
-//     console.error('There was an error!', error);
-//     //@ts-ignore
-//     return { code: 400, message: error.message }
-//   }
-// }

@@ -17,7 +17,7 @@ interface CancelClientButton {
 
 const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: CancelClientButton) => {
 
-  const [cancelStatus, setCancelStatus] = useState<"error" | "success" | "none">("none")
+  // const [cancelStatus, setCancelStatus] = useState<"error" | "success" | "none">("none")
   const [errorMessage, setErrorMessage] = useState("")
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
@@ -29,24 +29,23 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
     if (teamId && resellerIds) {
       cancelTeam(teamId, resellerIds)
         .then(data => {
-          // console.log(`data: `, data)
           if (!data) {
-            setCancelStatus("error")
+            // setCancelStatus("error")
             //@ts-ignore : Dropbox API inconsistent response structure
             setErrorMessage("Error desconocido")
           }
 
           if (data.message) {
-            setCancelStatus("error")
+            // setCancelStatus("error")
             //@ts-ignore : Dropbox API inconsistent response structure
             setErrorMessage(data.message)
           }
 
-          setCancelStatus("success")
+          // setCancelStatus("success")
 
         })
         .catch(error => {
-          setCancelStatus("error")
+          // setCancelStatus("error")
           setErrorMessage(error)
         })
         .finally(() => {
@@ -62,23 +61,23 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
         .then(data => {
           console.log(`reinstateTeam/then/data: `, data)
           if (!data) {
-            setCancelStatus("error")
+            // setCancelStatus("error")
             //@ts-ignore : Dropbox API inconsistent response structure
             setErrorMessage("Error desconocido")
           }
 
           if (data.message) {
-            setCancelStatus("error")
+            // setCancelStatus("error")
             //@ts-ignore : Dropbox API inconsistent response structure
             setErrorMessage(data.message)
           }
 
-          setCancelStatus("success")
+          // setCancelStatus("success")
 
         })
         .catch(error => {
           console.error(error)
-          setCancelStatus("error")
+          // setCancelStatus("error")
           setErrorMessage(error)
         })
         .finally(() => {
