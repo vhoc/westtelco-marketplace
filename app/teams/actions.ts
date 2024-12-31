@@ -2,6 +2,7 @@
 import { IPartner, ITeamData } from "@/types";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
+import { getPartners } from "@/utils/partner";
 
 /**
  * navigateToTeam
@@ -19,6 +20,63 @@ export const navigateToTeam = async (formData: FormData) => {
   }
 
   return redirect(`/team/${urlEncoded}?resellerId=${resellerId}`);
+}
+
+/**
+ * getAllTeamsFromPartners
+ */
+export const getAllTeamsFromPartners = async (): Promise<{ teams: Array<ITeamData>, partners: Array<IPartner>, error: any }> => {
+  "use server"
+
+  const partners = await getPartners()
+
+  if ( partners && partners.length >= 1 ) {
+
+    try {
+      let allTeams = []
+
+      for (const partner of partners) {
+        if (partner && partner.dropbox_reseller_id) {
+          
+          const result = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/list2`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `${process.env.API_KEY}`,
+              },
+              body: JSON.stringify({
+                "environment": process.env.API_ENV,
+                "reseller_ids": [partner.dropbox_reseller_id],
+                "country": process.env.DISTRIBUITOR_COUNTRY,
+              }),
+              next: {
+                tags: [
+                  `reseller-${partner.dropbox_reseller_id}-teams`
+                ]
+              }
+            },
+          )
+
+          const currentResult = await result.json()
+          
+          if (currentResult && currentResult.data && currentResult.data.teams && currentResult.data.teams.length >= 1) {
+            
+            allTeams.push(currentResult.data.teams)
+          }
+        }
+      }
+
+      return { teams: allTeams.flat(), partners: partners, error: null }
+    } catch (error) {
+      console.error(error)
+      return { teams: [], partners: [], error }
+    }
+
+  } else {
+    return { teams: [], partners: [], error: "No se encontraron partners." }
+  }
 }
 
 /**
