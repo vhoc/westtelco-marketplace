@@ -1,11 +1,11 @@
 //@ts-nocheck
 "use client"
-import React, { useState, useMemo, useEffect, useCallback } from "react"
+import React, { useState, useMemo, useCallback } from "react"
 import { Input, Button, Skeleton } from "@nextui-org/react"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass, faUserPlus, faPencil } from "@fortawesome/free-solid-svg-icons"
-import { ITeamData, IPartner } from "@/types"
+import { faMagnifyingGlass, faUserPlus  } from "@fortawesome/free-solid-svg-icons"
+import { IPartner } from "@/types"
 import { useRouter } from "next/navigation";
 
 interface PartnersTableProps {
@@ -15,8 +15,6 @@ interface PartnersTableProps {
 const PartnersTable = ( { partners }: PartnersTableProps ) => {
 
   const router = useRouter()
-  // const [teams, setTeams] = useState<Array<ITeamData>>([])
-  // const [partners, setPartners] = useState<Array<IPartner>>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingTeamPage, setIsLoadingTeamPage] = useState(false)
 

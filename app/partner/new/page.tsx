@@ -1,4 +1,3 @@
-import CreateTeamForm from "@/components/forms/CreateTeamForm"
 import CreatePartnerForm from "@/components/forms/CreatePartnerForm"
 import { Card } from "@nextui-org/react"
 import { createNewPartner } from "./actions"

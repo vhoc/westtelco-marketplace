@@ -1,4 +1,3 @@
-// import NextLogo from "./NextLogo";
 
 export default function Header() {
   return (

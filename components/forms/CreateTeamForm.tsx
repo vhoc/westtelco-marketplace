@@ -3,12 +3,10 @@ import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from
 import { Button } from "@nextui-org/react";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
-// import { useRouter } from "next/navigation";
 import { SubmitButton } from "../buttons/SubmitButton";
 import { IPartner, ISkuInfo } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { isEmailValid } from "@/utils/validators/input-fields/email";
 import clsx from "clsx";
 
 interface CreateTeamFormProps {
@@ -60,8 +58,6 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
   const [baseSkuIncludedUsers, setBaseSkuIncludedUsers] = useState(3)
   const [licenseSku, setLicenseSku] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  // const [partners, setPartners] = useState<Array<IPartner>>([])
-  // const [isLoadingPartners, setIsLoadingPartners] = useState(true)
   const [fields, setFields] = useState<ICreateTeamFormFields>({
     name: "",
     country_code: "MX",

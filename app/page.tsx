@@ -2,7 +2,6 @@ import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
 import { Card } from "@nextui-org/react";
 import { isUserValid } from "@/utils/auth";
-// import { createClient } from "@/utils/supabase/server";
 
 export default async function Home({ searchParams }: { searchParams: { message: string } }) {
 

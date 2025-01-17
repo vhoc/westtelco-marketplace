@@ -168,7 +168,6 @@ const CreatePartnerForm = ({ message, formAction, className }: CreatePartnerForm
       <Select
         name={'address_country'}
         label="CÓDIGO DEL PAÍS"
-        // defaultSelectedKeys={["cat"]}
         onChange={(event) => handleUpdateFields('address_country', event.target.value)}
         selectedKeys={[fields.address_country]}
         showScrollIndicators
@@ -183,7 +182,6 @@ const CreatePartnerForm = ({ message, formAction, className }: CreatePartnerForm
       <Select
         name={'currency'}
         label="TIPO DE CAMBIO"
-        // defaultSelectedKeys={["cat"]}
         onChange={(event) => handleUpdateFields('currency', event.target.value)}
         selectedKeys={[fields.currency]}
         showScrollIndicators

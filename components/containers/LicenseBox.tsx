@@ -70,8 +70,6 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
   const handleUpdate = () => {
     onOpen()
     if (props.teamId && props.baseSku && props.skus && newSkus && subPartnerResellerId) {
-      // console.log(`props.skus: `, JSON.stringify(props.skus, null, 1))
-      // console.log(`newSkus: `, JSON.stringify(newSkus, null, 1))
       modifyTeamSkus(props.teamId, props.skus, newSkus, false, subPartnerResellerId)
         .then(data => {
           if (data.code !== 200) {

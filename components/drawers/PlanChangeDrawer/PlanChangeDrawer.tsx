@@ -39,14 +39,6 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  // DEBUG
-  // useEffect(() => {
-  //   console.log('compatibleSkus: ', compatibleSkus)
-  // }, [compatibleSkus])
-
-  // useEffect(() => {
-  //   console.log('loadingCompatibleSkus: ', loadingCompatibleSkus)
-  // }, [loadingCompatibleSkus])
 
   /**
    * Update the newSkus array with the selectedBaseSku   * 
@@ -69,44 +61,6 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
     })
 
   }, [selectedBaseSku])
-
-  // useEffect(() => {
-  //   setNewSkus(prevState =>
-  //     prevState.map(item =>
-  //       item.sku_id === selectedBaseSku?
-  //         { ...item, sku_id: selectedBaseSku }
-  //         :
-  //         item
-  //     )
-  //   )
-  // },[selectedBaseSku])
-
-  // useEffect(() => {
-  //   console.log('currentSkuInfo: ', currentSkuInfo)
-  // },[currentSkuInfo])
-
-  // useEffect(() => {
-  //   console.log('selectedBaseSku: ', selectedBaseSku)
-  // },[selectedBaseSku])
-
-  // useEffect(() => {
-  //   console.log('current_skus: ', JSON.stringify(current_skus, null, 1))
-  // }, [current_skus, newSkus])
-
-  // useEffect(() => {
-  //   console.log('newSkus: ', JSON.stringify(newSkus, null, 1))
-  // }, [newSkus])
-
-  // useEffect(() => {
-  //   console.log('preparedBody: ', JSON.stringify({
-  //     environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
-  //     id: teamId,
-  //     current_skus: current_skus,
-  //     new_skus: newSkus,
-  //     reseller_ids: resellerIds,
-  //   }, null, 1))
-  // }, [current_skus, newSkus, resellerIds, teamId])
-
 
 
   return (

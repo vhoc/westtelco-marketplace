@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { validateSKUTransition } from "../validators/sku/sku-transition-validator"
-import { ISkuInfo, ITransitionOutcome } from "@/types"
+import { ISkuInfo } from "@/types"
 
 /**
  * Custom hook to fetch compatible SKUs based on the current SKU and selected commitment type.

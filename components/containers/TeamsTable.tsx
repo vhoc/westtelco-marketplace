@@ -4,20 +4,25 @@ import React, { useState, useMemo, useEffect, useCallback } from "react"
 import { Input, Button } from "@nextui-org/react"
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Chip, Progress } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass, faUserPlus, faPencil, faTriangleExclamation, faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
+import { faMagnifyingGlass, faUserPlus, faPencil, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
-import { getAllTeams, refetchTeams } from "@/app/teams/actions"
-import { getPartners } from "@/utils/partner"
+// import { getAllTeams } from "@/app/teams/actions"
+// import { getPartners } from "@/utils/partner"
 import { getRemainingTime } from "@/utils/time"
 import { differenceInDays } from "date-fns"
 import clsx from "clsx"
 
-const TeamsTable = () => {
+interface TeamsTableProps {
+  teams: Array<ITeamData>
+  partners: Array<IPartner>
+}
+
+const TeamsTable = ({ teams, partners }: TeamsTableProps) => {
 
   const router = useRouter()
-  const [teams, setTeams] = useState<Array<ITeamData>>([])
-  const [partners, setPartners] = useState<Array<IPartner>>([])
+  // const [teams, setTeams] = useState<Array<ITeamData>>([])
+  // const [partners, setPartners] = useState<Array<IPartner>>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingTeamPage, setIsLoadingTeamPage] = useState(false)
 
@@ -44,9 +49,6 @@ const TeamsTable = () => {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const handleRefetchTeams = () => {
-    location.reload()
-  }
 
   const filteredItems = useMemo(() => {
     let filteredTeams = [...teams];
@@ -143,15 +145,6 @@ const TeamsTable = () => {
                 isDisabled={true}
               >
                 Importar Cliente
-              </Button> */}
-              {/* <Button
-                size={'sm'}
-                color={'primary'}
-                variant={'ghost'}
-                endContent={<FontAwesomeIcon icon={faArrowsRotate} />}
-                onPress={() => handleRefetchTeams()}
-              >
-                Actualizar
               </Button> */}
               <Button
                 size={'sm'}
@@ -364,28 +357,28 @@ const TeamsTable = () => {
   }, [partners, isLoadingTeamPage, isLoading, router])
 
   // LOAD TEAMS AND PARTNERS
-  useEffect(() => {
-    setIsLoading(true)
-    getAllTeams().then(data => {
-      setTeams(data)
-    }).catch(error => {
-      console.error(error)
-    }).finally(() => {
-      setIsLoading(false)
-    })
-  }, [])
+  // useEffect(() => {
+  //   setIsLoading(true)
+  //   getAllTeams().then(data => {
+  //     setTeams(data)
+  //   }).catch(error => {
+  //     console.error(error)
+  //   }).finally(() => {
+  //     setIsLoading(false)
+  //   })
+  // }, [])
 
   // LOAD PARTNERS
-  useEffect(() => {
-    setIsLoading(true)
-    getPartners().then(data => {
-      setPartners(data)
-    }).catch(error => {
-      console.error(error)
-    }).finally(() => {
-      setIsLoading(false)
-    })
-  }, [])
+  // useEffect(() => {
+  //   setIsLoading(true)
+  //   getPartners().then(data => {
+  //     setPartners(data)
+  //   }).catch(error => {
+  //     console.error(error)
+  //   }).finally(() => {
+  //     setIsLoading(false)
+  //   })
+  // }, [])
 
   return (
     <>

@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 export const dynamic = 'force-dynamic' // defaults to auto
 export const revalidate = 60
 
-export async function GET(request: Request): Promise<void | Response> {
+export async function GET(_request: Request): Promise<void | Response> {
   const supabase = createClient()
 
   const { data, error } = await supabase
