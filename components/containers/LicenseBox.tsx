@@ -14,6 +14,7 @@ import PlanChangeDrawer from "../drawers/PlanChangeDrawer/PlanChangeDrawer"
 import clsx from "clsx"
 import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-validator"
 import { ITransitionOutcome } from "@/types"
+import AutoRenewalSwitch from "../buttons/AutoRenewalSwitch"
 
 /** TODO: Edit mode CHECK the license quantity of the license SKU, it is null, and updating it returns Conflict */
 
@@ -260,17 +261,23 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
 
             {/* AUTORENEWAL */}
             {
-              !props.active ? <Chip radius={'sm'} size={'sm'} className={'bg-danger-100 text-danger-700 '}>Inactiva</Chip> : null
+              !props.active ?
+                <Chip radius={'sm'} size={'sm'} className={'bg-danger-100 text-danger-700 '}>Inactiva</Chip>
+              :
+                null
             }
             {
               props.auto_renew ?
-                <span className="text-sm leading-5 text-default-500">
+                <span className="text-sm leading-5 text-default-500 flex items-center">
                   Renovación:
                   <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 ml-4'}>AUTO</Chip>
                 </span>
 
                 :
-                null
+                <span className="text-sm leading-5 text-default-500 flex items-center">
+                  Renovación:
+                  <Chip radius={'sm'} size={'sm'} className={'bg-default-100 text-default-700 ml-4'}>MANUAL</Chip>
+                </span>
             }
 
 
@@ -333,6 +340,14 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
             :
             null
         }
+        {/* AUTO-RENEW TOGGLE SWITCH */}
+        <AutoRenewalSwitch
+          className="mt-4 max-w-sm justify-between"
+          autoRenewal={props.auto_renew}
+          skus={props.skus}
+          teamId={props.teamId}
+          resellerIds={subPartnerResellerId}
+        />
 
         {/* CARD BODY BOTTOM SECTION */}
         {
