@@ -80,10 +80,35 @@ export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, n
   )
 
   const responseObject = await response.json()
-  console.log(`responseObject: `, responseObject)
   revalidateTag('team' + teamId)
   return responseObject
 
+}
+
+export const modifyTeamAutorenew = async (teamId: string, currentSkus: Array<ISku>,  auto_renew: boolean, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
+  "use server"
+
+  const response = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/auto_renew/modify`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `${process.env.API_KEY}`,
+      },
+      body: JSON.stringify({
+        "environment": process.env.API_ENV,
+        "id": teamId,
+        "reseller_ids" : resellerIds,
+        "new_auto_renew": auto_renew,
+        "country": process.env.DISTRIBUITOR_COUNTRY
+      })
+    }
+  )
+
+  const responseObject = await response.json()
+  revalidateTag('team' + teamId)
+  return responseObject
 }
 
 export async function getPartners() {
