@@ -165,3 +165,17 @@ export interface ITransitionOutcome {
   outcome: "Scheduled" | "Immediate" | "Not Allowed"
   type: TTransition
 }
+
+export interface IServerActionSuccessResult {
+  ok: true
+  data: Record<string, unknown>
+  error?: never
+}
+
+export interface IServerActionErrorResult {
+  ok: false
+  error: string
+  data?: never
+}
+
+export type TServerActionResult = IServerActionSuccessResult | IServerActionErrorResult

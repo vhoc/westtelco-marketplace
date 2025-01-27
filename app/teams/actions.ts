@@ -3,6 +3,7 @@ import { IPartner, ITeamData } from "@/types";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { getPartners } from "@/utils/partner";
+import { type TGetAllTeamsFromPartnersResult } from "../types/server-actions";
 
 /**
  * navigateToTeam
@@ -25,7 +26,7 @@ export const navigateToTeam = async (formData: FormData) => {
 /**
  * getAllTeamsFromPartners
  */
-export const getAllTeamsFromPartners = async (): Promise<{ teams: Array<ITeamData>, partners: Array<IPartner>, error: any }> => {
+export const getAllTeamsFromPartners = async (): Promise<TGetAllTeamsFromPartnersResult> => {
   "use server"
 
   const partners = await getPartners()
@@ -68,14 +69,33 @@ export const getAllTeamsFromPartners = async (): Promise<{ teams: Array<ITeamDat
         }
       }
 
-      return { teams: allTeams.flat(), partners: partners, error: null }
+      if ( allTeams.length < 1 ) {
+        return {
+          ok: false,
+          error: "Hubo un error al intentar obtener los clientes. Intenta actualizar la página.",
+        }
+      }
+
+      return {
+        ok: true,
+        data: {
+          teams: allTeams.flat(),
+          partners: partners
+        }
+      }
     } catch (error) {
       console.error(error)
-      return { teams: [], partners: [], error }
+      return {
+        ok: false,
+        error: error as string,
+      }
     }
 
   } else {
-    return { teams: [], partners: [], error: "No se encontraron partners." }
+    return {
+      ok: false,
+      error: "Hubo un error al intentar obtener los clientes. Intenta actualizar la página.",
+    }
   }
 }
 
