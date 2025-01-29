@@ -3,18 +3,19 @@ import { Chip, Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRightFromBracket, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
-import { getTeam } from "../actions"
-import { getSkuInfo } from "@/utils/licenses"
-import { getPartners } from "@/utils/partner"
+// import { getTeam } from "../actions"
+// import { getSkuInfo } from "@/utils/licenses"
+// import { getPartners } from "@/utils/partner"
+// import { getRemainingTime } from "@/utils/time"
+// import { getTeamFromDatabase } from "../actions"
+// import { getSkus } from "../actions"
+// import { ISku } from "@/types"
 import { redirect } from "next/navigation"
-import { ISku } from "@/types"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import CancelClientButton from "@/components/buttons/CancelClientButton"
-import { getRemainingTime } from "@/utils/time"
-import { getTeamFromDatabase } from "../actions"
-import { getSkus } from "../actions"
 import TeamAdminEmailField from "@/components/forms/TeamAdminEmailField"
+import { fetchTeamPageData } from "../actions"
 
 export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
 
@@ -24,29 +25,29 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   if (error || !data?.user) {
     redirect('/login')
   }
-  // Get all the team info from the API using the params.id, then render below.
+
   const teamId = decodeURIComponent(params.id)
-  const team = await (await getTeam(teamId, searchParams?.resellerId)).json()
-  const dbTeam = await getTeamFromDatabase(teamId)
 
-  const baseSku: ISku | undefined = team.data?.current_state.skus.filter((sku: ISku) => sku.sku_id.startsWith('TEAM-') || sku.sku_id.startsWith('EDU-') || sku.sku_id.startsWith('ENT-'))[0]
-  // console.log(`baseSku: `, baseSku)
-  const skuInfo = await getSkuInfo(baseSku?.sku_id)
-  const renewalSkuInfo = await getSkuInfo(team.data?.renewal_state?.skus[0]?.sku_id)
+  const {
+    data: teamData,
+    error: teamDataError
+  } = await fetchTeamPageData(teamId, searchParams?.resellerId)
 
-  const resellerIds = team.data?.reseller_ids
-  const remainingTime = getRemainingTime(team.data?.end_datetime ?? 'Hoy')
-  const partners = await getPartners(resellerIds || [])
-  const { data: allSkus } = await getSkus()
-
-  if (team.code === 409) {
-    return redirect(`/team?message=No se tiene acceso a éste cliente, verifique el estatus de éste cliente con Dropbox.')}`)
+  if (!teamData) {
+    return redirect(`/team?message=${teamDataError}`)
   }
 
-  if (team.code !== 200) {
-    return redirect(`/team?message=${encodeURI(team.message || 'Error desconocido.')}`)
-  }
-
+  const {
+    teamDataFromDropbox: team,
+    teamDataFromDatabase: dbTeam,
+    skuInfo,
+    renewalSkuInfo,
+    allSkus,
+    resellerIds,
+    remainingTime,
+    partners
+  } = teamData
+  
   return (
     <div className="w-full flex flex-col">
 
@@ -57,10 +58,10 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
         <div className="flex flex-col">
 
           <span className={'text-primary-500 text-sm/[12px]'}>{teamId}</span>
-          <span className={'text-default-900 text-lg font-medium mt-2'}>{team.data?.name || ''}</span>
-          <TeamAdminEmailField admin_email={dbTeam.data?.admin_email} dbTeam={dbTeam.data} />
+          <span className={'text-default-900 text-lg font-medium mt-2'}>{team?.name || ''}</span>
+          <TeamAdminEmailField admin_email={dbTeam.admin_email} dbTeam={dbTeam} />
           
-          <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 my-2'}>{team.data?.country_code}</Chip>          
+          <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 my-2'}>{team.country_code}</Chip>          
 
         </div>
 
@@ -83,9 +84,9 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
         <div className="flex gap-4">
           <CancelClientButton
             teamId={teamId}
-            teamActive={team.data?.active || false}
-            skus={team.data?.current_state.skus}
-            resellerIds={team.data?.reseller_ids}
+            teamActive={team.active || false}
+            skus={team.current_state.skus}
+            resellerIds={team.reseller_ids}
           />
 
           <Button
@@ -114,7 +115,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
         
         <div className={'w-full max-w-[1280px] flex flex-col gap-y-4'}>
           {
-            team.data.current_state.is_trial ?
+            team.current_state.is_trial ?
               <div
                 className="bg-warning-100 p-3 flex items-center rounded-sm gap-3"
               >
@@ -127,22 +128,22 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
               null
           }
           <LicenseBox
-            baseSku={team.data?.sku_id || 'Unknown'}
+            baseSku={team.sku_id || 'Unknown'}
             skuInfo={skuInfo}
             license_description={skuInfo && skuInfo.description ? skuInfo.description : 'SKU sin información'}
-            skus={team.data?.current_state.skus || []}
-            renewalStateSkus={team.data?.renewal_state?.skus || []}
+            skus={team.current_state.skus || []}
+            renewalStateSkus={team.renewal_state?.skus || []}
             renewalSkuInfo={renewalSkuInfo}
-            num_licensed_users={team.data?.num_licensed_users || 0}
-            space_quota={team.data?.current_state?.space_quota || 0}
-            auto_renew={team.data?.auto_renew || false}
-            end_date={team.data?.end_date || 'Unknown'}
-            end_datetime={team.data?.end_datetime || 'Unknown'}
-            teamId={team.data?.id || teamId}
-            teamName={team.data?.name || ''}
-            active={team.data?.active || false}
+            num_licensed_users={team.num_licensed_users || 0}
+            space_quota={team.current_state?.space_quota || 0}
+            auto_renew={team.auto_renew || false}
+            end_date={team.end_date || 'Unknown'}
+            end_datetime={team.end_datetime || 'Unknown'}
+            teamId={team.id || teamId}
+            teamName={team.name || ''}
+            active={team.active || false}
             remainingTime={remainingTime}
-            currentState={team.data.current_state}
+            currentState={team.current_state}
             allSkus={allSkus}
             resellerIds={resellerIds}
           />

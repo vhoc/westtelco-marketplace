@@ -2,12 +2,12 @@
 import { useState } from "react"
 import { Button, Input } from "@nextui-org/react"
 import { isEmailValid } from "@/utils/validators/input-fields/email"
-import { INewTeamData } from "@/types"
+import { INewTeamData, ITeamDataFromDatabase } from "@/types"
 import { updateDbTeamAdminEmail } from "@/app/team/actions"
 
 interface TeamAdminEmailFieldProps {
   admin_email?: string
-  dbTeam: INewTeamData
+  dbTeam: ITeamDataFromDatabase
 }
 
 const TeamAdminEmailField = ({ admin_email, dbTeam }: TeamAdminEmailFieldProps) => {

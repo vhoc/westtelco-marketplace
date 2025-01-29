@@ -26,6 +26,13 @@ export const getPartner = async (resellerId: string): Promise<IPartnerApiRespons
   }
 }
 
+/**
+ * Retrieves partners from the database.
+ * If resellerIds is provided, it filters the partners by those resellerIds,
+ * otherwise it returns all the partners.
+ * @param resellerIds 
+ * @returns 
+ */
 export const getPartners = async (resellerIds?: Array<string> | undefined): Promise<Array<IPartner>> => {
   "use server"
   const supabase = createClient()

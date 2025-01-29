@@ -66,7 +66,7 @@ export async function createNewTeam(formData: FormData) {
         dropbox_reseller_id: createTeamResponse.data.reseller_ids[1] ? createTeamResponse.data.reseller_ids[1] : createTeamResponse.data.reseller_ids[0],
         contract_start: startDate,
         provisioning_method: "API",
-        distributor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
+        distribuitor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
         admin_email: formData.get('invite_admin') as string,
       }
     ])
