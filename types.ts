@@ -166,16 +166,14 @@ export interface ITransitionOutcome {
   type: TTransition
 }
 
-export interface IServerActionSuccessResult {
-  ok: true
-  data: Record<string, unknown>
-  error?: never
+export interface ITeamDataFromDatabase {
+  id: number,
+  created_at: string,
+  team_id?: string,
+  name?: string,
+  dropbox_reseller_id?: string,
+  contract_start?: string,
+  provisioning_method?: string,
+  distributor_id?: number,
+  admin_email?: string,
 }
-
-export interface IServerActionErrorResult {
-  ok: false
-  error: string
-  data?: never
-}
-
-export type TServerActionResult = IServerActionSuccessResult | IServerActionErrorResult
