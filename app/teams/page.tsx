@@ -1,7 +1,7 @@
 import { Card } from "@nextui-org/react";
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation";
-import TeamsTable from "@/components/containers/TeamsTable";
+import TeamsTable from "@/components/containers/TeamsTable/TeamsTable";
 import { getAllTeamsFromPartners } from "@/app/teams/actions";
 import { Alert } from "@nextui-org/react";
 

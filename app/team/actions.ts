@@ -150,6 +150,7 @@ export async function getSkus(): Promise<{data: Array<ISkuInfo>}> {
  * @returns 
  */
 export const getTeamFromDatabase = async (teamId: string) => {
+
   const supabase = createClient()
   const { data, error } = await supabase
     .from('team')

@@ -16,6 +16,7 @@ import { createClient } from "@/utils/supabase/server"
 import CancelClientButton from "@/components/buttons/CancelClientButton"
 import TeamAdminEmailField from "@/components/forms/TeamAdminEmailField"
 import { fetchTeamPageData } from "../actions"
+import { Alert } from "@nextui-org/react"
 
 export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
 
@@ -47,9 +48,12 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
     remainingTime,
     partners
   } = teamData
+
   
   return (
     <div className="w-full flex flex-col">
+
+      { !dbTeam ? <Alert color="danger" title={`ERROR: La información de éste cliente existe en Dropbox pero no se encontró en la base de datos, favor de reportar éste error a Desarrollo indicando el ID del cliente: ${teamId}.`} /> : null }
 
       {/* TEAM INFO TOPBAR */}
       <div className={'py-4 px-[80px] bg-white w-full flex justify-between items-end border-b-1 border-b-default-200 gap-2'}>
@@ -59,7 +63,7 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
 
           <span className={'text-primary-500 text-sm/[12px]'}>{teamId}</span>
           <span className={'text-default-900 text-lg font-medium mt-2'}>{team?.name || ''}</span>
-          <TeamAdminEmailField admin_email={dbTeam.admin_email} dbTeam={dbTeam} />
+          {dbTeam ? <TeamAdminEmailField dbTeam={dbTeam} /> : null}
           
           <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 my-2'}>{team.country_code}</Chip>          
 
