@@ -2,17 +2,19 @@
 import { useState } from "react"
 import { Button, Input } from "@nextui-org/react"
 import { isEmailValid } from "@/utils/validators/input-fields/email"
-import { INewTeamData, ITeamDataFromDatabase } from "@/types"
+import { ITeamDataFromDatabase } from "@/types"
 import { updateDbTeamAdminEmail } from "@/app/team/actions"
 
 interface TeamAdminEmailFieldProps {
-  admin_email?: string
+  // admin_email?: string
   dbTeam: ITeamDataFromDatabase
 }
 
-const TeamAdminEmailField = ({ admin_email, dbTeam }: TeamAdminEmailFieldProps) => {
+const TeamAdminEmailField = ({ dbTeam }: TeamAdminEmailFieldProps) => {
 
-  const [adminEmail, setAdminEmail] = useState(admin_email)
+  // console.log('dbTeam', dbTeam)
+
+  const [adminEmail, setAdminEmail] = useState<string | null>(dbTeam.admin_email ?? null)
   const [updatedEmail, setUpdatedEmail] = useState<string | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -36,9 +38,9 @@ const TeamAdminEmailField = ({ admin_email, dbTeam }: TeamAdminEmailFieldProps) 
 
   }
 
-  if (admin_email || updatedEmail) {
+  if ( (dbTeam.admin_email && dbTeam.admin_email.length >= 1) || (updatedEmail && updatedEmail.length >= 1) ) {
     return (
-      <span className={'text-[#71717A] text-xs'}>{admin_email ?? updatedEmail}</span>
+      <span className={'text-[#71717A] text-xs'}>{dbTeam.admin_email ?? updatedEmail}</span>
     )
   }
 
