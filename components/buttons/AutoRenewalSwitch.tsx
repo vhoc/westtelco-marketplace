@@ -21,25 +21,29 @@ const AutoRenewalSwitch = ({ className, autoRenewal, skus, teamId, resellerIds }
   const [error, setError] = useState<string | null>(null)
 
   const handleConfirm = async () => {
-    try {
+    // try {
       setError(null)
       setIsBusy(true)
       // console.log(`Attempting to update `)
       const modifyResponse = await modifyTeamAutorenew(teamId, skus, isSwitchTrue ?? false, resellerIds)
 
+      console.log(`modifyResponse: `, modifyResponse)
+
       if ( modifyResponse.code !== 200 ) {
-        setError(`Error intentando modificar la auto-renovación: ${modifyResponse.data}`)
+        if (modifyResponse.data ) {
+          setError(`Error intentando modificar la auto-renovación: ${
+            'error_summary' in modifyResponse.data 
+                  ? modifyResponse.data.error_summary 
+                  : 'Error desconocido'
+          }`)
+        } else {
+          setError(`Error inesperado al intentar modificar la auto-renovación.`)
+        }
+            
       } else {
         onClose()
       }
-
-      // console.log('modifyResponse: ', modifyResponse)
-    } catch (error) {
-      console.error(error)
-      setError(`Error intentando modificar la auto-renovación: ${error}`)
-    } finally {
-      setIsBusy(false)
-    }
+    setIsBusy(false)
   }
   
   return (

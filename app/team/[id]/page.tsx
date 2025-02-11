@@ -1,22 +1,16 @@
 
-import { Chip, Button } from "@nextui-org/react"
+import { Chip, Button, Tooltip } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRightFromBracket, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
-// import { getTeam } from "../actions"
-// import { getSkuInfo } from "@/utils/licenses"
-// import { getPartners } from "@/utils/partner"
-// import { getRemainingTime } from "@/utils/time"
-// import { getTeamFromDatabase } from "../actions"
-// import { getSkus } from "../actions"
-// import { ISku } from "@/types"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import CancelClientButton from "@/components/buttons/CancelClientButton"
 import TeamAdminEmailField from "@/components/forms/TeamAdminEmailField"
 import { fetchTeamPageData } from "../actions"
-import { Alert } from "@nextui-org/react"
+import { CustomAlert } from "@/components/feedback/CustomAlert"
+import FixMissingTeamDataButton from "@/components/buttons/FixMissingTeamDataButton"
 
 export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
 
@@ -53,7 +47,23 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
   return (
     <div className="w-full flex flex-col">
 
-      { !dbTeam ? <Alert color="danger" title={`ERROR: La información de éste cliente existe en Dropbox pero no se encontró en la base de datos, favor de reportar éste error a Desarrollo indicando el ID del cliente: ${teamId}.`} /> : null }
+      { 
+        !dbTeam ?
+          <CustomAlert
+            color={'danger'}
+            title="ERROR: La información de éste cliente existe en Dropbox pero no se encontró en la base de datos."
+          >
+            <div className="flex items-center gap-1 mt-3">
+              <FixMissingTeamDataButton team={team} />
+
+              <Tooltip placement={'top-end'} color={'warning'} content="Éste error suele generarse cuando se da de alta un cliente nuevo por medio de la API de Dropbox directamente, en lugar de usar el Marketplace para darlo de alta." >
+                <Button color={'primary'} variant={'light'} size="sm" >¿Por qué sucede ésto?</Button>
+              </Tooltip>
+            </div>
+          </CustomAlert>
+          :
+          null
+      }
 
       {/* TEAM INFO TOPBAR */}
       <div className={'py-4 px-[80px] bg-white w-full flex justify-between items-end border-b-1 border-b-default-200 gap-2'}>
