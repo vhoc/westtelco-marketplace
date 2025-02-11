@@ -118,6 +118,7 @@ export const modifyTeamAutorenew = async (teamId: string, currentSkus: Array<ISk
   )
 
   const responseObject = await response.json()
+  // console.log('responseObject: ', responseObject)
   revalidateTag('team' + teamId)
   return responseObject
 }
@@ -328,5 +329,39 @@ export const fetchTeamPageData = async (teamId: string, resellerId?: string | nu
   return {
     ok: false,
     error: "No se pudieron obtener los datos del cliente."
+  }
+}
+
+
+export async function fixMissingTeamData(teamId: string, name: string, dropbox_reseller_id: string, contract_start: string) {
+  "use server"
+  // const requestResellerIds = process.env.API_ENV === "PROD" ? [dropbox_reseller_id] : []
+  const supabase = createClient()  
+
+  const { data, error } = await supabase
+    .from('team')
+    .insert([
+      {
+        team_id: teamId,
+        name: name,
+        dropbox_reseller_id: dropbox_reseller_id,
+        contract_start: contract_start,
+        provisioning_method: "API",
+        distribuitor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
+      }
+    ])
+    .select()
+
+  if ( error ) {
+    console.error(error)
+    return {
+      ok: false,
+      error: `No se pudieron agregar los datos del cliente en la base de datos. Por favor, reporte el problema a Desarrollo indicando el id del cliente (${teamId}) y el reseller id (${dropbox_reseller_id}).`
+    }
+  }
+
+  return {
+    ok: true,
+    data: data
   }
 }

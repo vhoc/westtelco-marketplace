@@ -60,7 +60,7 @@ export interface IAddonApiResponse {
 
 export interface ITeamApiResponse {
   code: number
-  data?: ITeamData | undefined
+  data?: ITeamData | { code: number, data: { error: { ".tag": string }, error_summary: string } } | undefined 
   error?: string
   // message?: string | { error_summary: string, error: any } | undefined
   message?: any
@@ -123,6 +123,7 @@ export interface ITeamData {
   current_state: ILicenseState
   auto_renew: boolean
   renewal_state: ILicenseState
+  start_date?: string
   end_date: string
   end_datetime: string
   active: boolean
