@@ -45,10 +45,10 @@ export async function createNewTeam(formData: FormData) {
   // Insert the record in supabase
 
   // Calculate the start contract date from the end_date
-  let endDate = new Date(createTeamResponse.data.end_datetime)
+  let endDate = new Date(createTeamResponse.data && 'end_datetime' in createTeamResponse.data ? createTeamResponse.data.end_datetime : '')
 
   // If base SKU ends in 1Y substract 1 year, if not, substract 1 month
-  if (createTeamResponse.data.sku_id?.endsWith("1Y") || createTeamResponse.data.sku_id?.endsWith("AC1M")) {
+  if ('sku_id' in createTeamResponse.data && (createTeamResponse.data.sku_id?.endsWith("1Y") || createTeamResponse.data.sku_id?.endsWith("AC1M"))) {
     endDate.setFullYear(endDate.getFullYear() - 1)
   } else {
     endDate.setMonth(endDate.getMonth() - 1);
@@ -61,9 +61,9 @@ export async function createNewTeam(formData: FormData) {
     .from('team')
     .insert([
       {
-        team_id: createTeamResponse.data.id,
-        name: createTeamResponse.data.name,
-        dropbox_reseller_id: createTeamResponse.data.reseller_ids[1] ? createTeamResponse.data.reseller_ids[1] : createTeamResponse.data.reseller_ids[0],
+        team_id: 'id' in createTeamResponse.data ? createTeamResponse.data.id : '',
+        name: 'name' in createTeamResponse.data ? createTeamResponse.data.name : '',
+        dropbox_reseller_id: 'reseller_ids' in createTeamResponse.data ? (createTeamResponse.data.reseller_ids[1] ? createTeamResponse.data.reseller_ids[1] : createTeamResponse.data.reseller_ids[0]) : '',
         contract_start: startDate,
         provisioning_method: "API",
         distribuitor_id: process.env.DISTRIBUITOR_INTERNAL_ID,
@@ -72,7 +72,7 @@ export async function createNewTeam(formData: FormData) {
     ])
     .select()
 
-  const urlEncoded = encodeURIComponent(createTeamResponse.data.id as string)
+  const urlEncoded = 'id' in createTeamResponse.data ? encodeURIComponent(createTeamResponse.data.id) : ''
 
   if (error) {
     console.error(error)
