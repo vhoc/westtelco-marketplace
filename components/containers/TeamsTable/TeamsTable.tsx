@@ -15,9 +15,11 @@ import { useRenderCell } from "./useRenderCell"
 interface TeamsTableProps {
   teams: Array<ITeamData>
   partners: Array<IPartner>
+  dbTeams?: Array<ITeamDataFromDatabase>
+  allSkus?: Array<ISkuInfo>
 }
 
-const TeamsTable = ({ teams, partners }: TeamsTableProps) => {
+const TeamsTable = ({ teams, partners, dbTeams, allSkus }: TeamsTableProps) => {
 
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -143,12 +145,16 @@ const TeamsTable = ({ teams, partners }: TeamsTableProps) => {
                   {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
                 </TableHeader>
 
-                <TableBody items={sortedItems} >
-                  {(team) => (
-                    <TableRow key={team.id}>
-                      {(columnKey) => <TableCell>{renderCell(team, columnKey)}</TableCell>}
-                    </TableRow>
-                  )}
+                <TableBody items={sortedItems}>
+                  {(team) => {
+                    const currentTeam = dbTeams?.find(item => item.team_id === team.id)
+                    const currentSkuInfo = allSkus?.find(item => item.sku_base === team.sku_id)
+                    return (
+                      <TableRow key={team.id}>
+                        {(columnKey) => <TableCell>{renderCell(team, columnKey, currentTeam, currentSkuInfo)}</TableCell>}
+                      </TableRow>
+                    )
+                  }}
                 </TableBody>
 
               </Table>
