@@ -2,6 +2,7 @@
 "use client"
 import { useCallback } from 'react'
 import { Button } from '@nextui-org/react'
+import { Link } from '@nextui-org/react'
 import { Chip } from '@nextui-org/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencil, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
@@ -11,6 +12,7 @@ import clsx from 'clsx'
 import { ITeamData } from '@/types'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { Key } from 'react'
+import { commitmentTypesMapHF } from '@/utils/human-friendly/commitment-types'
 
 interface RenderCellHookProps {
   partners: any[] // Replace 'any' with proper partner type
@@ -27,10 +29,13 @@ export const useRenderCell = ({
   isLoading,
   router
 }: RenderCellHookProps) => {
-  return useCallback((team: ITeamData, columnKey: string | Key | number) => {
+  return useCallback((team: ITeamData, columnKey: string | Key | number, currentTeam?: ITeamDataFromDatabase, currentSkuInfo?: ISkuInfo) => {
     const cellValue = team[columnKey]
     const currentResellerId = team.reseller_ids.filter(item => item !== process.env.NEXT_PUBLIC_DISTRIBUITOR_ID)
     const urlEncodedId = encodeURIComponent(team.id as string)
+
+    const humanReadableRemainingTime = getRemainingTime(new Date(team.end_date))
+    const daysDiff = differenceInDays(new Date(team.end_date), new Date())
 
     if (currentResellerId) {
       const currentPartner = partners.find(item => item.dropbox_reseller_id === currentResellerId[0])
@@ -39,17 +44,48 @@ export const useRenderCell = ({
         case "name":
           return (
             <div className={'flex flex-col'}>
-              <span>{team.name}</span>
+              <span className='font-medium'>{team.name}</span>
               <span className={'text-tiny text-default-500'}>{team.id}</span>
             </div>
           )
 
         case "reseller_ids":
           return (
-            <div className="text-black">
+            <div className="text-black flex flex-col">
               {
                 currentPartner ?
-                  `${currentPartner.company_name} [${currentResellerId[0]}]`
+                  <>
+                    <span className='font-medium'>{currentPartner.company_name}</span>
+                    <span className={'text-tiny text-default-500'}>{`[${currentResellerId[0]}]`}</span>
+                  </>
+                  :
+                  'N/A'
+              }
+            </div>
+          )
+
+        case "admin_email":
+          return (
+            <div className={currentTeam && currentTeam.admin_email ? 'text-primary-500' : 'text-default-400'}>
+              {
+                currentTeam && currentTeam.admin_email ?
+                  `${currentTeam.admin_email}`
+                  :
+                  'No disponible'
+              }
+            </div>
+          )
+
+        case "sku_id":
+          return (
+            <div className="text-black flex flex-col">
+              {
+                currentSkuInfo ?
+                  <>
+                    <span className='font-medium text-[#0061FE]'>{currentSkuInfo.description}</span>
+                    <span className={'text-tiny text-default-800'}>{commitmentTypesMapHF[currentSkuInfo.commitment_type]}</span>
+                    <span className={'text-tiny text-default-500'}>{`[${currentSkuInfo.sku_base}]`}</span>
+                  </>
                   :
                   'N/A'
               }
@@ -106,14 +142,23 @@ export const useRenderCell = ({
           )
 
         case "end_date":
-          const humanReadableRemainingTime = getRemainingTime(new Date(team.end_date))
-          const daysDiff = differenceInDays(new Date(team.end_date), new Date())
           return (
             <div className={clsx(
               new Date(team.end_date) <= new Date() ? "text-red-600" : "text-black",
               "flex justify-between items-center"
             )}>
-              <span>{`${humanReadableRemainingTime}`}</span>
+              <div className='flex flex-col'>
+                <span>
+                  {`${new Date(team.end_date).toLocaleString(process.env.NEXT_PUBLIC_LOCALE, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    timeZone: process.env.NEXT_PUBLIC_TIMEZONE
+                  })}`}
+                </span>
+                <span className={'text-tiny text-default-500'}>{`(${humanReadableRemainingTime})`}</span>
+              </div>
+
               {
                 daysDiff >= 0 && daysDiff <= 15 ?
                   <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500" />
@@ -141,23 +186,14 @@ export const useRenderCell = ({
 
         case "actions":
           return (
-            <div className={'flex justify-end items-center'}>
+            <div className={'flex justify-center items-center'}>
               <Button
                 size={'sm'}
                 variant={'light'}
-                isLoading={isLoadingTeamPage}
-                isDisabled={isLoadingTeamPage}
-                onPress={() => {
-                  setIsLoadingTeamPage(true)
-                  router.push(`/team/${urlEncodedId}?resellerId=${currentResellerId[0]}`)
-                }}
+                as={Link}
+                href={`/team/${urlEncodedId}?resellerId=${currentResellerId[0]}`}
               >
-                {
-                  !isLoading ?
-                    <FontAwesomeIcon icon={faPencil} color={'#71717A'} size={'lg'} />
-                    :
-                    '.'
-                }
+                <FontAwesomeIcon icon={faPencil} color={'#71717A'} size={'lg'} />
 
               </Button>
             </div>
