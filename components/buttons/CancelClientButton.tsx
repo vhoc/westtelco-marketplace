@@ -99,7 +99,9 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
         color={teamActive ? "danger" : "success"}
         variant="ghost"
         size={'sm'}
-        endContent={<FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" className={clsx( teamActive ? "text-[#ff0049] group-hover:text-white" : "text-[#00dc6c] group-hover:text-white" )}/>}
+        endContent={
+          <FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" className={clsx( teamActive ? "text-[#ff0049] group-hover:text-white" : "text-[#00dc6c] group-hover:text-white" )}/>
+        }
         onPress={onOpenConfirmation}
         className={clsx(
           teamActive ?

@@ -120,15 +120,6 @@ const ConfirmationBox = ({ current_sku_base, new_sku_base, new_license_descripti
         className="text-default-foreground text-sm"
         isLoading={isLoading}
         onPress={() => {
-          // TODO: Send the request to the backend
-          // console.log('Confirming the transition')
-          // console.log(JSON.stringify({
-          //   environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
-          //   id: teamId,
-          //   current_skus: current_skus,
-          //   new_skus: new_skus,
-          //   resellerIds: resellerIds,
-          // }, null, 1))
           // Do the thing and then, close the drawer
           setIsLoading(true)
           modifyTeamSkus(teamId, current_skus, new_skus, false, resellerIds)

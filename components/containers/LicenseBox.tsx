@@ -179,7 +179,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
         </div>
         <div className="flex justify-end gap-x-2">
           {
-            props.skuInfo && !props.currentState?.is_trial ?
+            props.active && props.skuInfo && !props.currentState?.is_trial ?
               <PlanChangeDrawer
                 teamId={props.teamId}
                 teamName={props.teamName}
@@ -347,6 +347,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
           skus={props.skus}
           teamId={props.teamId}
           resellerIds={subPartnerResellerId}
+          isDisabled={!props.active}
         />
 
         {/* CARD BODY BOTTOM SECTION */}

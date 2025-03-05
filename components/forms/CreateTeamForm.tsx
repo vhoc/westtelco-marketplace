@@ -193,7 +193,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
               isRequired
               value={fields.name}
               onChange={(event) => handleUpdateFields('name', event.target.value)}
-              maxLength={20}
+              maxLength={120}
             />
 
             <Select
@@ -254,22 +254,6 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
               isDisabled
               value={fields.reseller_id}
             />
-
-
-            {/* <div className="flex flex-col">
-                <div className="text-left text-[12px] font-medium text-default-500">SKU BASE</div>
-                <Input
-                  name={'sku_id'}
-                  // label={''}
-                  aria-label="SKU Base"
-                  placeholder={'Introduce SKU base'}
-                  isRequired
-                  value={fields.sku_id}
-                  onChange={(event) => handleUpdateFields('sku_id', event.target.value)}
-                />
-              </div>
-
-               */}
 
             <RadioGroup
               label={'Selecciona producto de Dropbox'}

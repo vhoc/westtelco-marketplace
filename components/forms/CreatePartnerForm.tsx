@@ -101,7 +101,7 @@ const CreatePartnerForm = ({ message, formAction, className }: CreatePartnerForm
         isRequired
         value={fields.company_name}
         onChange={(event) => handleUpdateFields('company_name', event.target.value)}
-        maxLength={20}
+        maxLength={120}
       />
 
       <Input
