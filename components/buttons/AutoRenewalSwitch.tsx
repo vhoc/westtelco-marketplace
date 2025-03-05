@@ -11,9 +11,10 @@ interface AutoRenewalSwitchProps {
   skus: Array<ISku>
   teamId: string
   resellerIds: Array<string>
+  isDisabled?: boolean
 }
 
-const AutoRenewalSwitch = ({ className, autoRenewal, skus, teamId, resellerIds }: AutoRenewalSwitchProps) => {
+const AutoRenewalSwitch = ({ className, autoRenewal, skus, teamId, resellerIds, isDisabled = false }: AutoRenewalSwitchProps) => {
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isSwitchTrue, setIsSwitchTrue] = useState(autoRenewal)
@@ -59,6 +60,7 @@ const AutoRenewalSwitch = ({ className, autoRenewal, skus, teamId, resellerIds }
           setIsSwitchTrue(value)
           onOpen()
         }}
+        isDisabled={isBusy || isDisabled}
       >
         <div className="flex flex-col">
           <span className="text-sm leading-5 font-medium text-left">Auto-renovación</span>

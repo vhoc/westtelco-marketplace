@@ -11,6 +11,7 @@ import TeamAdminEmailField from "@/components/forms/TeamAdminEmailField"
 import { fetchTeamPageData } from "../actions"
 import { CustomAlert } from "@/components/feedback/CustomAlert"
 import FixMissingTeamDataButton from "@/components/buttons/FixMissingTeamDataButton"
+import PlanChangeDrawer from "@/components/drawers/PlanChangeDrawer/PlanChangeDrawer"
 
 export default async function TeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
 
@@ -96,12 +97,32 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
 
         {/* TEAM INFO TOPBAR: RIGHT SECTION */}
         <div className="flex gap-4">
-          <CancelClientButton
-            teamId={teamId}
-            teamActive={team.active || false}
-            skus={team.current_state.skus}
-            resellerIds={team.reseller_ids}
-          />
+          {
+            team.active ?
+              <CancelClientButton
+                teamId={teamId}
+                teamActive={team.active || false}
+                skus={team.current_state.skus}
+                resellerIds={team.reseller_ids}
+              />
+            :
+            skuInfo && team.num_licensed_users ?
+            <PlanChangeDrawer
+              teamId={teamId}
+              teamName={team.name}
+              end_date={team.end_date}
+              currentSkuInfo={skuInfo}
+              num_licensed_users={team.num_licensed_users}
+              allSkus={allSkus}
+              license_description={skuInfo.description}
+              current_skus={team.current_state.skus}
+              resellerIds={team.reseller_ids}
+              isReinstatement={true}
+            />
+            :
+            null
+          }
+          
 
           <Button
             size={'sm'}

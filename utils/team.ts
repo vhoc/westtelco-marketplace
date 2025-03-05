@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { ISku, ITeamApiResponse, INewTeamData } from "@/types";
 
 const requestOptions = {
@@ -90,7 +90,7 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
   console.log(`body: `, JSON.stringify({
     "id": teamId,
     "skus": skus,
-    "reseller_ids": resellerIds,
+    "reseller_ids": [resellerIds[1]],
     "country": process.env.DISTRIBUITOR_COUNTRY,
   }))
   try {
@@ -101,7 +101,7 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
           "id": teamId,
           "skus": skus,
           "environment": process.env.API_ENV,
-          "reseller_ids": [],
+          "reseller_ids": [resellerIds[1]],
           "country": process.env.DISTRIBUITOR_COUNTRY,
         }),
         next: {
@@ -114,10 +114,15 @@ export const reinstateTeam = async (teamId: string, skus: Array<ISku>, resellerI
 
     if (!response.ok) {
       const error = await response.json()
-      console.log(error)
-      return { code: error.code, message: error.error_summary }
+      // console.log(`error: `, error)
+      return {
+        code: error.code,
+        message: error.data.error_summary.startsWith('skus_invalid') ?// Dropbox API is so bad... different strings for the same error
+        'El cliente fue cancelado fuera del período de gracia, por lo tanto debe reinstaurarse con la misma licencia que tenía antes.' :
+         error.data.error_summary }
     }
     revalidateTag('team')
+    revalidatePath('/team')
     const responseObject = await response.json()
     return responseObject
 
