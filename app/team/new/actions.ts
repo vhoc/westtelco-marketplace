@@ -25,14 +25,19 @@ export async function createNewTeam(formData: FormData) {
     ],
   }
 
-  console.log(`teamData: `, JSON.stringify(teamData, null, 1))
+  // console.log(`teamData: `, JSON.stringify(teamData, null, 1))
 
   const createTeamResponse = await createTeam(teamData)
+  console.log(`createTeamResponse: `, createTeamResponse)
 
+  if (createTeamResponse.code === 400) {
+    return redirect(`/team/new?message=${encodeURI(`ERROR: ${createTeamResponse.message}`)}`)
+  }
 
   if (createTeamResponse.code !== 200 || !createTeamResponse.data) {
 
     // Email already exists
+    
     if ( createTeamResponse.message.error_summary.startsWith('user_on_another_team') ) {
       return redirect(`/team/new?message=${encodeURI('ERROR: El email que has ingresado ya existe en otra cuenta.')}`)
     }
