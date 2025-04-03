@@ -100,6 +100,82 @@ export const getAllTeamsFromPartners = async (): Promise<TGetAllTeamsFromPartner
 }
 
 /**
+ * getAllTeamsFromPartners for DEV mode
+ */
+export const getAllTeamsFromPartnersDev = async (): Promise<TGetAllTeamsFromPartnersResult> => {
+  "use server"
+
+  const partners = await getPartners()
+
+  if ( partners && partners.length >= 1 ) {
+
+    try {
+      let allTeams = []
+
+      for (const partner of partners) {
+        if (partner) {
+          
+          const result = await fetch(`${process.env.API_BASE_URL}/dropboxResellers/v1/team/list2`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `${process.env.API_KEY}`,
+              },
+              body: JSON.stringify({
+                "environment": process.env.API_ENV,
+                "reseller_ids": [],
+                "country": process.env.DISTRIBUITOR_COUNTRY,
+              }),
+              next: {
+                tags: [
+                  `reseller-${partner.dropbox_reseller_id}-teams`
+                ]
+              }
+            },
+          )
+
+          const currentResult = await result.json()
+          
+          if (currentResult && currentResult.data && currentResult.data.teams && currentResult.data.teams.length >= 1) {
+            
+            allTeams.push(currentResult.data.teams)
+          }
+        }
+      }
+
+      if ( allTeams.length < 1 ) {
+        return {
+          ok: false,
+          error: "Hubo un error al intentar obtener los clientes. Intenta actualizar la página.",
+        }
+      }
+
+      return {
+        ok: true,
+        data: {
+          teams: allTeams.flat(),
+          partners: partners
+        }
+      }
+    } catch (error) {
+      console.error(error)
+      return {
+        ok: false,
+        error: error as string,
+      }
+    }
+
+  } else {
+    return {
+      ok: false,
+      error: "Hubo un error al intentar obtener los clientes. Intenta actualizar la página.",
+    }
+  }
+}
+
+/**
  * getAllTeams
  * 
  * Returns a list of all the teams from all the partners.

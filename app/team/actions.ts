@@ -26,6 +26,8 @@ export const getTeam = async (teamId: string, resellerId?: string | null | undef
   const fetchUrl = resellerId ? `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}?resellerId=${resellerId}`
     : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
 
+  console.log(`fetchUrl: `, fetchUrl)
+
 
   const response = await fetch(fetchUrl,
     {
@@ -195,7 +197,7 @@ export const updateDbTeamAdminEmail = async (teamId: string, admin_email: string
 export const fetchTeamPageData = async (teamId: string, resellerId?: string | null | undefined): Promise<TGetTeamDataResult> => {
   "use server"
 
-  const requestResellerIds = process.env.API_ENV === "PROD" ? [resellerId] : []
+  const requestResellerIds = process.env.API_ENV === "PROD" && resellerId && resellerId.length >= 1 ? [resellerId] : []
   // console.log(`DEBUG: app/team/actions/fetchTeam: teamId: `, teamId)
   // console.log(`DEBUG: app/team/actions/fetchTeam: resellerId: `, resellerId)
   // console.log(`DEBUG: requestBody: `, JSON.stringify({
