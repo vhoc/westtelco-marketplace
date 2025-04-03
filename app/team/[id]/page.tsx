@@ -1,7 +1,8 @@
 
-import { Chip, Button, Tooltip } from "@nextui-org/react"
+import { Chip, Button, Tooltip, } from "@nextui-org/react"
+import TeamDropDown from "@/components/buttons/TeamDropDown"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faRightFromBracket, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
+import { faRightFromBracket, faTriangleExclamation, faEllipsisV } from "@fortawesome/free-solid-svg-icons"
 import LicenseBox from "@/components/containers/LicenseBox"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -44,11 +45,11 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
     partners
   } = teamData
 
-  
+
   return (
     <div className="w-full flex flex-col">
 
-      { 
+      {
         !dbTeam ?
           <CustomAlert
             color={'danger'}
@@ -75,28 +76,28 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
           <span className={'text-primary-500 text-sm/[12px]'}>{teamId}</span>
           <span className={'text-default-900 text-lg font-medium mt-2'}>{team?.name || ''}</span>
           {dbTeam ? <TeamAdminEmailField dbTeam={dbTeam} /> : null}
-          
-          <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 my-2'}>{team.country_code}</Chip>          
+
+          <Chip radius={'sm'} size={'sm'} className={'bg-primary-100 text-primary-700 my-2'}>{team.country_code}</Chip>
 
         </div>
 
         {/* TEAM INFO TOPBAR: MIDDLE SECTION */}
         <div className="flex flex-col gap-2">
-            <span className={'text-[#71717A] text-xs/[8px]'}>Gestionado por</span>
-            {
-              partners && partners.length >= 1 ?
-                <ul className={'list-disc list-inside'}>
-                  {
-                    partners.map((partner, index) => <li key={`partner-id${index}`} className={'text-[#71717A] text-xs/[8px] leading-4'}>{`${partner.company_name} [${partner.dropbox_reseller_id}]`}</li>)
-                  }
-                </ul>
-                :
-                null
-            }
-          </div>
+          <span className={'text-[#71717A] text-xs/[8px]'}>Gestionado por</span>
+          {
+            partners && partners.length >= 1 ?
+              <ul className={'list-disc list-inside'}>
+                {
+                  partners.map((partner, index) => <li key={`partner-id${index}`} className={'text-[#71717A] text-xs/[8px] leading-4'}>{`${partner.company_name} [${partner.dropbox_reseller_id}]`}</li>)
+                }
+              </ul>
+              :
+              null
+          }
+        </div>
 
         {/* TEAM INFO TOPBAR: RIGHT SECTION */}
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           {
             team.active ?
               <CancelClientButton
@@ -105,24 +106,24 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
                 skus={team.current_state.skus}
                 resellerIds={team.reseller_ids}
               />
-            :
-            skuInfo && team.num_licensed_users ?
-            <PlanChangeDrawer
-              teamId={teamId}
-              teamName={team.name}
-              end_date={team.end_date}
-              currentSkuInfo={skuInfo}
-              num_licensed_users={team.num_licensed_users}
-              allSkus={allSkus}
-              license_description={skuInfo.description}
-              current_skus={team.current_state.skus}
-              resellerIds={team.reseller_ids}
-              isReinstatement={true}
-            />
-            :
-            null
+              :
+              skuInfo && team.num_licensed_users ?
+                <PlanChangeDrawer
+                  teamId={teamId}
+                  teamName={team.name}
+                  end_date={team.end_date}
+                  currentSkuInfo={skuInfo}
+                  num_licensed_users={team.num_licensed_users}
+                  allSkus={allSkus}
+                  license_description={skuInfo.description}
+                  current_skus={team.current_state.skus}
+                  resellerIds={team.reseller_ids}
+                  isReinstatement={true}
+                />
+                :
+                null
           }
-          
+
 
           <Button
             size={'sm'}
@@ -131,6 +132,8 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
           >
             <Link href="/teams" aria-label="Cerrar cliente">Cerrar Cliente</Link>
           </Button>
+
+          <TeamDropDown teamId={teamId} />
         </div>
 
       </div>
@@ -141,13 +144,13 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
       <div className={'py-4 w-full flex flex-col items-center justify-center px-[80px]'}>
         {
           searchParams && searchParams.message ?
-          <div className="w-full flex justify-center rounded-md bg-danger-100 text-danger-800 mb-4 px-4 py-1">
-            <div>{searchParams.message}</div>
-          </div>          
-        :
-        null
+            <div className="w-full flex justify-center rounded-md bg-danger-100 text-danger-800 mb-4 px-4 py-1">
+              <div>{searchParams.message}</div>
+            </div>
+            :
+            null
         }
-        
+
         <div className={'w-full max-w-[1280px] flex flex-col gap-y-4'}>
           {
             team.current_state.is_trial ?
@@ -157,9 +160,9 @@ export default async function TeamPage({ params, searchParams }: { params: { id:
                 <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500" />
                 <div className="flex flex-col items-center">
                   <span className="text-sm leading-5 font-semibold">La versión trial se convertirá a &quot;de paga&quot; automáticamente.</span>
-                </div> 
+                </div>
               </div>
-            :
+              :
               null
           }
           <LicenseBox

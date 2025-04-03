@@ -25,7 +25,7 @@ const TeamsTable = ({ teams, partners, dbTeams, allSkus }: TeamsTableProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingTeamPage, setIsLoadingTeamPage] = useState(false)
 
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(20)
   const [page, setPage] = useState(1)
   const [filterValue, setFilterValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
