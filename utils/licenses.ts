@@ -9,7 +9,7 @@ export const getSkuInfo = async (sku: string | undefined) => {
     return null
   }
   
-  const supabase = createClient()
+  const supabase = await createClient()
   try {
     const { data: skuInfo, error }: { data: ISkuInfo | null, error: PostgrestError | null } = await supabase
       .from('sku')

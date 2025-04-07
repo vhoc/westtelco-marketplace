@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Input, Select, SelectItem } from '@nextui-org/react'
+import { Input, Select, SelectItem } from "@heroui/react"
 import { IPartner } from "@/types"
 import { SubmitButton } from "../buttons/SubmitButton"
 

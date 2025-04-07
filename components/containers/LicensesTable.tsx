@@ -2,8 +2,8 @@
 "use client"
 import { useState, useEffect, Dispatch, SetStateAction } from "react"
 import { ISku, ISkuInfo } from "@/types"
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@nextui-org/react"
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react"
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@heroui/react"
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/react"
 import { filterLicenseType, getSkuInfo, validateAddonSku } from "@/utils/licenses-client"
 import { isInGracePeriod } from "@/utils/team-client"
 import { doesAddonSkuExist } from "@/utils/licenses-client"
@@ -90,7 +90,7 @@ export default function LicensesTable(props: LicensesTableProps) {
       // Add entered addon sku to the newSkus to be sent to Dropbox
       props.setNewAddonSkus((prevNewSkus) => (
         // Quantity needs to be the total users count, including the base SKU's 3 licensed users.
-        [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
+        ([...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }])
       ))
 
       props.setNewSkus((prevNewSkus) => (

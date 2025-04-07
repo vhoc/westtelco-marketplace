@@ -1,8 +1,8 @@
 //@ts-nocheck
 "use client"
 import React, { useState, useMemo, useCallback } from "react"
-import { Input, Button, Skeleton } from "@nextui-org/react"
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip } from "@nextui-org/react"
+import { Input, Button, Skeleton } from "@heroui/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Pagination, Chip } from "@heroui/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus  } from "@fortawesome/free-solid-svg-icons"
 import { IPartner } from "@/types"

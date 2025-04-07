@@ -2,7 +2,7 @@
 "use client"
 import { Dispatch, SetStateAction, useState } from "react"
 import { ISku, ISkuInfo } from "@/types"
-import { Button, Chip, Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react"
+import { Button, Chip, Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react"
 import { doesAddonSkuExist, validateAddonSku } from "@/utils/licenses-client"
 
 interface AddonsTableProps {
@@ -67,7 +67,7 @@ export const AddonsTable = (props: AddonsTableProps) => {
         // Add entered addon sku to the newSkus to be sent to Dropbox
         props.setNewSkus((prevNewSkus: any) => (
           // Quantity needs to be the total users count, including the base SKU's 3 licensed users.
-          [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
+          ([...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }])
         ))
 
         // Reset the SKU input field

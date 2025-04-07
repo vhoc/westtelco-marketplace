@@ -1,20 +1,23 @@
-import { Card } from "@nextui-org/react";
+import { Card, Alert } from "@/lib/hero-ui";
 import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import TeamsTable from "@/components/containers/TeamsTable/TeamsTable";
 import { getAllTeamsFromPartners, getAllTeamsFromPartnersDev } from "@/app/teams/actions";
-import { Alert } from "@nextui-org/react";
 import {ITeamDataFromDatabase} from "@/types";
 import { getSkus } from "../team/actions";
 
-export default async function TeamsHome({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
+export default async function TeamsHome(
+  props: { params: Promise<{ id: string }>; searchParams?: Promise<{ [key: string]: string | undefined | null, message?: string | undefined }> }
+) {
+  const searchParams = await props.searchParams;
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
-    redirect('/login')
-  }
+  // const { data, error } = await supabase.auth.getUser()
+
+  // if (error || !data?.user) {
+  //   redirect('/login')
+  // }
 
   const { data: teamsData, error: partnersError } = process.env.API_ENV === "DEV" ? await getAllTeamsFromPartnersDev() : await getAllTeamsFromPartners()
   const { data: allSkus } = await getSkus()

@@ -1,10 +1,11 @@
 import ImportTeamForm from "@/components/forms/ImportTeamForm"
-import { Card } from "@nextui-org/react"
+import { Card } from "@heroui/react"
 import { getPartners } from "../actions"
 import { importTeam } from "./actions"
-import { Link } from "@nextui-org/react"
+import { Link } from "@heroui/react"
 
-export default async function ImportTeamPage({ searchParams }: { searchParams: { message: string } }) {
+export default async function ImportTeamPage(props: { searchParams: Promise<{ message: string }> }) {
+  const searchParams = await props.searchParams;
 
   const { data: partners } = await getPartners()
 

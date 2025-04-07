@@ -1,4 +1,5 @@
 "use client"
+import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import { faCheckCircle, faInfoCircle, faCircleXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -24,10 +25,10 @@ const Toast = ( { type = 'warning', children }: ToastProps ) => {
     >
       <FontAwesomeIcon
         icon={
-          type === "success" ? faCheckCircle :
-          type === "info" ? faInfoCircle :
-          type === "error" ? faCircleXmark :
-          faTriangleExclamation }
+          type === "success" ? faCheckCircle as IconProp :
+          type === "info" ? faInfoCircle as IconProp :
+          type === "error" ? faCircleXmark as IconProp :
+          faTriangleExclamation as IconProp }
         color={
           type === "error" ? '##cd3131' :
           type === "warning" ?'#F5A524' :

@@ -154,7 +154,7 @@ export async function getSkus(): Promise<{data: Array<ISkuInfo>}> {
  */
 export const getTeamFromDatabase = async (teamId: string) => {
 
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('team')
     .select('*')
@@ -175,7 +175,7 @@ export const getTeamFromDatabase = async (teamId: string) => {
  * @returns 
  */
 export const updateDbTeamAdminEmail = async (teamId: string, admin_email: string) => {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error }: { data: INewTeamData | null, error: any } = await supabase
     .from('team')
     .update({ admin_email })
@@ -234,6 +234,7 @@ export const fetchTeamPageData = async (teamId: string, resellerId?: string | nu
     }
 
     const teamResponse = await response.json()
+    // console.log(`teamResponse: `, teamResponse)
     
     // 2. Get team data from database
     const { data: teamDataFromDatabase} = await getTeamFromDatabase(teamId)
@@ -247,8 +248,9 @@ export const fetchTeamPageData = async (teamId: string, resellerId?: string | nu
     const skuInfo = await getSkuInfo(baseSku?.sku_id)
       .catch(() => { throw new Error('SKU_INFO_FETCH_ERROR') })
 
-    const renewalSkuInfo = await getSkuInfo(teamResponse.data?.renewal_state?.skus[0]?.sku_id)
+    const renewalSkuInfo: ISkuInfo | null = teamResponse.data.renewal_state && await getSkuInfo(teamResponse.data?.renewal_state?.skus[0]?.sku_id)
       .catch(() => { throw new Error('RENEWALSKU_INFO_FETCH_ERROR') })
+    
 
     // 5. Prepare reseller IDs array
     const resellerIds: Array<string> = teamResponse.data?.reseller_ids ?? []
@@ -338,7 +340,7 @@ export const fetchTeamPageData = async (teamId: string, resellerId?: string | nu
 export async function fixMissingTeamData(teamId: string, name: string, dropbox_reseller_id: string, contract_start: string) {
   "use server"
   // const requestResellerIds = process.env.API_ENV === "PROD" ? [dropbox_reseller_id] : []
-  const supabase = createClient()  
+  const supabase = await createClient()  
 
   const { data, error } = await supabase
     .from('team')

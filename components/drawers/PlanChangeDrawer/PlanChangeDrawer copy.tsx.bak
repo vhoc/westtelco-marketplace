@@ -2,17 +2,9 @@
 import { useState, useEffect } from "react"
 import {
   Drawer, DrawerContent, DrawerHeader, DrawerBody,
-  DrawerFooter, Button, useDisclosure, Skeleton, Radio, RadioGroup,
-  Select, SelectItem
+  DrawerFooter, Button, useDisclosure,
+  Select, SelectItem, Skeleton, Radio, RadioGroup
 } from "@heroui/react"
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectGroup,
-//   SelectValue,
-// } from "@/components/ui/select"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHandshake, faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"
@@ -52,7 +44,7 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
-
+  
 
   // DEBUG
   // useEffect(() => {
@@ -196,22 +188,30 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
                               isRequired
                               name={'commitment_type'}
                               label="SELECCIONA MODALIDAD DE COSTO Y PAGO"
-                              onChange={(event) => {
-                                setSelectedCommitmentType(event.target.value)
-                                setSelectedBaseSku("")
-                              }}
-                              selectedKeys={[selectedCommitmentType]}
+                              // onChange={(event) => {
+                              //   setSelectedCommitmentType(event.target.value)
+                              //   setSelectedBaseSku("")
+                              // }}
+                              // selectedKeys={[selectedCommitmentType]}
                               showScrollIndicators
+                              className="relative z-50"
+                              style={{
+                                position: "absolute",
+                                zIndex: 9999,
+                              }}
                             >
+                              <SelectItem>Test1</SelectItem>
+                              <SelectItem>Test2</SelectItem>
+                              <SelectItem>Test3</SelectItem>
 
-                              {commitmentTypes.map((item) => {
+                              {/* {commitmentTypes.map((item) => {
                                 console.log(`commitment type ${item.value}: ${item.description}`)
                                 return (
                                   <SelectItem key={item.value} className="text-black">
                                     {item.description}
                                   </SelectItem>
                                 )
-                              })}
+                              })} */}
                             </Select>
                           </div>
 
@@ -222,62 +222,62 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
                                 <div className="h-14 rounded-lg bg-default-300" />
                               </Skeleton>
                               :
-                              !isReinstatement ?
-                                compatibleSkus && compatibleSkus.length >= 1 ?
-                                  <div className="flex flex-col mt-2">
-                                    <Select
-                                      isRequired
-                                      name={'sku_base'}
-                                      label="SELECCIONA SKU BASE"
-                                      // defaultSelectedKeys={["cat"]}
-                                      onChange={(event) => {
-                                        // get the description of the selected sku
-                                        const skuDescription = allSkus.filter((sku) => sku.sku_base === event.target.value)[0].description
-                                        setSelectedBaseSkuDescription(skuDescription)
-                                        setSelectedBaseSku(event.target.value)
+                                !isReinstatement ?
+                                  compatibleSkus && compatibleSkus.length >= 1 ?
+                                    <div className="flex flex-col mt-2">
+                                      <Select
+                                        isRequired
+                                        name={'sku_base'}
+                                        label="SELECCIONA SKU BASE"
+                                        // defaultSelectedKeys={["cat"]}
+                                        onChange={(event) => {
+                                          // get the description of the selected sku
+                                          const skuDescription = allSkus.filter((sku) => sku.sku_base === event.target.value)[0].description
+                                          setSelectedBaseSkuDescription(skuDescription)
+                                          setSelectedBaseSku(event.target.value)
 
-                                        // handleUpdateFields('sku_id', '')
-                                      }}
-                                      selectedKeys={[selectedBaseSku]}
-                                      showScrollIndicators
-                                    >
-                                      {compatibleSkus.map((item) => (
-                                        <SelectItem key={item.sku_base} className="text-black">
-                                          {item.description}
-                                        </SelectItem>
-                                      ))}
-                                    </Select>
-                                  </div>
+                                          // handleUpdateFields('sku_id', '')
+                                        }}
+                                        selectedKeys={[selectedBaseSku]}
+                                        showScrollIndicators
+                                      >
+                                        {compatibleSkus.map((item) => (
+                                          <SelectItem key={item.sku_base} className="text-black">
+                                            {item.description}
+                                          </SelectItem>
+                                        ))}
+                                      </Select>
+                                    </div>
+                                    :
+                                    null
                                   :
-                                  null
-                                :
-                                availableSkus && availableSkus.length >= 1 ?
-                                  <div className="flex flex-col mt-2">
-                                    <Select
-                                      isRequired
-                                      name={'sku_base'}
-                                      label="SELECCIONA SKU BASE"
-                                      // defaultSelectedKeys={["cat"]}
-                                      onChange={(event) => {
-                                        // get the description of the selected sku
-                                        const skuDescription = allSkus.filter((sku) => sku.sku_base === event.target.value)[0].description
-                                        setSelectedBaseSkuDescription(skuDescription)
-                                        setSelectedBaseSku(event.target.value)
+                                  availableSkus && availableSkus.length >= 1 ?
+                                    <div className="flex flex-col mt-2">
+                                      <Select
+                                        isRequired
+                                        name={'sku_base'}
+                                        label="SELECCIONA SKU BASE"
+                                        // defaultSelectedKeys={["cat"]}
+                                        onChange={(event) => {
+                                          // get the description of the selected sku
+                                          const skuDescription = allSkus.filter((sku) => sku.sku_base === event.target.value)[0].description
+                                          setSelectedBaseSkuDescription(skuDescription)
+                                          setSelectedBaseSku(event.target.value)
 
-                                        // handleUpdateFields('sku_id', '')
-                                      }}
-                                      selectedKeys={[selectedBaseSku]}
-                                      showScrollIndicators
-                                    >
-                                      {availableSkus.map((item) => (
-                                        <SelectItem key={item.sku_base} className="text-black">
-                                          {item.description}
-                                        </SelectItem>
-                                      ))}
-                                    </Select>
-                                  </div>
-                                  :
-                                  null
+                                          // handleUpdateFields('sku_id', '')
+                                        }}
+                                        selectedKeys={[selectedBaseSku]}
+                                        showScrollIndicators
+                                      >
+                                        {availableSkus.map((item) => (
+                                          <SelectItem key={item.sku_base} className="text-black">
+                                            {item.description}
+                                          </SelectItem>
+                                        ))}
+                                      </Select>
+                                    </div>
+                                    :
+                                    null
                           }
 
                         </>
@@ -311,7 +311,7 @@ const PlanChangeDrawer = ({ teamId, teamName, end_date, currentSkuInfo, num_lice
                         setSelectedBaseSku={setSelectedBaseSku}
                         withPlanChange={withPlanChange}
                       />
-                      :
+                    :
                       null
                   }
 

@@ -1,9 +1,10 @@
 import CreatePartnerForm from "@/components/forms/CreatePartnerForm"
-import { Card } from "@nextui-org/react"
+import { Card } from "@/lib/hero-ui"
 import { createNewPartner } from "./actions"
 
-export default async function NewPartnerPage({ searchParams }: { searchParams: { message: string } }) {
-  
+export default async function NewPartnerPage(props: { searchParams: Promise<{ message: string }> }) {
+  const searchParams = await props.searchParams;
+
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center pt-[40px] animate-in opacity-1 max-w-4xl px-3 text-black">

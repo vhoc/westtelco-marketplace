@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic' // defaults to auto
 export const revalidate = 60
 
 export async function GET(_request: Request): Promise<void | Response> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
       .from('sku')

@@ -1,9 +1,9 @@
 //@ts-nocheck
 "use client"
 import { useCallback } from 'react'
-import { Button } from '@nextui-org/react'
-import { Link } from '@nextui-org/react'
-import { Chip } from '@nextui-org/react'
+import { Button } from "@heroui/react"
+import { Link } from "@heroui/react"
+import { Chip } from "@heroui/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencil, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { differenceInDays } from 'date-fns'

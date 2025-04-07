@@ -1,11 +1,11 @@
 import React from "react";
-import {Alert} from "@nextui-org/react";
-import { cn } from "@nextui-org/react";
+import {Alert} from "@/lib/hero-ui";
+import { cn } from "@/lib/hero-ui";
 
 interface CustomAlertProps {
   title: string;
   children: React.ReactNode;
-  variant?: "faded" | "filled" | "light";
+  variant?: "flat" | "faded" | "solid" | "bordered" | undefined;
   color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
   className?: string;
   classNames?: {
@@ -41,7 +41,7 @@ export const CustomAlert = React.forwardRef(
 
     return (
       <Alert
-        ref={ref}
+        ref={ref as React.Ref<HTMLDivElement | null> | undefined}
         classNames={{
           ...classNames,
           base: cn(

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import Toast from "../../feedback/Toast"
 import { ITransitionOutcome, ISku } from "@/types"
 import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-validator"
-import { Button, Input } from "@nextui-org/react"
+import { Button, Input } from "@heroui/react"
 import { modifyTeamSkus } from "@/app/team/actions"
 import { revalidateTagFromClientComponent } from "@/utils/revalidateTagFromClientComponent"
 

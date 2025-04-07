@@ -1,6 +1,6 @@
 "use client"
-import { Modal, ModalContent, ModalHeader, ModalBody, } from "@nextui-org/react"
-import { CircularProgress } from "@nextui-org/react"
+import { Modal, ModalContent, ModalHeader, ModalBody, } from "@heroui/react"
+import { CircularProgress } from "@heroui/react"
 
 interface BusyModalProps {
   message: string

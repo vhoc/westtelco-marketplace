@@ -3,7 +3,8 @@ import { createNewTeam } from "./actions"
 import { getPartners, getSkus } from "../actions"
 import { commitmentTypes } from "@/utils/commitmentTypes"
 
-export default async function NewTeamPage({ searchParams }: { searchParams: { message: string } }) {
+export default async function NewTeamPage(props: { searchParams: Promise<{ message: string }> }) {
+  const searchParams = await props.searchParams;
 
   const { data: partners } = await getPartners()
   const { data: skus } = await getSkus()

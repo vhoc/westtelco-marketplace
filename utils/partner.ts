@@ -4,7 +4,7 @@ import { IPartner, IPartnerApiResponse } from "@/types"
 import { createClient } from "./supabase/server"
 
 export const getPartner = async (resellerId: string): Promise<IPartnerApiResponse> => {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('partner')
@@ -35,7 +35,7 @@ export const getPartner = async (resellerId: string): Promise<IPartnerApiRespons
  */
 export const getPartners = async (resellerIds?: Array<string> | undefined): Promise<Array<IPartner>> => {
   "use server"
-  const supabase = createClient()
+  const supabase = await createClient()
 
   if (resellerIds && resellerIds.length >= 1) {
     const { data, error } = await supabase

@@ -1,18 +1,19 @@
 import { SubmitButton } from "./submit-button";
 import { login } from "./actions";
-import { Input } from "@nextui-org/react";
+import { Input } from "@/lib/hero-ui";
 import Image from "next/image";
 import getConfig from "next/config";
-import logoWt from '../../public/wt-logo-2024.png'
-import flagMexico from '../../public/img/flagMx.png'
-import flagBrazil from '../../public/img/flagBr.png'
-import { Link } from "@nextui-org/react";
+import logoWt from '../../public/wt-logo-2024.png';
+import flagMexico from '../../public/img/flagMx.png';
+import flagBrazil from '../../public/img/flagBr.png';
+import { Link } from "@/lib/hero-ui";
 
-export default function Login({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+export default async function Login(
+  props: {
+    searchParams: Promise<{ message: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
 
   const { publicRuntimeConfig } = getConfig();
 

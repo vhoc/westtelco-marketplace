@@ -1,6 +1,6 @@
 "use client"
 import React, { useMemo } from "react"
-import { Input, Button } from "@nextui-org/react"
+import { Input, Button } from "@heroui/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus } from "@fortawesome/free-solid-svg-icons"
 import { ITeamData } from "@/types"

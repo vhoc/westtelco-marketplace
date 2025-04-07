@@ -3,7 +3,7 @@
 //@ts-nocheck
 "use client"
 import React, { useState, useMemo } from "react"
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Progress } from "@nextui-org/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Progress } from "@heroui/react"
 import { ITeamData, IPartner } from "@/types"
 import { useRouter } from "next/navigation";
 import columns from "./columns"

@@ -17,10 +17,8 @@ const requestOptions = {
  * @param request 
  * @param teamId 
  */
-export async function GET(
-  request: Request,
-  { params }: { params: { teamId: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ teamId: string }> }) {
+  const params = await props.params;
 
   const url = new URL(request.url);
   const resellerId = url.searchParams.get('resellerId');
@@ -68,7 +66,6 @@ export async function GET(
       { status: 500 }
     )
   }
-
 }
 
 /**

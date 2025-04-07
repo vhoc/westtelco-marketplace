@@ -1,6 +1,6 @@
 "use client";
-import { Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+import { Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 import Toast from "../feedback/Toast";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";

@@ -1,6 +1,6 @@
 "use client";
-import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from "@/lib/hero-ui";
+import { Button } from "@/lib/hero-ui";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { SubmitButton } from "../buttons/SubmitButton";
@@ -8,6 +8,7 @@ import { IPartner, ISkuInfo } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface CreateTeamFormProps {
   message?: string | undefined
@@ -416,7 +417,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
 
                     {/* WARNING MESSAGE */}
                     <div className="bg-warning-100 rounded-lg py-3 px-3 flex gap-4 mt-2">
-                      <FontAwesomeIcon icon={faTriangleExclamation} color="#F5A524" size="lg" />
+                      <FontAwesomeIcon icon={faTriangleExclamation as IconProp} color="#F5A524" size="lg" />
 
                       <div className="flex flex-col">
                         <p className="font-semibold text-sm text-warning-foreground text-left">Revisa la configuración antes de completar.</p>

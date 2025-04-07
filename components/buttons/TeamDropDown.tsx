@@ -1,9 +1,10 @@
 "use client"
 
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react"
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@/lib/hero-ui"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faEllipsisV, faRepeat } from "@fortawesome/free-solid-svg-icons"
 import Link from "next/link"
+import { IconProp } from "@fortawesome/fontawesome-svg-core"
 
 interface ITeamDropDownProps {
   teamId: string
@@ -18,14 +19,14 @@ export default function TeamDropDown({ teamId }: ITeamDropDownProps) {
     <Dropdown className="rounded-md">
       <DropdownTrigger>
         <Button size="sm" className="min-w-0 w-10 max-w-10 p-0">
-          <FontAwesomeIcon icon={faEllipsisV} size="lg" />
+          <FontAwesomeIcon icon={faEllipsisV as IconProp} size="lg" />
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions" className="rounded-sm">
 
         <DropdownItem key="migrate">
           <Link className="w-full flex gap-4 py-2 max-w-[262px]" href={`/team/${teamId}/migrate`}>
-            <FontAwesomeIcon icon={faRepeat} size="lg" color="#C2C2C5" />
+            <FontAwesomeIcon icon={faRepeat as IconProp} size="lg" color="#C2C2C5" />
 
             <div className="flex flex-col gap-1">
               <span className="text-black font-medium text-sm leading-5">Migrar Cliente</span>

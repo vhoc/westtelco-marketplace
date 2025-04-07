@@ -1,11 +1,11 @@
 "use client"
 import { ILicenseState, ISku, ISkuInfo } from "@/types"
-import { Card, CardHeader, CardBody, Divider, Button, Spinner } from "@nextui-org/react"
+import { Card, CardHeader, CardBody, Divider, Button, Spinner } from "@heroui/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPencil, faUsers, faRotateLeft, faFloppyDisk, faHandshake, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
-import { Chip } from "@nextui-org/react"
+import { faPencil, faUsers, faRotateLeft, faFloppyDisk, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
+import { Chip } from "@heroui/react"
 import LicensesTable from "./LicensesTable"
-import { Modal, ModalContent, ModalBody, useDisclosure, ModalHeader, ModalFooter } from "@nextui-org/react"
+import { Modal, ModalContent, ModalBody, useDisclosure, ModalHeader, ModalFooter } from "@heroui/react"
 import { useState, useEffect } from "react"
 import { modifyTeamSkus } from "@/app/team/actions"
 import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"
@@ -15,6 +15,7 @@ import clsx from "clsx"
 import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-validator"
 import { ITransitionOutcome } from "@/types"
 import AutoRenewalSwitch from "../buttons/AutoRenewalSwitch"
+import { IconProp } from "@fortawesome/fontawesome-svg-core"
 
 /** TODO: Edit mode CHECK the license quantity of the license SKU, it is null, and updating it returns Conflict */
 
@@ -202,7 +203,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                 <Button
                   color="primary"
                   size={'sm'}
-                  endContent={<FontAwesomeIcon icon={faPencil} size="lg" />}
+                  endContent={<FontAwesomeIcon icon={faPencil as IconProp} size="lg" />}
                   onClick={() => setEditMode(true)}
                   aria-label="Editar SKU"
                 >
@@ -212,7 +213,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                 <div className="flex justify-end gap-x-2">
                   <Button
                     size={'sm'}
-                    endContent={<FontAwesomeIcon icon={faRotateLeft} size="lg" />}
+                    endContent={<FontAwesomeIcon icon={faRotateLeft as IconProp} size="lg" />}
                     aria-label="Deshacer"
                     onClick={() => {
                       setNewSkus(props.skus)
@@ -225,7 +226,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                   <Button
                     color="primary"
                     size={'sm'}
-                    endContent={<FontAwesomeIcon icon={faFloppyDisk} size="lg" />}
+                    endContent={<FontAwesomeIcon icon={faFloppyDisk as IconProp} size="lg" />}
                     onClick={handleUpdate}
                     aria-label="Actualizar"
                   >
@@ -292,7 +293,7 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                 >
                   {/* Truncate this span to fit the chip */}
                   <div className="text-sm text-[#11181C] truncate whitespace-nowrap overflow-hidden min-w-72">{`${transitionValidationResult.type} a ${props.renewalSkuInfo?.description} programado en ${props.remainingTime}`}
-                    <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500 ml-2" />
+                    <FontAwesomeIcon icon={faTriangleExclamation as IconProp} className="text-warning-500 ml-2" />
                   </div>
 
                 </div>
@@ -307,14 +308,14 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                   className={'bg-warning-100 py-4'}
                 >
                   <span className="text-sm text-[#11181C]">{`Renovación programada en ${props.remainingTime}`}</span>
-                  <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500 ml-2" />
+                  <FontAwesomeIcon icon={faTriangleExclamation as IconProp} className="text-warning-500 ml-2" />
                 </Chip>
                 :
                 null
             }
 
             <div className="flex gap-4 items-center">
-              <FontAwesomeIcon icon={faUsers} size="xl" color="#D4D4D8" />
+              <FontAwesomeIcon icon={faUsers as IconProp} size="xl" color="#D4D4D8" />
               <span className="text-xl leading-7 font-medium text-black">{String(props.num_licensed_users)}</span>
             </div>
           </div>
@@ -329,9 +330,9 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
             >
               {/* Truncate this span to fit the chip */}
               <div className="text-sm text-[#11181C] min-w-72 flex">
-                <FontAwesomeIcon icon={faTriangleExclamation} className="text-warning-500 mr-2" />
+                <FontAwesomeIcon icon={faTriangleExclamation as IconProp} className="text-warning-500 mr-2" />
                 <div className="flex flex-col gap-y-2">
-                  <span><strong> Advertencia:</strong> Hay un <strong>{transitionValidationResult.type}</strong> de plan programado para ésta cuenta. Si realizas un cambio y presionas <strong> Actualizar <FontAwesomeIcon icon={faFloppyDisk} size="lg" /></strong>, el {transitionValidationResult.type} programado se <strong>cancelará.</strong> </span>
+                  <span><strong> Advertencia:</strong> Hay un <strong>{transitionValidationResult.type}</strong> de plan programado para ésta cuenta. Si realizas un cambio y presionas <strong> Actualizar <FontAwesomeIcon icon={faFloppyDisk as IconProp} size="lg" /></strong>, el {transitionValidationResult.type} programado se <strong>cancelará.</strong> </span>
                   <span>Si requires hacer un upsale o downsale, puedes hacerlo pero deberás volver a programar el cambio de plan.</span>
                 </div>
               </div>

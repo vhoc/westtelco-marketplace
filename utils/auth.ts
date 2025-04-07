@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export const signOut = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   return redirect("/login");
 };
@@ -17,12 +17,12 @@ export const signOut = async () => {
  * @returns Promise<redirect>
  */
 export const isUserValid = async ( successRedirectTo?: string | undefined ): Promise<void> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getUser()
 
   if ( error || !data?.user ){
-    console.error(error)
+    console.error('Authentication error:', error)
     return redirect(`/login?message=${ 'Se requiere iniciar sesión.' }`)
   } else {
     // Check if the user's profile data for a validation below
@@ -46,7 +46,7 @@ export const isUserValid = async ( successRedirectTo?: string | undefined ): Pro
       return
     } else {
       console.error('El usuario no existe en éste entorno.')
-      await supabase.auth.signOut();
+      // await supabase.auth.signOut();
       return redirect(`/login?message=El usuario no existe en éste entorno.`)
     }
   }
