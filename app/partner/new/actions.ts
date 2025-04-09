@@ -20,7 +20,7 @@ export async function createNewPartner(formData: FormData) {
 
   console.log(`partnerData: `, partnerData)
 
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('partner')
     .insert([

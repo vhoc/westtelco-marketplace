@@ -1,5 +1,5 @@
 'use server'
 
-export const importTeam = () => {
+export const importTeam = async() => {
   
 }

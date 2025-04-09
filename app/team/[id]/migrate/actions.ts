@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server"
 export const migrateTeam = async (formData: FormData) => {
   "use server"
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const rawData = {
     id: formData.get('team_id'),

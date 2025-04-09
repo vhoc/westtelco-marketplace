@@ -61,7 +61,7 @@ export async function createNewTeam(formData: FormData) {
 
   let startDate = endDate.toISOString()
 
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('team')
     .insert([

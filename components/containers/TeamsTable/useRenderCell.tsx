@@ -25,7 +25,7 @@ interface RenderCellHookProps {
 export const useRenderCell = ({
   partners,
   isLoadingTeamPage,
-  setIsLoadingTeamPage,
+  // setIsLoadingTeamPage,
   isLoading,
   router
 }: RenderCellHookProps) => {
