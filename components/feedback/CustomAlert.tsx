@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert} from "@/lib/hero-ui";
-import { cn } from "@/lib/hero-ui";
+import clsx from "clsx";
 
 interface CustomAlertProps {
   title: string;
@@ -44,7 +44,7 @@ export const CustomAlert = React.forwardRef(
         ref={ref as React.Ref<HTMLDivElement | null> | undefined}
         classNames={{
           ...classNames,
-          base: cn(
+          base: clsx(
             [
               "relative before:content-[''] before:absolute before:z-10",
               "before:left-0 before:top-[-1px] before:bottom-[-1px] before:w-1",
@@ -63,8 +63,8 @@ export const CustomAlert = React.forwardRef(
             classNames.base,
             className,
           ),
-          mainWrapper: cn("pt-1", classNames.mainWrapper),
-          iconWrapper: cn("dark:bg-transparent", classNames.iconWrapper),
+          mainWrapper: clsx("pt-1", classNames.mainWrapper),
+          iconWrapper: clsx("dark:bg-transparent", classNames.iconWrapper),
         }}
         color={color}
         title={title}

@@ -1,5 +1,5 @@
 "use client"
-import { Modal, ModalContent, ModalHeader, ModalBody, } from "@heroui/react"
+import { Modal, ModalContent, ModalBody, } from "@heroui/react"
 import { CircularProgress } from "@heroui/react"
 
 interface BusyModalProps {
