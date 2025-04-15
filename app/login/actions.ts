@@ -22,7 +22,10 @@ export async function login(formData: FormData) {
   redirect('/teams')
 }
 
-// export async function login(formData: FormData) {
+// Account registration is currently disabled.
+// This is an example
+//
+// export async function signup(formData: FormData) {
 //   const supabase = await createClient()
 
 //   // Pending: validations
@@ -31,40 +34,12 @@ export async function login(formData: FormData) {
 //     password: formData.get('password') as string,
 //   }
 
-//   const { data: user, error } = await supabase.auth.signInWithPassword(data)
-
-//   // if (user) {
-//   //   console.log('login/actions user: ', user)
-//   // }
+//   const { error } = await supabase.auth.signUp(data)
 
 //   if (error) {
-//     console.log('login/actions error: ', error)
 //     redirect('/error')
 //   }
 
 //   revalidatePath('/', 'layout')
-
-//   console.log('login/actions: redirecting to /teams')
 //   redirect('/teams')
 // }
-
-
-
-export async function signup(formData: FormData) {
-  const supabase = await createClient()
-
-  // Pending: validations
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signUp(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/teams')
-}
