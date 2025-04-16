@@ -3,8 +3,9 @@ import React, { useMemo } from "react"
 import { Input, Button } from "@heroui/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus } from "@fortawesome/free-solid-svg-icons"
-import { ITeamData } from "@/types"
+import { IPartner, ITeamData } from "@/types"
 import { useRouter } from "next/navigation"
+import ExportToCSVButton from "@/components/buttons/ExportToCSVButton";
 
 interface TopContentProps {
   filterValue:string
@@ -13,9 +14,10 @@ interface TopContentProps {
   hasSearchFilter: boolean
   sortedItems: ITeamData[]
   teams: ITeamData[]
+  partners: IPartner[]
 }
 
-export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, hasSearchFilter, sortedItems, teams }: TopContentProps) => {
+export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, hasSearchFilter, sortedItems, teams, partners }: TopContentProps) => {
 
   const router = useRouter()
 
@@ -61,6 +63,7 @@ export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, h
               >
                 Nuevo Cliente
               </Button>
+              <ExportToCSVButton teams={teams} partners={partners} />
             </div>
             <label className="flex items-center text-default-500 text-tiny">
               Filas por página:

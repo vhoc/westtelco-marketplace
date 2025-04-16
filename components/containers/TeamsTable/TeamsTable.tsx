@@ -136,6 +136,7 @@ const TeamsTable = ({ teams, partners, dbTeams, allSkus }: TeamsTableProps) => {
                     hasSearchFilter={hasSearchFilter}
                     sortedItems={sortedItems}
                     teams={teams}
+                    partners={partners}
                   />
                 }
                 topContentPlacement="outside"
