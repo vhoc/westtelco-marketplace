@@ -220,8 +220,8 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
               isRequired
               value={fields.invite_admin}
               onChange={(event) => {
-                  handleUpdateFields('invite_admin', event.target.value)
-                }
+                handleUpdateFields('invite_admin', event.target.value)
+              }
               }
             />
 
@@ -380,35 +380,41 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                     </div>
 
                     {/* SKU LICENSE */}
-                    <div className="flex justify-between gap-2 items-center">
-                      <div className="flex flex-col">
-                        <span className="text-sm leading-5 font-medium text-left">Licencias adicionales</span>
-                        <span className="text-default-500 text-left text-xs">{licenseSku}</span>
-                      </div>
-                      <Input type={'hidden'} name="licenseSku" value={licenseSku}/>
+                    {
+                      fields.is_trial === 'false' ?
+                        <div className="flex justify-between gap-2 items-center">
+                          <div className="flex flex-col">
+                            <span className="text-sm leading-5 font-medium text-left">Licencias adicionales</span>
+                            <span className="text-default-500 text-left text-xs">{licenseSku}</span>
+                          </div>
+                          <Input type={'hidden'} name="licenseSku" value={licenseSku} />
 
-                      <Input
-                        name={'license_sku_quantity'}
-                        type={'number'}
-                        variant={'bordered'}
-                        value={String(fields.license_sku_quantity)}
-                        size={'lg'}
-                        onChange={(event) => handleUpdateFields('license_sku_quantity', event.target.value)}
-                        min={0}
-                        className="max-w-24"
-                        classNames={{
-                          input: [
-                            "text-center text-sm",
-                            "pl-3",
-                          ],
-                          inputWrapper: [
-                            "min-w-20",
-                            "h-14",
-                            "bg-white"
-                          ]
-                        }}
-                      />
-                    </div>
+                          <Input
+                            name={'license_sku_quantity'}
+                            type={'number'}
+                            variant={'bordered'}
+                            value={String(fields.license_sku_quantity)}
+                            size={'lg'}
+                            onChange={(event) => handleUpdateFields('license_sku_quantity', event.target.value)}
+                            min={0}
+                            className="max-w-24"
+                            classNames={{
+                              input: [
+                                "text-center text-sm",
+                                "pl-3",
+                              ],
+                              inputWrapper: [
+                                "min-w-20",
+                                "h-14",
+                                "bg-white"
+                              ]
+                            }}
+                          />
+                        </div>
+                        :
+                        null
+                    }
+
 
                     <div className="flex justify-between items-center bg-default-100 rounded-md py-2 pl-2 pr-11">
                       <span className="text-xs text-default-500">Total de licencias</span>
@@ -428,7 +434,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                     </div>
 
                     {message && (
-                      <Toast type={ message.startsWith('ERROR:') ? 'error' : 'warning'}>
+                      <Toast type={message.startsWith('ERROR:') ? 'error' : 'warning'}>
                         {message}
                       </Toast>
                     )}

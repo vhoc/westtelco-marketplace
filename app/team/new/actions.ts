@@ -12,20 +12,27 @@ export async function createNewTeam(formData: FormData) {
     invite_admin: formData.get('invite_admin') as string,
     country_code: formData.get('country_code') as string,
     reseller_ids: process.env.API_ENV === "PROD" ? [ formData.get('reseller_id') as string ] : [],
-    is_trial: formData.get('is_trial') as string || false,
-    skus: [
+    is_trial: Boolean(formData.get('is_trial') as string) || false,
+    skus: Boolean(formData.get('is_trial') as string) === false ? [// ON Trial, only send the base SKU in the array.
       {
         "sku_id": formData.get('sku_id') as string,
         "quantity": 1
-      },
+      },      
       {
         "sku_id": formData.get('licenseSku') as string,
         "quantity": Number(formData.get('license_sku_quantity') as string)
       }
+    ]
+    :
+    [
+      {
+        "sku_id": formData.get('sku_id') as string,
+        "quantity": 1
+      }
     ],
   }
 
-  // console.log(`teamData: `, JSON.stringify(teamData, null, 1))
+  console.log(`teamData: `, JSON.stringify(teamData, null, 1))
 
   const createTeamResponse = await createTeam(teamData)
   console.log(`createTeamResponse: `, createTeamResponse)
