@@ -52,3 +52,33 @@ export const isUserValid = async ( successRedirectTo?: string | undefined ): Pro
   }
 
 }
+
+/**
+ * Returns the user's from Supabase Auth along with the user role from the public schema
+ */
+export const getUserWithRole = async () => {
+  const supabase = await createClient();
+
+  const { data:{ user }, error: userError } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    // console.error("Error fetching user:", userError?.message);
+    return { user: null, role: null };
+  }
+
+  // Fetch the role from your public.user table
+  // Adjust 'user' to your actual table name and 'id' to the column referencing auth.users.id
+  const { data: profileData, error: profileError  } = await supabase
+    .from('user')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+    if (profileError) {
+      console.error("Error fetching user role:", profileError.message);
+      // Decide how to handle missing profiles: return null role, throw error, etc.
+      return { user, role: 'default' };
+    }
+
+    return { user, role: profileData?.role ?? 'default' };
+}

@@ -6,6 +6,7 @@ import { faMagnifyingGlass, faUserPlus } from "@fortawesome/free-solid-svg-icons
 import { IPartner, ITeamData } from "@/types"
 import { useRouter } from "next/navigation"
 import ExportToCSVButton from "@/components/buttons/ExportToCSVButton";
+import ProtectedResource from "@/components/authorization/ProtectedResource"
 
 interface TopContentProps {
   filterValue:string
@@ -55,14 +56,17 @@ export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, h
               >
                 Importar Cliente
               </Button> */}
-              <Button
-                size={'sm'}
-                color={'primary'}
-                endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
-                onPress={() => router.push('/team/new')}
-              >
-                Nuevo Cliente
-              </Button>
+              {/* <ProtectedResource
+                roles={['westtelco-admin', 'westtelco-agent']}
+              > */}
+                <Button
+                  size={'sm'}
+                  color={'primary'}
+                  endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
+                  onPress={() => router.push('/team/new')}
+                >
+                  Nuevo Cliente
+                </Button>
               <ExportToCSVButton teams={teams} partners={partners} />
             </div>
             <label className="flex items-center text-default-500 text-tiny">
