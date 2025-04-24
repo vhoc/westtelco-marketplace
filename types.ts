@@ -186,3 +186,5 @@ export interface IDistribuitor {
   flag_base64: string
   active: boolean
 }
+
+export type TRole = "default" | "partner-agent" | "partner-admin" | "westtelco-limited" | "westtelco-agent" | "westtelco-admin"

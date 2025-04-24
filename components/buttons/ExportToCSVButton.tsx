@@ -41,7 +41,8 @@ const ExportToCSVButton = ({ teams, partners }: ExportToCSVButtonProps) => {
       active: team.active,
       country_code: team.country_code,
       data_residency: team.data_residency,
-      reseller_ids: team.reseller_ids,
+      reseller_id_1: team.reseller_ids[0] ?? '',
+      reseller_id_2: team.reseller_ids[1] ?? '',
       partner: partners.find(partner => partner.dropbox_reseller_id === team.reseller_ids[1])?.company_name ?? 'Unknown',
     }
   })

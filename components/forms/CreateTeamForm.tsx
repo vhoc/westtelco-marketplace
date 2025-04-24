@@ -40,6 +40,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
     { name: "Chile", code: "CL" },
     { name: "Colombia", code: "CO" },
     { name: "Costa Rica", code: "CR" },
+    { name: "Ecuador", code: "EC" },
     { name: "El Salvador", code: "SV" },
     { name: "Estados Unidos", code: "US" },
     { name: "Guatemala", code: "GT" },

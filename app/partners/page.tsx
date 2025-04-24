@@ -9,6 +9,10 @@ export default async function PartnersHome() {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
+
+  console.log('data ', data)
+  console.log('error ', error)
+
   if (error || !data?.user) {
     redirect('/login')
   }
