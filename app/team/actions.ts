@@ -74,6 +74,16 @@ const requestOptions = {
 export const modifyTeamSkus = async (teamId: string, currentSkus: Array<ISku>, newSkus: Array<ISku>, forceImmediate: boolean = false, resellerIds: Array<string> = []): Promise<ITeamApiResponse> => {
   "use server"
 
+  // console.log(`requestBody: `, JSON.stringify({
+  //   "environment": process.env.API_ENV,
+  //   "country": process.env.DISTRIBUITOR_COUNTRY,
+  //   "id": teamId,
+  //   "current_skus": currentSkus,
+  //   "new_skus": newSkus,
+  //   "reseller_ids": resellerIds,
+  //   "force_immediate": forceImmediate,
+  // }, null, 2) )
+
   const response = await fetch(`${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`,
     {
       method: 'PUT',

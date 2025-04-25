@@ -1,7 +1,7 @@
 "use client";
 import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from "@/lib/hero-ui";
 import { Button } from "@/lib/hero-ui";
-import Toast from "../feedback/Toast";
+// import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { SubmitButton } from "../buttons/SubmitButton";
 import { IPartner, ISkuInfo } from "@/types";
@@ -434,11 +434,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                       </div>
                     </div>
 
-                    {message && (
-                      <Toast type={message.startsWith('ERROR:') ? 'error' : 'warning'}>
-                        {message}
-                      </Toast>
-                    )}
+                    
 
                     <SubmitButton
                       radius={'sm'}
