@@ -6,7 +6,7 @@ import { faMagnifyingGlass, faUserPlus } from "@fortawesome/free-solid-svg-icons
 import { IPartner, ITeamData } from "@/types"
 import { useRouter } from "next/navigation"
 import ExportToCSVButton from "@/components/buttons/ExportToCSVButton";
-import ProtectedResource from "@/components/authorization/ProtectedResource"
+import ProtectedElement from "@/components/authorization/ProtectedElement"
 
 interface TopContentProps {
   filterValue:string

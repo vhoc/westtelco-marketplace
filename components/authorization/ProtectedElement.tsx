@@ -5,7 +5,7 @@ interface ProtectedResourceProps {
   roles: TRole[]
 }
 
-const ProtectedResource = ({ children, roles = ["default"] }: ProtectedResourceProps) => {
+const ProtectedElement = ({ children, roles = ["default"] }: ProtectedResourceProps) => {
 
   return (
     <>
@@ -14,4 +14,4 @@ const ProtectedResource = ({ children, roles = ["default"] }: ProtectedResourceP
 
 }
 
-export default ProtectedResource
+export default ProtectedElement
