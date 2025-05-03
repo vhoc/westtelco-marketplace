@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus  } from "@fortawesome/free-solid-svg-icons"
 import { IPartner } from "@/types"
 import { useRouter } from "next/navigation";
+import ProtectedElement from "@/components/authorization/ProtectedElement" 
 
 interface PartnersTableProps {
   partners: Array<IPartner>
@@ -131,14 +132,16 @@ const PartnersTable = ( { partners }: PartnersTableProps ) => {
               >
                 Buscar por TEAM ID
               </Button> */}
-              <Button
-                size={'sm'}
-                color={'primary'}
-                endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
-                onPress={() => router.push('/partner/new')}
-              >
+              <ProtectedElement  Element roles={['westtelco-admin', 'westtelco-agent']}>
+                <Button
+                  size={'sm'}
+                  color={'primary'}
+                  endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
+                  onPress={() => router.push('/partner/new')}
+                >
                 Nuevo Partner
               </Button>
+              </ProtectedElement>
             </div>
             <label className="flex items-center text-default-500 text-tiny">
               Filas por página:

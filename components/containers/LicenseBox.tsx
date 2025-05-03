@@ -16,6 +16,7 @@ import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-val
 import { ITransitionOutcome } from "@/types"
 import AutoRenewalSwitch from "../buttons/AutoRenewalSwitch"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
+import ProtectedElement from "../authorization/ProtectedElement"
 
 /** TODO: Edit mode CHECK the license quantity of the license SKU, it is null, and updating it returns Conflict */
 
@@ -181,17 +182,19 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
         <div className="flex justify-end gap-x-2">
           {
             props.active && props.skuInfo && !props.currentState?.is_trial ?
-              <PlanChangeDrawer
-                teamId={props.teamId}
-                teamName={props.teamName}
-                currentSkuInfo={props.skuInfo}
-                num_licensed_users={props.num_licensed_users}
-                allSkus={props.allSkus}
-                end_date={props.end_date}
-                license_description={props.license_description ?? 'SKU sin información'}
-                current_skus={props.skus}
-                resellerIds={subPartnerResellerId}
-              />
+              <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+                <PlanChangeDrawer
+                  teamId={props.teamId}
+                  teamName={props.teamName}
+                  currentSkuInfo={props.skuInfo}
+                  num_licensed_users={props.num_licensed_users}
+                  allSkus={props.allSkus}
+                  end_date={props.end_date}
+                  license_description={props.license_description ?? 'SKU sin información'}
+                  current_skus={props.skus}
+                  resellerIds={subPartnerResellerId}
+                />
+              </ProtectedElement>
               :
               null
           }
@@ -200,22 +203,24 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
             // Can't edit ENTERPRISE type SKUs for now
             !props.baseSku.startsWith('ENT-') && props.active ?
               !editMode ?
-                <Button
-                  color="primary"
-                  size={'sm'}
-                  endContent={<FontAwesomeIcon icon={faPencil as IconProp} size="lg" />}
-                  onClick={() => setEditMode(true)}
-                  aria-label="Editar SKU"
-                >
-                  Editar SKU
-                </Button>
+                <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+                  <Button
+                    color="primary"
+                    size={'sm'}
+                    endContent={<FontAwesomeIcon icon={faPencil as IconProp} size="lg" />}
+                    onPress={() => setEditMode(true)}
+                    aria-label="Editar SKU"
+                  >
+                    Editar SKU
+                  </Button>
+                </ProtectedElement>
                 :
                 <div className="flex justify-end gap-x-2">
                   <Button
                     size={'sm'}
                     endContent={<FontAwesomeIcon icon={faRotateLeft as IconProp} size="lg" />}
                     aria-label="Deshacer"
-                    onClick={() => {
+                    onPress={() => {
                       setNewSkus(props.skus)
                       setNewAddonSkus([])
                       setEditMode(false)
@@ -223,15 +228,18 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
                   >
                     Deshacer
                   </Button>
-                  <Button
-                    color="primary"
-                    size={'sm'}
-                    endContent={<FontAwesomeIcon icon={faFloppyDisk as IconProp} size="lg" />}
-                    onClick={handleUpdate}
-                    aria-label="Actualizar"
-                  >
-                    Actualizar
-                  </Button>
+
+                  <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+                    <Button
+                      color="primary"
+                      size={'sm'}
+                      endContent={<FontAwesomeIcon icon={faFloppyDisk as IconProp} size="lg" />}
+                      onPress={handleUpdate}
+                      aria-label="Actualizar"
+                    >
+                      Actualizar
+                    </Button>
+                  </ProtectedElement>
                 </div>
               :
               null
@@ -342,14 +350,16 @@ export default function LicenseBox({ resellerIds = [], ...props }: LicenseBoxPro
             null
         }
         {/* AUTO-RENEW TOGGLE SWITCH */}
-        <AutoRenewalSwitch
-          className="mt-4 max-w-sm justify-between"
-          autoRenewal={props.auto_renew}
-          skus={props.skus}
-          teamId={props.teamId}
-          resellerIds={subPartnerResellerId}
-          isDisabled={!props.active}
-        />
+        <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+          <AutoRenewalSwitch
+            className="mt-4 max-w-sm justify-between"
+            autoRenewal={props.auto_renew}
+            skus={props.skus}
+            teamId={props.teamId}
+            resellerIds={subPartnerResellerId}
+            isDisabled={!props.active}
+          />
+        </ProtectedElement>
 
         {/* CARD BODY BOTTOM SECTION */}
         {
