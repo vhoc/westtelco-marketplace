@@ -49,19 +49,23 @@ const ExportToCSVButton = ({ teams, partners }: ExportToCSVButtonProps) => {
 
   const filename = `clientes-zoom_${new Date().toISOString()}.csv`
 
+  if ( teams && teams.length >= 1 && exportedTeams && exportedTeams.length >= 1 ) {
+    return (
+      <CSVLink data={exportedTeams} filename={filename} >
+        <Button
+          type="button"
+          size="sm"
+          color={'default'}
+          endContent={<FileInput size={16} />}
+        >      
+          Exportar
+        </Button>
+      </CSVLink>
+    )
+  }
 
-  return (
-    <CSVLink data={exportedTeams} filename={filename} >
-      <Button
-        type="button"
-        size="sm"
-        color={'default'}
-        endContent={<FileInput size={16} />}
-      >      
-        Exportar
-      </Button>
-    </CSVLink>
-  )
+
+  return null
 }
 
 export default ExportToCSVButton

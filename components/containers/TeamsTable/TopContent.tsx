@@ -56,9 +56,9 @@ export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, h
               >
                 Importar Cliente
               </Button> */}
-              {/* <ProtectedResource
+              <ProtectedElement
                 roles={['westtelco-admin', 'westtelco-agent']}
-              > */}
+              >
                 <Button
                   size={'sm'}
                   color={'primary'}
@@ -67,6 +67,7 @@ export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, h
                 >
                   Nuevo Cliente
                 </Button>
+              </ProtectedElement>
               <ExportToCSVButton teams={teams} partners={partners} />
             </div>
             <label className="flex items-center text-default-500 text-tiny">

@@ -16,49 +16,6 @@ const requestOptions = {
   },
 }
 
-/**
- * Fetches a team's data
- * 
- * Currently unused
- */
-// export const getTeam = async (teamId: string, resellerId?: string | null | undefined) => {
-//   "use server"
-//   revalidateTag('team' + teamId)
-
-//   const fetchUrl = resellerId ? `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}?resellerId=${resellerId}`
-//     : `${process.env.LOCAL_API_BASE_URL}/api/teams/${teamId}`
-
-//   console.log(`fetchUrl: `, fetchUrl)
-
-
-//   const response = await fetch(fetchUrl,
-//     {
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//       },
-//       next: {
-//         tags: [
-//           'team' + teamId
-//         ]
-//       }
-//     }
-//   )
-
-//   if (!response.ok) {
-//     return Response.json(
-//       {
-//         error: "No se pudo obtener la información de éste cliente.",
-//         status: response.status
-//       }
-//     )
-//   }
-
-//   const data = await response.json()
-//   revalidateTag('team' + teamId)
-//   return Response.json(data, { status: 200 })
-
-// }
 
 /**
  * Modify a team's SKUs
