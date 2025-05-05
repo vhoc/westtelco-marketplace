@@ -2,7 +2,7 @@
 import { Button } from "@heroui/react"
 import { ITeamData, IPartner } from "@/types"
 import { FileInput } from 'lucide-react'
-import { CSVLink } from "react-csv"
+import jsonToCsvExport from "json-to-csv-export"
 
 interface ExportToCSVButtonProps {
   teams: ITeamData[]
@@ -10,22 +10,6 @@ interface ExportToCSVButtonProps {
 }
 
 const ExportToCSVButton = ({ teams, partners }: ExportToCSVButtonProps) => {
-
-  function escapeCsvField(fieldValue: string) {
-    // Convert non-strings (like numbers, booleans) to strings
-    const stringValue = String(fieldValue);
-  
-    // Check if quoting is necessary: contains comma, double quote, or newline
-    if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n') || stringValue.includes('\r')) {
-      // 1. Escape existing double quotes by doubling them ("" -> """")
-      const escapedValue = stringValue.replace(/"/g, '""');
-      // 2. Enclose the entire result in double quotes
-      return `"${escapedValue}"`;
-    }
-  
-    // If no special characters, return the string as is
-    return stringValue;
-  }
 
   const exportedTeams = teams.map(team => {
     return {
@@ -47,20 +31,20 @@ const ExportToCSVButton = ({ teams, partners }: ExportToCSVButtonProps) => {
     }
   })
 
+
   const filename = `clientes-zoom_${new Date().toISOString()}.csv`
 
   if ( teams && teams.length >= 1 && exportedTeams && exportedTeams.length >= 1 ) {
     return (
-      <CSVLink data={exportedTeams} filename={filename} >
         <Button
           type="button"
           size="sm"
           color={'default'}
           endContent={<FileInput size={16} />}
+          onPress={() => jsonToCsvExport({ data: exportedTeams, filename: filename })}
         >      
           Exportar
         </Button>
-      </CSVLink>
     )
   }
 
