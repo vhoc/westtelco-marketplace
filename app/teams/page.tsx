@@ -1,10 +1,9 @@
 import { Card, Alert } from "@/lib/hero-ui";
 import { createClient } from "@/utils/supabase/server"
-// import { redirect } from "next/navigation";
 import TeamsTable from "@/components/containers/TeamsTable/TeamsTable";
 import { getAllTeamsFromPartners, getAllTeamsFromPartnersDev } from "@/app/teams/actions";
 import {ITeamDataFromDatabase} from "@/types";
-import { getSkus } from "../team/actions";
+import { fetchSkus } from "@/utils/licenses";
 
 export default async function TeamsHome(
   props: { params: Promise<{ id: string }>; searchParams?: Promise<{ [key: string]: string | undefined | null, message?: string | undefined }> }
@@ -13,22 +12,10 @@ export default async function TeamsHome(
 
   const supabase = await createClient()
 
-  // const { data, error } = await supabase.auth.getUser()
-
-  // if (error || !data?.user) {
-  //   redirect('/login')
-  // }
-
   const { data: teamsData, error: partnersError } = process.env.API_ENV === "DEV" ? await getAllTeamsFromPartnersDev() : await getAllTeamsFromPartners()
-  const { data: allSkus } = await getSkus()
+  const allSkus = await fetchSkus()
   // Teams that come from Supabase
   const { data: dbTeams = [] as ITeamDataFromDatabase[] } = await supabase.from('team').select('*') as { data: ITeamDataFromDatabase[] }
-
-  // console.log(`teamsData: `, teamsData)
-  // console.log(`teamsData: `, teamsData?.teams)
-  
-
-  // console.log(`exportedTeams: `, exportedTeams)
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center pt-[16px] animate-in opacity-1 px-3 text-black">

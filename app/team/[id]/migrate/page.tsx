@@ -1,4 +1,4 @@
-import { getPartners } from "../../actions";
+import { getPartners } from "@/utils/partner";
 import { fetchTeamPageData } from "../../actions";
 import { migrateTeam } from "./actions";
 import { Link, Card } from "@/lib/hero-ui";
@@ -11,11 +11,11 @@ export default async function MigrateTeamPage(
   const params = await props.params;
 
   const teamId = decodeURIComponent(params.id)
-  const { data: partners } = await getPartners()
+  const partners = await getPartners()
 
   const {
     data: teamData,
-    error: teamDataError
+    // error: teamDataError
   } = await fetchTeamPageData(teamId, searchParams?.resellerId)
 
   return (

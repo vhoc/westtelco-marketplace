@@ -1,21 +1,26 @@
-import { createClient } from "@/utils/supabase/server";
+// import { createClient } from "@/utils/supabase/server";
 
-export const dynamic = 'force-dynamic' // defaults to auto
-export const revalidate = 60
+// export const dynamic = 'force-dynamic' // defaults to auto
+// export const revalidate = 60
 
-export async function GET(_request: Request): Promise<void | Response> {
-  const supabase = await createClient()
+// export async function GET(_request: Request): Promise<void | Response> {
+  
+//   const supabase = await createClient()
 
-  const { data, error } = await supabase
-      .from('sku')
-      .select('*')
+//   const { data, error } = await supabase
+//       .from('sku')
+//       .select('*')
 
-    if (error) {
-      console.error(`Error retrieving skus from database: `, error)
-      return Response.json(error)
-    }
+//       console.log(`api/skus/route.ts: data: `, data)
+//       console.log(`api/skus/route.ts: error: `, error)
 
-    const response = Response.json({data})
+//     if (error) {
+//       console.error(`Error retrieving skus from database: `, error)
+//       return Response.json(error)
+//     }
 
-    return response
-}
+//     const response = Response.json({data})
+    
+
+//     return response
+// }

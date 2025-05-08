@@ -49,14 +49,6 @@ const ConfirmationBox = ({ current_sku_base, new_sku_base, new_license_descripti
     validateTransition()
   }, [current_sku_base, new_sku_base])
 
-  /// DEBUG
-  // useEffect(() => {
-  //   console.log('transitionValidationResult: ', transitionValidationResult)
-  // }, [transitionValidationResult])
-
-  // useEffect(() => {
-  //   console.log(JSON.stringify(new_skus, null, 1))
-  // }, [new_skus])
 
   return (
     <div className="flex flex-col gap-4">
