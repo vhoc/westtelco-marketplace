@@ -22,7 +22,7 @@ const ProtectedPage = async ({ roles = ['default'], children, unauthenticatedRed
   if (!user) {
     console.log("AdminLayout: No user found, redirecting to login.");
     // Redirect to login, maybe include where they came from
-    const loginUrl = new URL(unauthenticatedRedirectTo, process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
+    const loginUrl = new URL(unauthenticatedRedirectTo, process.env.APP_URL || 'http://localhost:3000');
     loginUrl.searchParams.set('message', 'Please log in to access the admin area.');
     loginUrl.searchParams.set('redirectedFrom', '/admin'); // Optional: tell login where to return
     redirect(loginUrl.toString());
@@ -34,7 +34,7 @@ const ProtectedPage = async ({ roles = ['default'], children, unauthenticatedRed
   if (!isAllowed) {
     console.warn(`AdminLayout Access Denied: User ${user.id} (Role: ${role}) attempted access.`);
     // Redirect to a generic dashboard or an "unauthorized" page
-    const unauthorizedUrl = new URL(unauthorizedRedirectTo, process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
+    const unauthorizedUrl = new URL(unauthorizedRedirectTo, process.env.APP_URL || 'http://localhost:3000');
     // unauthorizedUrl.searchParams.set('requiredRole', roles.join(',')); // Optional: info for the page
     // unauthorizedUrl.searchParams.set('userRole', role || 'none'); // Optional: info for the page
     redirect(unauthorizedUrl.toString()); // Or redirect('/dashboard?error=unauthorized');
