@@ -5,14 +5,6 @@ import {
   DrawerFooter, Button, useDisclosure, Skeleton, Radio, RadioGroup,
   Select, SelectItem
 } from "@heroui/react"
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectGroup,
-//   SelectValue,
-// } from "@/components/ui/select"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHandshake, faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import { commitmentTypesMapHF } from "@/utils/human-friendly/commitment-types"

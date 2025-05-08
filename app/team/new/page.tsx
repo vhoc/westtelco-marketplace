@@ -1,14 +1,16 @@
 import CreateTeamForm from "@/components/forms/CreateTeamForm"
 import { createNewTeam } from "./actions"
-import { getPartners, getSkus } from "../actions"
+// import { getSkus } from "../actions"
+import { fetchSkus } from "@/utils/licenses"
+import { getPartners } from "@/utils/partner"
 import { commitmentTypes } from "@/utils/commitmentTypes"
 import Toast from "@/components/feedback/Toast"
 
 export default async function NewTeamPage(props: { searchParams: Promise<{ message: string }> }) {
   const searchParams = await props.searchParams;
 
-  const { data: partners } = await getPartners()
-  const { data: skus } = await getSkus()
+  const partners = await getPartners()
+  const skus = await fetchSkus()
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center pt-[40px] animate-in opacity-1 max-w-4xl px-3 text-black">

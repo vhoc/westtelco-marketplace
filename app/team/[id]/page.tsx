@@ -91,7 +91,7 @@ export default async function TeamPage(
               <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
                 <TeamAdminEmailField dbTeam={dbTeam} />
               </ProtectedElement>
-            :
+              :
               null
           }
 
@@ -154,7 +154,7 @@ export default async function TeamPage(
           >
             <Link href="/teams" aria-label="Cerrar cliente">Cerrar Cliente</Link>
           </Button>
-          
+
           <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
             <TeamDropDown teamId={teamId} />
           </ProtectedElement>
