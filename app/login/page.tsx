@@ -1,12 +1,10 @@
-import { SubmitButton } from "./submit-button";
-import { login } from "./actions";
-import { Input } from "@/lib/hero-ui";
 import Image from "next/image";
 import getConfig from "next/config";
 import logoWt from '../../public/wt-logo-2024.png';
 import flagMexico from '../../public/img/flagMx.png';
 import flagBrazil from '../../public/img/flagBr.png';
 import { Link } from "@/lib/hero-ui";
+import { LoginForm } from "@/components/forms/LoginForm";
 
 export default async function Login(
   props: {
@@ -35,36 +33,10 @@ export default async function Login(
 
         <p className="text-xl font-medium text-[#00336A] mt-12 mb-4">Inicia sesión para continuar</p>
 
-        <form
-          action={login}
-          className="animate-in flex-1 flex flex-col w-full justify-center gap-4 text-foreground"
-        >
-          <Input
-            isRequired
-            type="email"
-            name="email"
-            label={"Email"}
-            radius={'sm'}
-            size={'sm'}
-          />
-          <Input
-            isRequired
-            type="password"
-            name="password"
-            label={"Contraseña"}
-            radius={'sm'}
-            size={'sm'}
-          />
-          <SubmitButton
-            formAction={login}
-          />
+        {/*  */}
 
-          {searchParams?.message && (
-            <p className="mt-4 p-4 bg-warning-200 text-foreground text-center rounded">
-              {searchParams.message}
-            </p>
-          )}
-        </form>
+        <LoginForm message={searchParams?.message ? searchParams?.message : undefined} />
+
         <div className={'flex justify-center gap-6 mt-10 w-full'}>
           <Link href={'https://market.wti.mx/'}>
             <Image

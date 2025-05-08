@@ -17,9 +17,12 @@ export async function login(formData: FormData) {
   if (error) {
     redirect('/error')
   }
-  revalidatePath('/', 'layout')
+
+  await new Promise((resolve) => setTimeout(resolve, 1000))
   console.log('login/actions: redirecting to /teams')
+  revalidatePath('/', 'layout')
   redirect('/teams')
+  
 }
 
 // Account registration is currently disabled.
