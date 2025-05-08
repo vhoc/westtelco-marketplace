@@ -1,13 +1,13 @@
 import ImportTeamForm from "@/components/forms/ImportTeamForm"
 import { Card } from "@heroui/react"
-import { getPartners } from "../actions"
-import { importTeam } from "./actions"
+import { getPartners } from "@/utils/partner"
+import { importTeam } from "./actions"// CURRENTLY NOT WORKING. PENDING TO DEVELOP
 import { Link } from "@heroui/react"
 
 export default async function ImportTeamPage(props: { searchParams: Promise<{ message: string }> }) {
   const searchParams = await props.searchParams;
 
-  const { data: partners } = await getPartners()
+  const partners = await getPartners()
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center pt-[40px] animate-in opacity-1 max-w-4xl px-3 text-black">
