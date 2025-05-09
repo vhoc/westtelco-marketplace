@@ -1,10 +1,10 @@
 "use client"
 
-import { Button } from "@nextui-org/react"
+import { Button } from "@/lib/hero-ui"
 import { useState } from "react"
 import { fixMissingTeamData } from "@/app/team/actions"
 import { ITeamData } from "@/types"
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@/lib/hero-ui";
 import { useRouter } from "next/navigation"
 
 

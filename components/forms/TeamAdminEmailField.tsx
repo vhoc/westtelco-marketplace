@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { Button, Input } from "@nextui-org/react"
+import { Button, Input } from "@/lib/hero-ui"
 import { isEmailValid } from "@/utils/validators/input-fields/email"
 import { ITeamDataFromDatabase } from "@/types"
 import { updateDbTeamAdminEmail } from "@/app/team/actions"

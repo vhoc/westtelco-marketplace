@@ -1,17 +1,21 @@
-import { getPartners } from "../../actions";
+import { getPartners } from "@/utils/partner";
 import { fetchTeamPageData } from "../../actions";
 import { migrateTeam } from "./actions";
-import { Link, Card } from "@nextui-org/react";
+import { Link, Card } from "@/lib/hero-ui";
 import MigrateTeamForm from "@/components/forms/MigrateTeamForm";
 
-export default async function MigrateTeamPage({ params, searchParams }: { params: { id: string }; searchParams?: { [key: string]: string | undefined | null, message?: string | undefined } }) {
+export default async function MigrateTeamPage(
+  props: { params: Promise<{ id: string }>; searchParams?: Promise<{ [key: string]: string | undefined | null, message?: string | undefined }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
 
   const teamId = decodeURIComponent(params.id)
-  const { data: partners } = await getPartners()
+  const partners = await getPartners()
 
   const {
     data: teamData,
-    error: teamDataError
+    // error: teamDataError
   } = await fetchTeamPageData(teamId, searchParams?.resellerId)
 
   return (
@@ -47,5 +51,4 @@ export default async function MigrateTeamPage({ params, searchParams }: { params
       </main>
     </div>
   )
-
 }

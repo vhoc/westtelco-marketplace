@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
-import { Switch } from "@nextui-org/react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
+import { Switch } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@heroui/react";
 import { modifyTeamAutorenew } from "@/app/team/actions";
 import { type ISku } from "@/types";
 

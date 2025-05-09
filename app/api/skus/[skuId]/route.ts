@@ -1,10 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { skuId: string } }
-): Promise<void | Response> {
-  const supabase = createClient()
+export async function GET(_request: Request, props: { params: Promise<{ skuId: string }> }): Promise<void | Response> {
+  const params = await props.params;
+  const supabase = await createClient()
 
   const skuId = params.skuId
 
@@ -14,12 +12,12 @@ export async function GET(
       .eq('sku_license', skuId)
       .single()
 
-    if (error) {
-      console.error(`Error retrieving sku from database: `, error)
-      return Response.json(error)
-    }
+  if (error) {
+    console.error(`Error retrieving sku from database: `, error)
+    return Response.json(error)
+  }
 
-    const response = Response.json({data})
+  const response = Response.json({data})
 
-    return response
+  return response
 }

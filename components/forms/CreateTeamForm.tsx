@@ -1,13 +1,14 @@
 "use client";
-import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
-import Toast from "../feedback/Toast";
+import { Input, Select, SelectItem, Switch, RadioGroup, Radio, Card, Link } from "@/lib/hero-ui";
+import { Button } from "@/lib/hero-ui";
+// import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { SubmitButton } from "../buttons/SubmitButton";
 import { IPartner, ISkuInfo } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface CreateTeamFormProps {
   message?: string | undefined
@@ -39,6 +40,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
     { name: "Chile", code: "CL" },
     { name: "Colombia", code: "CO" },
     { name: "Costa Rica", code: "CR" },
+    { name: "Ecuador", code: "EC" },
     { name: "El Salvador", code: "SV" },
     { name: "Estados Unidos", code: "US" },
     { name: "Guatemala", code: "GT" },
@@ -219,8 +221,8 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
               isRequired
               value={fields.invite_admin}
               onChange={(event) => {
-                  handleUpdateFields('invite_admin', event.target.value)
-                }
+                handleUpdateFields('invite_admin', event.target.value)
+              }
               }
             />
 
@@ -379,35 +381,41 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                     </div>
 
                     {/* SKU LICENSE */}
-                    <div className="flex justify-between gap-2 items-center">
-                      <div className="flex flex-col">
-                        <span className="text-sm leading-5 font-medium text-left">Licencias adicionales</span>
-                        <span className="text-default-500 text-left text-xs">{licenseSku}</span>
-                      </div>
-                      <Input type={'hidden'} name="licenseSku" value={licenseSku}/>
+                    {
+                      fields.is_trial === 'false' ?
+                        <div className="flex justify-between gap-2 items-center">
+                          <div className="flex flex-col">
+                            <span className="text-sm leading-5 font-medium text-left">Licencias adicionales</span>
+                            <span className="text-default-500 text-left text-xs">{licenseSku}</span>
+                          </div>
+                          <Input type={'hidden'} name="licenseSku" value={licenseSku} />
 
-                      <Input
-                        name={'license_sku_quantity'}
-                        type={'number'}
-                        variant={'bordered'}
-                        value={String(fields.license_sku_quantity)}
-                        size={'lg'}
-                        onChange={(event) => handleUpdateFields('license_sku_quantity', event.target.value)}
-                        min={0}
-                        className="max-w-24"
-                        classNames={{
-                          input: [
-                            "text-center text-sm",
-                            "pl-3",
-                          ],
-                          inputWrapper: [
-                            "min-w-20",
-                            "h-14",
-                            "bg-white"
-                          ]
-                        }}
-                      />
-                    </div>
+                          <Input
+                            name={'license_sku_quantity'}
+                            type={'number'}
+                            variant={'bordered'}
+                            value={String(fields.license_sku_quantity)}
+                            size={'lg'}
+                            onChange={(event) => handleUpdateFields('license_sku_quantity', event.target.value)}
+                            min={0}
+                            className="max-w-24"
+                            classNames={{
+                              input: [
+                                "text-center text-sm",
+                                "pl-3",
+                              ],
+                              inputWrapper: [
+                                "min-w-20",
+                                "h-14",
+                                "bg-white"
+                              ]
+                            }}
+                          />
+                        </div>
+                        :
+                        null
+                    }
+
 
                     <div className="flex justify-between items-center bg-default-100 rounded-md py-2 pl-2 pr-11">
                       <span className="text-xs text-default-500">Total de licencias</span>
@@ -416,7 +424,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
 
                     {/* WARNING MESSAGE */}
                     <div className="bg-warning-100 rounded-lg py-3 px-3 flex gap-4 mt-2">
-                      <FontAwesomeIcon icon={faTriangleExclamation} color="#F5A524" size="lg" />
+                      <FontAwesomeIcon icon={faTriangleExclamation as IconProp} color="#F5A524" size="lg" />
 
                       <div className="flex flex-col">
                         <p className="font-semibold text-sm text-warning-foreground text-left">Revisa la configuración antes de completar.</p>
@@ -426,11 +434,7 @@ const CreateTeamForm = ({ message, formAction, className, partners, commitmentTy
                       </div>
                     </div>
 
-                    {message && (
-                      <Toast type={ message.startsWith('ERROR:') ? 'error' : 'warning'}>
-                        {message}
-                      </Toast>
-                    )}
+                    
 
                     <SubmitButton
                       radius={'sm'}

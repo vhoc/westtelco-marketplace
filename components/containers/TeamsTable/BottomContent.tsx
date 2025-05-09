@@ -2,7 +2,7 @@
 "use client"
 import { ITeamData } from "@/types";
 import React, { useMemo } from "react";
-import { Button, Pagination } from "@nextui-org/react";
+import { Button, Pagination } from "@heroui/react";
 
 interface BottomContentProps {
   sortedItems: ITeamData[]

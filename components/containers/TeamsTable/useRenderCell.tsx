@@ -1,11 +1,11 @@
 //@ts-nocheck
 "use client"
 import { useCallback } from 'react'
-import { Button } from '@nextui-org/react'
-import { Link } from '@nextui-org/react'
-import { Chip } from '@nextui-org/react'
+import { Button } from "@heroui/react"
+import { Link } from "@heroui/react"
+import { Chip } from "@heroui/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencil, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faPencil, faTriangleExclamation, faEye } from '@fortawesome/free-solid-svg-icons'
 import { differenceInDays } from 'date-fns'
 import { getRemainingTime } from '@/utils/time'
 import clsx from 'clsx'
@@ -13,6 +13,7 @@ import { ITeamData } from '@/types'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { Key } from 'react'
 import { commitmentTypesMapHF } from '@/utils/human-friendly/commitment-types'
+import ProtectedElement from '@/components/authorization/ProtectedElement'
 
 interface RenderCellHookProps {
   partners: any[] // Replace 'any' with proper partner type
@@ -25,7 +26,7 @@ interface RenderCellHookProps {
 export const useRenderCell = ({
   partners,
   isLoadingTeamPage,
-  setIsLoadingTeamPage,
+  // setIsLoadingTeamPage,
   isLoading,
   router
 }: RenderCellHookProps) => {
@@ -187,14 +188,19 @@ export const useRenderCell = ({
         case "actions":
           return (
             <div className={'flex justify-center items-center'}>
+
               <Button
                 size={'sm'}
                 variant={'light'}
                 as={Link}
                 href={`/team/${urlEncodedId}?resellerId=${currentResellerId[0]}`}
               >
-                <FontAwesomeIcon icon={faPencil} color={'#71717A'} size={'lg'} />
-
+                <ProtectedElement
+                  roles={['westtelco-admin', 'westtelco-agent']}
+                  deniedFallback={<FontAwesomeIcon icon={faEye} color={'#71717A'} size={'lg'} />}
+                >
+                  <FontAwesomeIcon icon={faPencil} color={'#71717A'} size={'lg'} />
+                </ProtectedElement>
               </Button>
             </div>
           )

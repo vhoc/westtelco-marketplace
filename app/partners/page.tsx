@@ -1,4 +1,4 @@
-import { Card } from "@nextui-org/react";
+import { Card } from "@/lib/hero-ui";
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation";
 import { getPartners } from "@/utils/partner";
@@ -6,9 +6,10 @@ import PartnersTable from "@/components/containers/PartnersTable";
 
 export default async function PartnersHome() {
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
+
   if (error || !data?.user) {
     redirect('/login')
   }

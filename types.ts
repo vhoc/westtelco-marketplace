@@ -178,3 +178,13 @@ export interface ITeamDataFromDatabase {
   distributor_id?: number,
   admin_email?: string,
 }
+
+export interface IDistribuitor {
+  id: number
+  name: string
+  marketplace_url: string
+  flag_base64: string
+  active: boolean
+}
+
+export type TRole = "default" | "partner-agent" | "partner-admin" | "westtelco-limited" | "westtelco-agent" | "westtelco-admin"

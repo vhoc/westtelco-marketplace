@@ -1,3 +1,3 @@
 export default function ErrorPage() {
-  return <p  className={'tect-black'}>Sorry, something went wrong</p>
+  return <p  className={'text-black'}>Sorry, something went wrong</p>
 }

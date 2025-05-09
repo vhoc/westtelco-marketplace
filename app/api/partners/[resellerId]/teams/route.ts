@@ -18,10 +18,8 @@ const requestOptions = {
  * @param resellerId 
  * @returns 
  */
-export async function GET(
-  request: Request,
-  { params }: { params: { resellerId: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ resellerId: string }> }) {
+  const params = await props.params;
 
   const resellerId = params.resellerId
 
@@ -58,5 +56,4 @@ export async function GET(
       { status: 500 }
     );
   }
-
 }

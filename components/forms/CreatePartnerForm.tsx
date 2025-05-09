@@ -1,6 +1,6 @@
 "use client";
-import { Input, Select, SelectItem } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+import { Input, Select, SelectItem } from "@/lib/hero-ui";
+import { Button } from "@/lib/hero-ui";
 import Toast from "../feedback/Toast";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -40,6 +40,7 @@ const CreatePartnerForm = ({ message, formAction, className }: CreatePartnerForm
     { name: "Chile", code: "CL" },
     { name: "Colombia", code: "CO" },
     { name: "Costa Rica", code: "CR" },
+    { name: "Ecuador", code: "EC" },
     { name: "El Salvador", code: "SV" },
     { name: "Estados Unidos", code: "US" },
     { name: "Guatemala", code: "GT" },

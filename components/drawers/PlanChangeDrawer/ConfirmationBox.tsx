@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import Toast from "../../feedback/Toast"
 import { ITransitionOutcome, ISku } from "@/types"
 import { validateSKUTransition } from "@/utils/validators/sku/sku-transition-validator"
-import { Button, Input } from "@nextui-org/react"
+import { Button, Input } from "@heroui/react"
 import { modifyTeamSkus } from "@/app/team/actions"
 import { revalidateTagFromClientComponent } from "@/utils/revalidateTagFromClientComponent"
 
@@ -49,14 +49,6 @@ const ConfirmationBox = ({ current_sku_base, new_sku_base, new_license_descripti
     validateTransition()
   }, [current_sku_base, new_sku_base])
 
-  /// DEBUG
-  // useEffect(() => {
-  //   console.log('transitionValidationResult: ', transitionValidationResult)
-  // }, [transitionValidationResult])
-
-  // useEffect(() => {
-  //   console.log(JSON.stringify(new_skus, null, 1))
-  // }, [new_skus])
 
   return (
     <div className="flex flex-col gap-4">

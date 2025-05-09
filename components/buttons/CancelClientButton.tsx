@@ -1,12 +1,12 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Button, ModalFooter, ModalHeader } from "@nextui-org/react"
+import { Button, ModalFooter, ModalHeader, Modal, ModalContent, ModalBody, useDisclosure, Spinner } from "@/lib/hero-ui"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUserSlash } from "@fortawesome/free-solid-svg-icons"
 import { cancelTeam, reinstateTeam } from "@/utils/team"
-import { Modal, ModalContent, ModalBody, useDisclosure, Spinner } from "@nextui-org/react"
 import { ISku } from "@/types"
 import clsx from "clsx"
+import { IconProp } from "@fortawesome/fontawesome-svg-core"
 
 interface CancelClientButton {
   teamId: string
@@ -100,7 +100,7 @@ const CancelClientButton = ({ teamId, teamActive, skus, resellerIds = [] }: Canc
         variant="ghost"
         size={'sm'}
         endContent={
-          <FontAwesomeIcon icon={faUserSlash} size="lg" aria-label="Suspender cliente" className={clsx( teamActive ? "text-[#ff0049] group-hover:text-white" : "text-[#00dc6c] group-hover:text-white" )}/>
+          <FontAwesomeIcon icon={faUserSlash as IconProp} size="lg" aria-label="Suspender cliente" className={clsx( teamActive ? "text-[#ff0049] group-hover:text-white" : "text-[#00dc6c] group-hover:text-white" )}/>
         }
         onPress={onOpenConfirmation}
         className={clsx(

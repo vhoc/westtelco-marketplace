@@ -1,10 +1,12 @@
 "use client"
 import React, { useMemo } from "react"
-import { Input, Button } from "@nextui-org/react"
+import { Input, Button } from "@heroui/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMagnifyingGlass, faUserPlus } from "@fortawesome/free-solid-svg-icons"
-import { ITeamData } from "@/types"
+import { IPartner, ITeamData } from "@/types"
 import { useRouter } from "next/navigation"
+import ExportToCSVButton from "@/components/buttons/ExportToCSVButton";
+import ProtectedElement from "@/components/authorization/ProtectedElement"
 
 interface TopContentProps {
   filterValue:string
@@ -13,9 +15,10 @@ interface TopContentProps {
   hasSearchFilter: boolean
   sortedItems: ITeamData[]
   teams: ITeamData[]
+  partners: IPartner[]
 }
 
-export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, hasSearchFilter, sortedItems, teams }: TopContentProps) => {
+export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, hasSearchFilter, sortedItems, teams, partners }: TopContentProps) => {
 
   const router = useRouter()
 
@@ -53,14 +56,19 @@ export const TopContent = ({ filterValue, onRowsPerPageChange, onSearchChange, h
               >
                 Importar Cliente
               </Button> */}
-              <Button
-                size={'sm'}
-                color={'primary'}
-                endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
-                onPress={() => router.push('/team/new')}
+              <ProtectedElement
+                roles={['westtelco-admin', 'westtelco-agent']}
               >
-                Nuevo Cliente
-              </Button>
+                <Button
+                  size={'sm'}
+                  color={'primary'}
+                  endContent={<FontAwesomeIcon icon={faUserPlus} color={'white'} />}
+                  onPress={() => router.push('/team/new')}
+                >
+                  Nuevo Cliente
+                </Button>
+              </ProtectedElement>
+              <ExportToCSVButton teams={teams} partners={partners} />
             </div>
             <label className="flex items-center text-default-500 text-tiny">
               Filas por página:

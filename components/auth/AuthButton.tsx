@@ -3,7 +3,7 @@ import Link from "next/link";
 import UserDropdown from "./UserDropdown";
 
 export default async function AuthButton() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

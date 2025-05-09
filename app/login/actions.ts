@@ -6,39 +6,43 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
-  const supabase = createClient()
-
-  // Pending: validations
+  const supabase = await createClient()
+  // type-casting here for convenience
+  // in practice, you should validate your inputs
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
-
   const { error } = await supabase.auth.signInWithPassword(data)
-
   if (error) {
     redirect('/error')
   }
 
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  console.log('login/actions: redirecting to /teams')
   revalidatePath('/', 'layout')
   redirect('/teams')
+  
 }
 
-export async function signup(formData: FormData) {
-  const supabase = createClient()
+// Account registration is currently disabled.
+// This is an example
+//
+// export async function signup(formData: FormData) {
+//   const supabase = await createClient()
 
-  // Pending: validations
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+//   // Pending: validations
+//   const data = {
+//     email: formData.get('email') as string,
+//     password: formData.get('password') as string,
+//   }
 
-  const { error } = await supabase.auth.signUp(data)
+//   const { error } = await supabase.auth.signUp(data)
 
-  if (error) {
-    redirect('/error')
-  }
+//   if (error) {
+//     redirect('/error')
+//   }
 
-  revalidatePath('/', 'layout')
-  redirect('/teams')
-}
+//   revalidatePath('/', 'layout')
+//   redirect('/teams')
+// }

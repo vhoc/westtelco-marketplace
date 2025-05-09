@@ -1,30 +1,32 @@
 "use server"
 
-import { IPartner, IPartnerApiResponse } from "@/types"
+import { IPartner } from "@/types"
 import { createClient } from "./supabase/server"
 
-export const getPartner = async (resellerId: string): Promise<IPartnerApiResponse> => {
-  const supabase = createClient()
+// Currently unused
+//
+// export const getPartner = async (resellerId: string): Promise<IPartnerApiResponse> => {
+//   const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('partner')
-    .select('*')
-    .eq('dropbox_reseller_id', resellerId)
-    .single()
+//   const { data, error } = await supabase
+//     .from('partner')
+//     .select('*')
+//     .eq('dropbox_reseller_id', resellerId)
+//     .single()
 
-  if (error) {
-    console.error(`Error retrieving partner from database: `, error)
-    return {
-      code: 400,
-      message: error.message
-    }
-  }
+//   if (error) {
+//     console.error(`Error retrieving partner from database: `, error)
+//     return {
+//       code: 400,
+//       message: error.message
+//     }
+//   }
 
-  return {
-    code: 200,
-    data: data
-  }
-}
+//   return {
+//     code: 200,
+//     data: data
+//   }
+// }
 
 /**
  * Retrieves partners from the database.
@@ -35,7 +37,7 @@ export const getPartner = async (resellerId: string): Promise<IPartnerApiRespons
  */
 export const getPartners = async (resellerIds?: Array<string> | undefined): Promise<Array<IPartner>> => {
   "use server"
-  const supabase = createClient()
+  const supabase = await createClient()
 
   if (resellerIds && resellerIds.length >= 1) {
     const { data, error } = await supabase
@@ -60,7 +62,7 @@ export const getPartners = async (resellerIds?: Array<string> | undefined): Prom
       console.error(`Error retrieving partners from database: `, error)
       return []
     }
-
+    // console.log(`getPartners data: `, data)
     return data
   }
 

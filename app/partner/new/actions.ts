@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { validateServerActionRole, AuthError, PermissionError, RoleConfigError } from "@/utils/auth/serverActions";
 
 export async function createNewPartner(formData: FormData) {
 
@@ -20,7 +21,13 @@ export async function createNewPartner(formData: FormData) {
 
   console.log(`partnerData: `, partnerData)
 
-  const supabase = createClient()
+  try {
+    await validateServerActionRole([
+      'westtelco-admin',
+      'westtelco-agent',
+    ]);
+
+    const supabase = await createClient()
   const { data, error } = await supabase
     .from('partner')
     .insert([
@@ -53,5 +60,15 @@ export async function createNewPartner(formData: FormData) {
   }
 
   return redirect(`/partner/new?message=Hubo un error desconocido, por favor contacte a soporte de UX Neighbor.`);
+  } catch (error) {
+    console.error("Server Action 'createNewPartner' failed:", error)
+    if (error instanceof AuthError || error instanceof PermissionError || error instanceof RoleConfigError) {
+      return redirect(`/partner/new?message=El partner no pudo ser creado. Por favor contactar a soporte de UX Neighbor. Mensaje: ${ error.message }`);
+    } else {
+      // Handle other potential errors during action execution
+      return redirect(`/partner/new?message=El partner no pudo ser creado. Por favor contactar a soporte de UX Neighbor. Mensaje: Unexpected error.`);
+    }
+  }
+ 
   
 }

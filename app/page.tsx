@@ -1,9 +1,10 @@
 import Image from "next/image";
 import AuthButton from "@/components/auth/AuthButton";
-import { Card } from "@nextui-org/react";
+import { Card } from "@/lib/hero-ui";
 import { isUserValid } from "@/utils/auth";
 
-export default async function Home({ searchParams }: { searchParams: { message: string } }) {
+// export default async function Home({ searchParams }: { searchParams: { message: string } }) {
+export default async function Home() {
 
   await isUserValid('/teams')
 

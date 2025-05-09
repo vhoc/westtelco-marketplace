@@ -2,7 +2,7 @@
 import { useState } from "react"
 import Toast from "../../feedback/Toast"
 import { ISku } from "@/types"
-import { Button, Input } from "@nextui-org/react"
+import { Button, Input } from "@heroui/react"
 import { reinstateTeam } from "@/utils/team"
 // import { modifyTeamSkus } from "@/app/team/actions"
 // import { revalidateTagFromClientComponent } from "@/utils/revalidateTagFromClientComponent"

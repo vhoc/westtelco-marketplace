@@ -1,5 +1,4 @@
-import { Card, Modal, ModalBody, ModalContent, Skeleton } from "@nextui-org/react";
-import { CircularProgress } from "@nextui-org/react";
+import { Card, Modal, ModalBody, ModalContent, Skeleton, CircularProgress } from "@/lib/hero-ui";
 
 export default async function PartnersLoadingPage() {
 

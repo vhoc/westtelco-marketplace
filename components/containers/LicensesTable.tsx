@@ -2,13 +2,14 @@
 "use client"
 import { useState, useEffect, Dispatch, SetStateAction } from "react"
 import { ISku, ISkuInfo } from "@/types"
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@nextui-org/react"
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react"
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Input, Button, Checkbox } from "@heroui/react"
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/react"
 import { filterLicenseType, getSkuInfo, validateAddonSku } from "@/utils/licenses-client"
 import { isInGracePeriod } from "@/utils/team-client"
 import { doesAddonSkuExist } from "@/utils/licenses-client"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlusCircle, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
+import ProtectedElement from "@/components/authorization/ProtectedElement"
 
 interface LicensesTableProps {
   skus: Array<ISku>
@@ -90,7 +91,7 @@ export default function LicensesTable(props: LicensesTableProps) {
       // Add entered addon sku to the newSkus to be sent to Dropbox
       props.setNewAddonSkus((prevNewSkus) => (
         // Quantity needs to be the total users count, including the base SKU's 3 licensed users.
-        [...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }]
+        ([...prevNewSkus, { sku_id: skuId, quantity: quantity + 3 }])
       ))
 
       props.setNewSkus((prevNewSkus) => (
@@ -237,33 +238,35 @@ export default function LicensesTable(props: LicensesTableProps) {
                               }
                             </span>
                             :
-                            <div className="flex gap-8 items-center">
-                              <Input
-                                min={1}
-                                type="number"
-                                variant="bordered"
-                                value={props.newSkus.find(item => item.sku_id === sku.sku_id)?.quantity}
-                                aria-label="Cantidad"
-                                onChange={(event) => {
-                                  // console.log(`event: `, event.target.value)
-                                  props.setNewSkus((prevSkus) =>
-                                    prevSkus.map(sku =>
-                                    ({
-                                      ...sku, quantity: sku.sku_id.startsWith("TEAM-") || sku.sku_id.startsWith("EDU-") ?
-                                        1
-                                        : sku.sku_id.startsWith("TEAMADD-") || sku.sku_id.startsWith("EDUADD-") ?
-                                          3 + Number(event.target.value)
-                                          :
-                                          Number(event.target.value)
-                                    })
-                                    ))
+                            <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+                              <div className="flex gap-8 items-center">
+                                <Input
+                                  min={1}
+                                  type="number"
+                                  variant="bordered"
+                                  value={props.newSkus.find(item => item.sku_id === sku.sku_id)?.quantity}
+                                  aria-label="Cantidad"
+                                  onChange={(event) => {
+                                    // console.log(`event: `, event.target.value)
+                                    props.setNewSkus((prevSkus) =>
+                                      prevSkus.map(sku =>
+                                      ({
+                                        ...sku, quantity: sku.sku_id.startsWith("TEAM-") || sku.sku_id.startsWith("EDU-") ?
+                                          1
+                                          : sku.sku_id.startsWith("TEAMADD-") || sku.sku_id.startsWith("EDUADD-") ?
+                                            3 + Number(event.target.value)
+                                            :
+                                            Number(event.target.value)
+                                      })
+                                      ))
 
-                                }}
-                                className="max-w-24"
-                                size={'lg'}
-                              />
-                              <span className="text-[14px] text-default-500">{`Aumenta o reduce el número actual de licencias (${props.newSkus.find(item => item.sku_id === sku.sku_id)?.quantity})`}</span>
-                            </div>
+                                  }}
+                                  className="max-w-24"
+                                  size={'lg'}
+                                />
+                                <span className="text-[14px] text-default-500">{`Aumenta o reduce el número actual de licencias (${props.newSkus.find(item => item.sku_id === sku.sku_id)?.quantity})`}</span>
+                              </div>
+                            </ProtectedElement>
 
                         }
                       </TableCell>
@@ -282,17 +285,19 @@ export default function LicensesTable(props: LicensesTableProps) {
                 baseSkuInfo && baseSkuInfo.sku_base && !regularSkus?.some(item => item.sku_id.startsWith('TEAMLIC-')) && !props.newSkus?.some(item => item.sku_id === baseSkuInfo?.sku_license) && props.editMode ?
                   <TableRow key={'new-license-sku-row'}>
                     <TableCell>
-                      <Button
-                        color="primary"
-                        size={'sm'}
-                        endContent={<FontAwesomeIcon icon={faPlusCircle} size="lg" />}
-                        aria-label="Agregar License SKU"
-                        isLoading={isAddSkuButtonDisabled}
-                        isDisabled={isAddSkuButtonDisabled}
-                        onPress={() => handleAddLicenseSku(baseSkuInfo.sku_base, 1)}
-                      >
-                        Agregar License SKU
-                      </Button>
+                      <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+                        <Button
+                          color="primary"
+                          size={'sm'}
+                          endContent={<FontAwesomeIcon icon={faPlusCircle} size="lg" />}
+                          aria-label="Agregar License SKU"
+                          isLoading={isAddSkuButtonDisabled}
+                          isDisabled={isAddSkuButtonDisabled}
+                          onPress={() => handleAddLicenseSku(baseSkuInfo.sku_base, 1)}
+                        >
+                          Agregar License SKU
+                        </Button>
+                      </ProtectedElement>
                     </TableCell>
                     <TableCell>
 
@@ -385,27 +390,29 @@ export default function LicensesTable(props: LicensesTableProps) {
             props.editMode ?
               <TableRow key="add-new-addon-row">
                 <TableCell>
-                  <div className="flex gap-x-4 pb-4">
-                    <Input
-                      type="text"
-                      placeholder="Introduce Add-on SKU para añadir"
-                      className="max-w-[370px] rounded-sm"
-                      aria-label="New SKU"
-                      value={newSkuToAdd}
-                      onValueChange={setNewSkuToAdd}
-                    />
-                    <Button
-                      color="primary"
-                      className={'rounded-md'}
-                      aria-label="Añadir"
-                      isLoading={isAddSkuButtonDisabled}
-                      isDisabled={isAddSkuButtonDisabled || !newSkuToAdd || newSkuToAdd.length < 1}
-                      // Add addon with the sku specified in the above input, and the quantity taken from the TEAMLIC- or EDULIC- SKU's quantity for it to be equal to the new quanitity to be requested. If only a Base SKU exists, set quantity to 1.
-                      onPress={() => handleAddAddon(newSkuToAdd, props.newSkus?.find(item => item.sku_id.startsWith("TEAMLIC-"))?.quantity || props.newSkus?.find(item => item.sku_id.startsWith("EDULIC-"))?.quantity || 0)}
-                    >
-                      Añadir
-                    </Button>
-                  </div>
+                  <ProtectedElement roles={['westtelco-admin', 'westtelco-agent']}>
+                    <div className="flex gap-x-4 pb-4">
+                      <Input
+                        type="text"
+                        placeholder="Introduce Add-on SKU para añadir"
+                        className="max-w-[370px] rounded-sm"
+                        aria-label="New SKU"
+                        value={newSkuToAdd}
+                        onValueChange={setNewSkuToAdd}
+                      />
+                      <Button
+                        color="primary"
+                        className={'rounded-md'}
+                        aria-label="Añadir"
+                        isLoading={isAddSkuButtonDisabled}
+                        isDisabled={isAddSkuButtonDisabled || !newSkuToAdd || newSkuToAdd.length < 1}
+                        // Add addon with the sku specified in the above input, and the quantity taken from the TEAMLIC- or EDULIC- SKU's quantity for it to be equal to the new quanitity to be requested. If only a Base SKU exists, set quantity to 1.
+                        onPress={() => handleAddAddon(newSkuToAdd, props.newSkus?.find(item => item.sku_id.startsWith("TEAMLIC-"))?.quantity || props.newSkus?.find(item => item.sku_id.startsWith("EDULIC-"))?.quantity || 0)}
+                      >
+                        Añadir
+                      </Button>
+                    </div>
+                  </ProtectedElement>
                 </TableCell>
                 <TableCell>&nbsp;</TableCell>
                 <TableCell>&nbsp;</TableCell>
